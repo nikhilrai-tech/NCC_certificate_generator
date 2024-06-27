@@ -1,0 +1,368 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <style>
+            body {
+                display: flex;
+                min-height: 100vh;
+                overflow-x: hidden;
+            }
+    
+            .sidebar {
+                background-color: #000;
+                color: #fff;
+                min-height: 100vh;
+                width: 250px;
+                position: fixed;
+                top: 0;
+                left: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding-top: 20px;
+            }
+    
+            .sidebar .logo {
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                margin-bottom: 20px;
+            }
+    
+            .sidebar a {
+                color: #fff;
+                text-decoration: none;
+                width: 100%;
+                padding: 15px 20px;
+                display: flex;
+                align-items: center;
+                font-size: 18px;
+                transition: background 0.3s;
+            }
+    
+            .sidebar a:hover,
+            .sidebar a.active {
+                background-color: #333;
+            }
+    
+            .sidebar a .icon {
+                margin-right: 10px;
+            }
+    
+            .content {
+                margin-left: 250px;
+                padding: 20px;
+                width: 100%;
+            }
+    
+            .content-section {
+                display: none;
+            }
+            .top-bar {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 20px;
+                background-color: #fff;
+                margin-bottom: 20px;
+            }
+            .content-section.active {
+                display: block;
+            }
+    
+            .top-bar {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 10px;
+                margin-bottom: 8px;
+            }
+    
+            .user-info {
+                display: flex;
+                align-items: center;
+            }
+    
+            .user-info img {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                margin-right: 10px;
+            }
+    
+            .user-info div {
+                display: flex;
+                flex-direction: column;
+            }
+    
+            .search-bar {
+                flex-grow: 1;
+                margin-left: 20px;
+                margin-right: 20px;
+            }
+    
+            .summary-cards {
+                display: flex;
+                flex-direction: column;
+                margin-bottom: 20px;
+            }
+    
+            .summary-card {
+                margin: 10px 0;
+                padding: 20px;
+                border-radius: 8px;
+                color: #fff;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+    
+            .summary-card:nth-child(1) {
+                background-color: #198754;
+            }
+    
+            .summary-card:nth-child(2) {
+                background-color: #fd7e14;
+            }
+    
+            .summary-card:nth-child(3) {
+                background-color: #212529;
+            }
+    
+            .notification-card {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 20px;
+                background-color: #fff;
+                border-radius: 8px;
+                margin-bottom: 20px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+    
+            .notification-card img {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                margin-right: 10px;
+            }
+    
+            .notification-info {
+                display: flex;
+                align-items: center;
+            }
+    
+            @media (max-width: 768px) {
+                .sidebar {
+                    width: 100%;
+                    height: auto;
+                    position: relative;
+                }
+                .sidebar a {
+                    text-align: center;
+                    padding: 10px;
+                }
+                .content {
+                    margin-left: 0;
+                }
+                .top-bar {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+                .search-bar {
+                    margin-left: 0;
+                    margin-right: 0;
+                    margin-top: 10px;
+                    width: 100%;
+                }
+            }
+    
+            .main-content {
+                display: flex;
+            }
+    
+            .left-column {
+                flex: 2;
+            }
+    
+            .right-column {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                margin-left: 20px;
+            }
+        </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <img src="{% static 'l3.png' %}" alt="Logo 1" class="mt-2" style="width: 222px; margin-left: -65px;">
+        </div>
+        <a href="#" class="active" style="margin-top: 40px;" onclick="showContent(event, 'dashboard')"><span class="icon">🏠</span>Dashboard</a>
+        <a href="#" onclick="showContent(event, 'statistics')"><span class="icon">📊</span>Statistics</a>
+        <a href="#" onclick="showContent(event, 'certificate')"><span class="icon">📜</span>Certificate</a>
+        <a href="#" onclick="showContent(event, 'notification')"><span class="icon">🔔</span>Notification</a>
+        <a href="#" onclick="showContent(event, 'settings')"><span class="icon">⚙️</span>Settings</a>
+        <a href="#" onclick="showContent(event, 'logout')"><span class="icon">🚪</span>Logout</a>
+        <a href="#" onclick="showContent(event, 'help')"><span class="icon">❓</span>Help</a>
+    </div>
+    <div class="content">
+        <div class="top-bar">
+            <div class="user-info">
+                <img src="{% static 'l1.png' %}" alt="User Image">
+                <div>
+                    <strong style="width: 124px;">Rajeev Mishra</strong>
+                    <span>Clerk - IIT Kanpur</span>
+                </div>
+            </div>
+            <input type="text" class="form-control search-bar" placeholder="Search here..." style="width: 149px;">
+            <button class="btn btn-success" style="width: 248px;">+ Create Certificate</button>
+        </div>
+        <div id="dashboard" class="content-section active">
+            <!-- <h4 style="
+            margin-top: -20px;
+        ">Dashboard</h4> -->
+            <div class="main-content">
+                <div class="left-column">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Certificate</h5>
+                            <canvas id="analyticsChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="notification-card" style="
+                    margin-top: -15px;
+                ">
+                        <div class="notification-info">
+                            <img src="{% static 'l2.png' %}" alt="User Image">
+                            <div>
+                                <strong>Col Reena Singh</strong>
+                                <span>Sent 10 Certificates for Revision</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-outline-success">Reply</button>
+                    </div>
+                </div>
+                <div class="right-column" style="
+                margin-top: -10px;
+            ">
+                    <div class="summary-card">
+                        <h2>Total Certificates</h2>
+                        <p>3,000</p>
+                        <span>📈 Up to 10% From Last Batch</span>
+                    </div>
+                    <div class="summary-card">
+                        <h2>Accepted Certificates</h2>
+                        <p>2,750</p>
+                        <span>📈 Up to 6% From Last Batch</span>
+                    </div>
+                    <div class="summary-card">
+                        <h2>Revised Certificates</h2>
+                        <p>650</p>
+                        <span>📈 Up to 7% From Last Batch</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="statistics" class="content-section">
+            <div class="container">
+                <h1>Statistics</h1>
+                <p>This is the statistics content.</p>
+            </div>
+        </div>
+        <div id="certificate" class="content-section">
+            <h1>Certificate</h1>
+            <p>This is the certificate content.</p>
+        </div>
+        <div id="notification" class="content-section">
+            <h1>Notification</h1>
+            <p>This is the notification content.</p>
+        </div>
+        <div id="settings" class="content-section">
+            <h1>Settings</h1>
+            <p>This is the settings content.</p>
+        </div>
+        <div id="logout" class="content-section">
+            <h1>Logout</h1>
+            <p>This is the logout content.</p>
+        </div>
+        <div id="help" class="content-section">
+            <h1>Help</h1>
+            <p>This is the help content.</p>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function showContent(event, section) {
+            const links = document.querySelectorAll('.sidebar a');
+            const contentSections = document.querySelectorAll('.content-section');
+
+            links.forEach(link => {
+                link.classList.remove('active');
+            });
+
+            contentSections.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            event.currentTarget.classList.add('active');
+            document.getElementById(section).classList.add('active');
+        }
+
+        // Chart.js setup
+        var ctx = document.getElementById('analyticsChart').getContext('2d');
+        var analyticsChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5'],
+                datasets: [
+                    {
+                        label: 'Total Certificate',
+                        data: [5, 10, 15, 20, 25, 30],
+                        borderColor: 'green',
+                        fill: false
+                    },
+                    {
+                        label: 'Reviewed',
+                        data: [3, 6, 9, 12, 15, 18],
+                        borderColor: 'orange',
+                        fill: false
+                    },
+                    {
+                        label: 'Rejected',
+                        data: [2, 4, 6, 8, 10, 12],
+                        borderColor: 'red',
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    },
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        
+    </script>
+    
+</body>
+
+</html>

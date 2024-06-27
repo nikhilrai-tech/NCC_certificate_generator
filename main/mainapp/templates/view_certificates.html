@@ -1,0 +1,36 @@
+<!-- certificates/templates/certificates/view_certificates.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Certificates</title>
+</head>
+<body>
+    <h2>View Certificates</h2>
+    
+    {% if certificates %}
+        <ul>
+            {% for certificate in certificates %}
+                <li>
+                    <h3>{{ certificate.Name }}</h3>
+                    <p>Certificate Type: {{ certificate.CertificateType }}</p>
+                    <p>Date of Birth: {{ certificate.DOB }}</p>
+                    <p>Passing Year: {{ certificate.PassingYear }}</p>
+                    <!-- Add more details as needed -->
+
+                    <a href="{% url 'view_certificate_detail' certificate_id=certificate.id %}" class="btn btn-primary" target="_blank">View</a>
+                    <a href="{% url 'download_certificate_detail' certificate_id=certificate.id %}" class="btn btn-success">Download</a>
+                    <!-- Replace 'view_certificate_detail' with the actual URL name if different -->
+                </li>
+            {% endfor %}
+        </ul>
+
+        <!-- Button to download all certificates -->
+        <a href="{% url 'download_all_certificates' %}" class="btn btn-primary">Download All Certificates</a>
+
+    {% else %}
+        <p>No certificates found.</p>
+    {% endif %}
+</body>
+</html>

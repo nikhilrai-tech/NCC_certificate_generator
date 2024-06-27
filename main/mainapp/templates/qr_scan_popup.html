@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>QR Code Scan Result</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        .certificate-info {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .certificate-info h2 {
+            text-align: center;
+            color: #333;
+        }
+        .certificate-info p {
+            margin-bottom: 10px;
+        }
+        .certificate-info img {
+            display: block;
+            margin: 20px auto;
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="certificate-info">
+        <h2>Certificate Information</h2>
+        <!-- <p><strong>ID:</strong> {{ certificate.ID }}</p> -->
+        <p><strong>Name:</strong> {{ certificate.Name }}</p>
+        <p><strong>Date of Birth:</strong> {{ certificate.DOB }}</p>
+        <p><strong>Guardian:</strong> {{ certificate.Guardian }}</p>
+        <p><strong>Certificate Type:</strong> {{ certificate.CertificateType }}</p>
+        <p><strong>Cadet Rank:</strong> {{ certificate.CadetRank }}</p>
+        <p><strong>Passing Year:</strong> {{ certificate.PassingYear }}</p>
+        <p><strong>Grade:</strong> {{ certificate.Grade }}</p>
+        <p><strong>Unit:</strong> {{ certificate.Unit }}</p>
+        <p><strong>Directorate:</strong> {{ certificate.Directorate }}</p>
+        <p><strong>Place:</strong> {{ certificate.Place }}</p>
+        <p><strong>Institute:</strong> {{ certificate.Institute }}</p>
+        <p><strong>Certificate Number:</strong> {{ certificate.certificate_number }}</p>
+        <p><strong>Serial Number:</strong> {{ certificate.serial_number }}</p>
+        {% if certificate.user_image %}
+            <img src="{{ certificate.user_image.url }}" alt="User Image">
+        {% endif %}
+    </div>
+</body>
+</html>

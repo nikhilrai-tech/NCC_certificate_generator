@@ -1,0 +1,17 @@
+<!-- certificates/templates/certificates/certificate_form.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Generate Certificate</title>
+</head>
+<body>
+    <h2>Generate Certificate</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Generate Certificate</button>
+    </form>
+</body>
+</html>
