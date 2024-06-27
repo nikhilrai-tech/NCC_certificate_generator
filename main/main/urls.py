@@ -36,6 +36,8 @@ urlpatterns = [
     path('signuppage/',signuppage, name='signuppage'),
     path('forgotpass/',forgotpass, name='forgotpass'),
     path('dashboard/',dashboard, name='dashboard'),
+    path('main/',mintemplate, name='main'),
+
 
 ]
 if settings.DEBUG:

@@ -299,3 +299,7 @@ def register_head(request):
 
 def dashboard(request):
     return render(request,"dashboard.html")
+
+
+def mintemplate(request):
+    return render(request,"maintemp.html")
