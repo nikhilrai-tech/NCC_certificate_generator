@@ -112,7 +112,7 @@ USE_I18N = True
 
 USE_TZ = True
 CSRF_TRUSTED_ORIGINS = [
-    'https://a031-202-3-77-208.ngrok-free.app',  # Replace with your actual ngrok URL
+    'https://d8e6-2409-40e3-18-3a66-70f4-e0fa-db42-75c3.ngrok-free.app',  # Replace with your actual ngrok URL
 ]
 
 # Static files (CSS, JavaScript, Images)

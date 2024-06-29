@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admission Card Form</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Generate Admission Card</h2>
+        <form>
+            <div class="form-group">
+                <label for="studentName">Student Name</label>
+                <input type="text" class="form-control" id="studentName" placeholder="Enter student name" required>
+            </div>
+            <div class="form-group">
+                <label for="rollNumber">Roll Number</label>
+                <input type="text" class="form-control" id="rollNumber" placeholder="Enter roll number" required>
+            </div>
+            <div class="form-group">
+                <label for="dob">Date of Birth</label>
+                <input type="date" class="form-control" id="dob" required>
+            </div>
+            <div class="form-group">
+                <label for="course">Course</label>
+                <input type="text" class="form-control" id="course" placeholder="Enter course" required>
+            </div>
+            <div class="form-group">
+                <label for="department">Department</label>
+                <input type="text" class="form-control" id="department" placeholder="Enter department" required>
+            </div>
+            <div class="form-group">
+                <label for="examDate">Examination Date</label>
+                <input type="date" class="form-control" id="examDate" required>
+            </div>
+            <div class="form-group">
+                <label for="examCenter">Examination Center</label>
+                <input type="text" class="form-control" id="examCenter" placeholder="Enter examination center" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Generate Admission Card</button>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

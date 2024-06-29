@@ -220,7 +220,7 @@ input[type="submit"]:active
                 <div class="signin">
                     <div class="content">
                         <h2 style="color: white;">{{ role }} Sign Up</h2>
-                        <form method="POST" action="{% url 'register_staff' %}" class="form">
+                        <form method="POST" action="{% url 'register_ceo' %}" class="form">
                             {% csrf_token %}
                             <div class="inputBox">
                                 <input type="text" name="username" required>

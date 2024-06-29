@@ -223,6 +223,9 @@ def register_staff(request):
             staff_group.user_set.add(user)
             login(request, user)
             return redirect('custom_login')
+        else:
+            # Capture form errors and display them
+            return render(request, 'signup_form.html', {'form': form, 'role': 'Commanding Staff', 'errors': form.errors})
     else:
         form = StaffSignUpForm()
     return render(request, 'signup_form.html', {'form': form, 'role': 'Commanding Staff'})
@@ -236,22 +239,29 @@ def register_clerk(request):
             clerk_group.user_set.add(user)
             login(request, user)
             return redirect('custom_login')
+        else:
+            # Capture form errors and display them
+            return render(request, 'signupclerk_form.html', {'form': form, 'role': 'Clerk', 'errors': form.errors})
     else:
         form = ClerkSignUpForm()
-    return render(request, 'signup_form.html', {'form': form, 'role': 'Clerk'})
+    return render(request, 'signupclerk_form.html', {'form': form, 'role': 'Clerk'})
 
 def register_ceo(request):
     if request.method == 'POST':
         form = CEOSignUpForm(request.POST)
         if form.is_valid():
             user = form.save()
-            ceo_group = Group.objects.get(name='CEO')
-            ceo_group.user_set.add(user)
+            CEO_group = Group.objects.get(name='CEO')
+            CEO_group.user_set.add(user)
             login(request, user)
             return redirect('custom_login')
+        else:
+            # Capture form errors and display them
+            return render(request, 'signupceo_form.html', {'form': form, 'role': 'CO', 'errors': form.errors})
     else:
         form = CEOSignUpForm()
-    return render(request, 'signup_form.html', {'form': form, 'role': 'CEO'})
+    return render(request, 'signupceo_form.html', {'form': form, 'role': 'CO'})
+
 
 def custom_login(request):
     if request.method == 'POST':
@@ -264,11 +274,11 @@ def custom_login(request):
             if user.is_superuser:
                 return redirect('/admin/')
             elif user.groups.filter(name='Staff').exists():
-                return redirect('generate_certificate')
+                return redirect('dashboard')
             elif user.groups.filter(name='Clerk').exists():
-                return redirect('generate_certificate')
+                return redirect('dashboard')
             elif user.groups.filter(name='CEO').exists():
-                return redirect('ceo_dashboard')
+                return redirect('dashboard')
         else:
             return HttpResponse('Invalid login credentials')
     return render(request, 'login.html')
@@ -284,6 +294,17 @@ def forgotpass(request):
 
 
 def register_head(request):
+    # if request.method == 'POST':
+    #     form = headSignUpForm(request.POST)
+    #     if form.is_valid():
+    #         user = form.save()
+    #         register_head = Group.objects.get(name='register_head')
+    #         register_head.user_set.add(user)
+    #         login(request, user)
+    #         return redirect('custom_login')
+    # else:
+    #     form = headSignUpForm()
+    # return render(request, 'signup_form.html', {'form': form, 'role': 'state head'})
     if request.method == 'POST':
         form = headSignUpForm(request.POST)
         if form.is_valid():
@@ -292,9 +313,14 @@ def register_head(request):
             register_head.user_set.add(user)
             login(request, user)
             return redirect('custom_login')
+        else:
+            # Capture form errors and display them
+            return render(request, 'signuphead_form.html', {'form': form, 'role': 'state head', 'errors': form.errors})
     else:
         form = headSignUpForm()
-    return render(request, 'signup_form.html', {'form': form, 'role': 'state head'})
+    return render(request, 'signuphead_form.html', {'form': form, 'role': 'state head'})
+
+
 
 
 def dashboard(request):
@@ -303,3 +329,7 @@ def dashboard(request):
 
 def mintemplate(request):
     return render(request,"maintemp.html")
+
+
+def admincard(request):
+    return render(request,"admincard.html")

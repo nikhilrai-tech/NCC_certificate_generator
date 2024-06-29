@@ -1,17 +1,98 @@
-<!-- certificates/templates/certificates/certificate_form.html -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Generate Certificate</title>
+    <!-- Bootstrap CSS (adjust the path as per your project setup) -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <h2>Generate Certificate</h2>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Generate Certificate</button>
-    </form>
+    <div class="container mt-4">
+        <form id="certificateForm" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <!-- Step 1: First 5 fields -->
+            <div id="step1">
+                <div class="form-group">
+                    <label for="{{ form.Name.id_for_label }}">Name:</label>
+                    {{ form.Name }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.DOB.id_for_label }}">Date of Birth:</label>
+                    {{ form.DOB }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.Guardian.id_for_label }}">Guardian:</label>
+                    {{ form.Guardian }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.CertificateType.id_for_label }}">Certificate Type:</label>
+                    {{ form.CertificateType }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.PassingYear.id_for_label }}">Passing Year:</label>
+                    {{ form.PassingYear }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.Grade.id_for_label }}">Grade:</label>
+                    {{ form.Grade }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.CadetRank.id_for_label }}">Cadet Rank:</label>
+                    {{ form.CadetRank }}
+                </div>
+                <button type="button" class="btn btn-primary" onclick="showStep2()">Next</button>
+            </div>
+            
+            <!-- Step 2: Hidden by default -->
+            <div id="step2" style="display: none;">
+                
+                <div class="form-group">
+                    <label for="{{ form.Unit.id_for_label }}">Unit:</label>
+                    {{ form.Unit }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.Directorate.id_for_label }}">Directorate:</label>
+                    {{ form.Directorate }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.Place.id_for_label }}">Place:</label>
+                    {{ form.Place }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.Institute.id_for_label }}">Institute:</label>
+                    {{ form.Institute }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.certificate_number.id_for_label }}">Certificate Number:</label>
+                    {{ form.certificate_number }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.serial_number.id_for_label }}">Serial Number:</label>
+                    {{ form.serial_number }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.user_image.id_for_label }}">User Image:</label>
+                    {{ form.user_image }}
+                </div>
+                <button type="button" class="btn btn-secondary mr-2" onclick="showStep1()">Previous</button>
+                <button type="submit" class="btn btn-primary">Generate Certificate</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS (optional if you need JavaScript features) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function showStep1() {
+            document.getElementById('step1').style.display = 'block';
+            document.getElementById('step2').style.display = 'none';
+        }
+        
+        function showStep2() {
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').style.display = 'block';
+        }
+    </script>
 </body>
 </html>

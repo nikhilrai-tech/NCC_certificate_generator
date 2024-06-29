@@ -37,7 +37,7 @@ urlpatterns = [
     path('forgotpass/',forgotpass, name='forgotpass'),
     path('dashboard/',dashboard, name='dashboard'),
     path('main/',mintemplate, name='main'),
-
+    path('admincard/',admincard, name='admincard'),
 
 ]
 if settings.DEBUG:
