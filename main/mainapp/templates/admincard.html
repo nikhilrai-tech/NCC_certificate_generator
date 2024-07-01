@@ -7,7 +7,7 @@
     <!-- Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
+<!-- <body>
     <div class="container mt-5">
         <h2>Generate Admission Card</h2>
         <form>
@@ -43,9 +43,148 @@
         </form>
     </div>
 
+    
+</body> -->
+
+<body>
+    <div class="container mt-4 ">
+        <h2 class="text-center">Generate Admission Card</h2>
+        <form id="certificateForm" method="post" enctype="multipart/form-data">
+            <div class="form-group" >
+                <label for="unit">Unit</label>
+                <input type="text" class="form-control" id="unit" placeholder="Enter unit" required>
+            </div>
+            <div class="form-group">
+                <label for="number">Number/ CBSE No</label>
+                <input type="text" class="form-control" id="number" placeholder="Enter number or CBSE No" required>
+            </div>
+            <div class="form-group">
+                <label for="rank">Rank</label>
+                <input type="text" class="form-control" id="rank" placeholder="Enter rank" required>
+            </div>
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" class="form-control" id="name" placeholder="Enter name" required>
+            </div>
+            <div class="form-group">
+                <label for="dob">Date of Birth</label>
+                <input type="date" class="form-control" id="dob" required>
+            </div>
+            <div class="form-group">
+                <label for="fatherName">Father's Name</label>
+                <input type="text" class="form-control" id="fatherName" placeholder="Enter father's name" required>
+            </div>
+            <div class="form-group">
+                <label for="schoolCollege">School/College</label>
+                <input type="text" class="form-control" id="schoolCollege" placeholder="Enter school or college" required>
+            </div>
+            <div class="form-group">
+                <label for="yearOfPassing">Year of Passing 'Certificate B'</label>
+                <input type="text" class="form-control" id="yearOfPassing" placeholder="Enter year of passing 'Certificate B'" required>
+            </div>
+            <div class="form-group">
+                <label for="bCertificatePhoto">If applicable, attach photo of 'Certificate B'</label>
+                <input type="file" class="form-control" id="bCertificatePhoto" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label for="freshOrFailure">Whether fresh or failure</label>
+                <input type="text" class="form-control" id="freshOrFailure" placeholder="Enter whether fresh or failure" required>
+            </div>
+            <div class="form-group">
+                <label>Attendance</label>
+                <div class="form-row">
+                    <div class="col">
+                        <input type="text" class="form-control" placeholder="1st year" required>
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" placeholder="2nd year" required>
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" placeholder="3rd year" required>
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" placeholder="Total" required>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Details of Camp Attended</label>
+                <div id="campDetailsContainer">
+                    <div class="form-row mb-2 camp-details">
+                        <div class="col">
+                            <input type="text" class="form-control" placeholder="No/Name of Camp Attended" required>
+                        </div>
+                        <div class="col">
+                            <input type="text" class="form-control" placeholder="Date/Month/Year" required>
+                        </div>
+                        <div class="col">
+                            <input type="text" class="form-control" placeholder="Location" required>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-secondary" onclick="addCampDetails()">+</button>
+                
+                <button type="button" class="btn btn-danger" onclick="removeCampDetails(this)">×</button>
+            </div>
+            <div class="form-group">
+                <label for="homeAddress">Home address for postal areas</label>
+                <textarea class="form-control" id="homeAddress" rows="3" placeholder="Enter home address" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Generate Certificate</button>
+        </form>
+    </div>
+
+  
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function addCampDetails() {
+            const container = document.getElementById('campDetailsContainer');
+            const campDetailsTemplate = `
+                <div class="form-row mb-2 camp-details">
+                    <div class="col">
+                        <input type="text" class="form-control" placeholder="No/Name of Camp Attended" required>
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" placeholder="Date/Month/Year" required>
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" placeholder="Location" required>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', campDetailsTemplate);
+        }
+    </script>
+    <script>
+        function addCampDetails() {
+            const container = document.getElementById('campDetailsContainer');
+            const campDetailsTemplate = `
+                <div class="form-row mb-2 camp-details">
+                    <div class="col">
+                        <input type="text" class="form-control" placeholder="No/Name of Camp Attended" required>
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" placeholder="Date/Month/Year" required>
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" placeholder="Location" required>
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-danger" onclick="removeCampDetails(this)">×</button>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', campDetailsTemplate);
+        }
+    
+        function removeCampDetails(button) {
+            const campDetails = button.closest('.camp-details');
+            campDetails.remove();
+        }
+    </script>
+    
 </body>
 </html>
