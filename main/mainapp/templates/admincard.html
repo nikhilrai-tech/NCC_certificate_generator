@@ -3,49 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admission Card Form</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Generate Admission Card</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
 <body>
     <div class="container mt-5">
-        <h2>Generate Admission Card</h2>
+        <h2>Generate AdmiT Card</h2>
         <form>
             <div class="form-group">
-                <label for="studentName">Student Name</label>
-                <input type="text" class="form-control" id="studentName" placeholder="Enter student name" required>
+                <label for="unit">Unit</label>
+                <input type="text" class="form-control" id="unit" placeholder="Enter unit" required>
             </div>
             <div class="form-group">
-                <label for="rollNumber">Roll Number</label>
-                <input type="text" class="form-control" id="rollNumber" placeholder="Enter roll number" required>
+                <label for="image">Image</label>
+                <input type="file" class="form-control-file" id="image" required>
+            </div>
+            <div class="form-group">
+                <label for="extensionPaper">Attach Extension Paper (if applicable)</label>
+                <input type="text" class="form-control" id="extensionPaper" placeholder="extensionPaper" required>
+            </div>
+            <div class="form-group">
+                <label for="cbseNo">Number/CBSE NO</label>
+                <input type="text" class="form-control" id="cbseNo" placeholder="Enter number/CBSE NO" required>
+            </div>
+            <div class="form-group">
+                <label for="studentName">Name</label>
+                <input type="text" class="form-control" id="studentName" placeholder="Enter name" required>
             </div>
             <div class="form-group">
                 <label for="dob">Date of Birth</label>
                 <input type="date" class="form-control" id="dob" required>
             </div>
             <div class="form-group">
-                <label for="course">Course</label>
-                <input type="text" class="form-control" id="course" placeholder="Enter course" required>
+                <label for="fathersName">Father's Name</label>
+                <input type="text" class="form-control" id="fathersName" placeholder="Enter father's name" required>
             </div>
             <div class="form-group">
-                <label for="department">Department</label>
-                <input type="text" class="form-control" id="department" placeholder="Enter department" required>
+                <label for="schoolCollege">School/College</label>
+                <input type="text" class="form-control" id="schoolCollege" placeholder="Enter school/college" required>
             </div>
             <div class="form-group">
-                <label for="examDate">Examination Date</label>
-                <input type="date" class="form-control" id="examDate" required>
+                <label for="status">Weather Fresh/Failure</label>
+                <select class="form-control" id="status" required>
+                    <option value="" disabled selected>Select status</option>
+                    <option value="fresh">Fresh</option>
+                    <option value="failure">Failure</option>
+                </select>
             </div>
             <div class="form-group">
-                <label for="examCenter">Examination Center</label>
-                <input type="text" class="form-control" id="examCenter" placeholder="Enter examination center" required>
+                <label for="homeAddress">Home Address</label>
+                <input type="text" class="form-control" id="homeAddress" placeholder="Enter home address" required>
             </div>
             <button type="submit" class="btn btn-primary">Generate Admission Card</button>
         </form>
     </div>
 
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
 </html>
