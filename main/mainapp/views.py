@@ -8,6 +8,8 @@ import qrcode
 from PIL import Image, ImageDraw, ImageFont
 import os
 from django.conf import settings
+from .forms import StudentDetailForm, CampDetailForm
+from .models import CampDetail
 
 def generate_certificate(request):
     if request.method == 'POST':
@@ -333,3 +335,38 @@ def mintemplate(request):
 
 def admincard(request):
     return render(request,"admincard.html")
+
+
+
+def student_detail_view(request):
+    if request.method == 'POST':
+        student_form = StudentDetailForm(request.POST, request.FILES)
+        camp_forms = []
+        camp_data = []
+
+        for i in range(len(request.POST.getlist('camp_no_name'))):
+            camp_form = CampDetailForm({
+                'no_name': request.POST.getlist('camp_no_name')[i],
+                'date_month_year': request.POST.getlist('camp_date_month_year')[i],
+                'location': request.POST.getlist('camp_location')[i],
+            })
+            camp_forms.append(camp_form)
+            if camp_form.is_valid():
+                camp_data.append(camp_form.save())
+
+        if student_form.is_valid() and all([cf.is_valid() for cf in camp_forms]):
+            student = student_form.save(commit=False)
+            student.save()
+            student.camp_details.set(camp_data)
+            student.save()
+            return redirect('success_url')  # Replace with your success URL
+
+    else:
+        student_form = StudentDetailForm()
+        camp_forms = [CampDetailForm()]
+
+    context = {
+        'student_form': student_form,
+        'camp_forms': camp_forms,
+    }
+    return render(request, 'student_detail_form.html', context)

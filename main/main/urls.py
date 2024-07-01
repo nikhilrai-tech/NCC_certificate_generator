@@ -18,6 +18,7 @@ from django.urls import path
 from mainapp . views import *
 from django.conf.urls.static import static
 from django.conf import settings
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('generate/', generate_certificate, name='generate_certificate'),
@@ -38,6 +39,9 @@ urlpatterns = [
     path('dashboard/',dashboard, name='dashboard'),
     path('main/',mintemplate, name='main'),
     path('admincard/',admincard, name='admincard'),
+    path('student/', student_detail_view, name='student_detail'),
+
+
 
 ]
 if settings.DEBUG:

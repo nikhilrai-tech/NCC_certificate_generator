@@ -3,174 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admission Card Form</title>
+    <title>Generate Admission Card</title>
     <!-- Bootstrap CSS -->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Additional custom styles if needed */
+    </style>
 </head>
-<!-- <body>
-    <div class="container mt-5">
-        <h2>Generate Admission Card</h2>
-        <form>
-            <div class="form-group">
-                <label for="studentName">Student Name</label>
-                <input type="text" class="form-control" id="studentName" placeholder="Enter student name" required>
-            </div>
-            <div class="form-group">
-                <label for="rollNumber">Roll Number</label>
-                <input type="text" class="form-control" id="rollNumber" placeholder="Enter roll number" required>
-            </div>
-            <div class="form-group">
-                <label for="dob">Date of Birth</label>
-                <input type="date" class="form-control" id="dob" required>
-            </div>
-            <div class="form-group">
-                <label for="course">Course</label>
-                <input type="text" class="form-control" id="course" placeholder="Enter course" required>
-            </div>
-            <div class="form-group">
-                <label for="department">Department</label>
-                <input type="text" class="form-control" id="department" placeholder="Enter department" required>
-            </div>
-            <div class="form-group">
-                <label for="examDate">Examination Date</label>
-                <input type="date" class="form-control" id="examDate" required>
-            </div>
-            <div class="form-group">
-                <label for="examCenter">Examination Center</label>
-                <input type="text" class="form-control" id="examCenter" placeholder="Enter examination center" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Generate Admission Card</button>
-        </form>
-    </div>
-
-    
-</body> -->
-
 <body>
-    <div class="container mt-4 ">
-        <h2 class="text-center">Generate Admission Card</h2>
-        <form id="certificateForm" method="post" enctype="multipart/form-data">
-            <div class="form-group" >
-                <label for="unit">Unit</label>
-                <input type="text" class="form-control" id="unit" placeholder="Enter unit" required>
-            </div>
-            <div class="form-group">
-                <label for="number">Number/ CBSE No</label>
-                <input type="text" class="form-control" id="number" placeholder="Enter number or CBSE No" required>
-            </div>
-            <div class="form-group">
-                <label for="rank">Rank</label>
-                <input type="text" class="form-control" id="rank" placeholder="Enter rank" required>
-            </div>
-            <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" class="form-control" id="name" placeholder="Enter name" required>
-            </div>
-            <div class="form-group">
-                <label for="dob">Date of Birth</label>
-                <input type="date" class="form-control" id="dob" required>
-            </div>
-            <div class="form-group">
-                <label for="fatherName">Father's Name</label>
-                <input type="text" class="form-control" id="fatherName" placeholder="Enter father's name" required>
-            </div>
-            <div class="form-group">
-                <label for="schoolCollege">School/College</label>
-                <input type="text" class="form-control" id="schoolCollege" placeholder="Enter school or college" required>
-            </div>
-            <div class="form-group">
-                <label for="yearOfPassing">Year of Passing 'Certificate B'</label>
-                <input type="text" class="form-control" id="yearOfPassing" placeholder="Enter year of passing 'Certificate B'" required>
-            </div>
-            <div class="form-group">
-                <label for="bCertificatePhoto">If applicable, attach photo of 'Certificate B'</label>
-                <input type="file" class="form-control" id="bCertificatePhoto" accept="image/*">
-            </div>
-            <div class="form-group">
-                <label for="freshOrFailure">Whether fresh or failure</label>
-                <input type="text" class="form-control" id="freshOrFailure" placeholder="Enter whether fresh or failure" required>
-            </div>
-            <div class="form-group">
-                <label>Attendance</label>
-                <div class="form-row">
-                    <div class="col">
-                        <input type="text" class="form-control" placeholder="1st year" required>
+    <div class="container mt-4">
+        <h2 class="text-center mb-4">Generate Admission Card</h2>
+        <form id="studentDetailForm" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <!-- Render main form fields -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ student_form.unit.id_for_label }}">Unit:</label>
+                        {{ student_form.unit }}
                     </div>
-                    <div class="col">
-                        <input type="text" class="form-control" placeholder="2nd year" required>
-                    </div>
-                    <div class="col">
-                        <input type="text" class="form-control" placeholder="3rd year" required>
-                    </div>
-                    <div class="col">
-                        <input type="text" class="form-control" placeholder="Total" required>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ student_form.cbse_no.id_for_label }}">Number/ CBSE No:</label>
+                        {{ student_form.cbse_no }}
                     </div>
                 </div>
             </div>
-            <div class="form-group">
-                <label>Details of Camp Attended</label>
-                <div id="campDetailsContainer">
-                    <div class="form-row mb-2 camp-details">
-                        <div class="col">
-                            <input type="text" class="form-control" placeholder="No/Name of Camp Attended" required>
-                        </div>
-                        <div class="col">
-                            <input type="text" class="form-control" placeholder="Date/Month/Year" required>
-                        </div>
-                        <div class="col">
-                            <input type="text" class="form-control" placeholder="Location" required>
-                        </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ student_form.rank.id_for_label }}">Rank:</label>
+                        {{ student_form.rank }}
                     </div>
                 </div>
-                <button type="button" class="btn btn-secondary" onclick="addCampDetails()">+</button>
-                
-                <button type="button" class="btn btn-danger" onclick="removeCampDetails(this)">×</button>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ student_form.name.id_for_label }}">Name:</label>
+                        {{ student_form.name }}
+                    </div>
+                </div>
             </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ student_form.dob.id_for_label }}">Date of Birth:</label>
+                        {{ student_form.dob }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ student_form.fathers_name.id_for_label }}">Father's Name:</label>
+                        {{ student_form.fathers_name }}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ student_form.school_college.id_for_label }}">School/College:</label>
+                        {{ student_form.school_college }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ student_form.year_of_passing_b_certificate.id_for_label }}">Year of Passing 'Certificate B':</label>
+                        {{ student_form.year_of_passing_b_certificate }}
+                    </div>
+                </div>
+            </div>
+            
             <div class="form-group">
-                <label for="homeAddress">Home address for postal areas</label>
-                <textarea class="form-control" id="homeAddress" rows="3" placeholder="Enter home address" required></textarea>
+                <label for="{{ student_form.attach_photo_b_certificate.id_for_label }}">If applicable attach photo of B certificate:</label>
+                {{ student_form.attach_photo_b_certificate }}
             </div>
-            <button type="submit" class="btn btn-primary">Generate Certificate</button>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ student_form.fresh_or_failure.id_for_label }}">Whether fresh or failure:</label>
+                        {{ student_form.fresh_or_failure }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ student_form.attendance_1st_year.id_for_label }}">Attendance 1st Year:</label>
+                        {{ student_form.attendance_1st_year }}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ student_form.attendance_2nd_year.id_for_label }}">Attendance 2nd Year:</label>
+                        {{ student_form.attendance_2nd_year }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="{{ student_form.attendance_3rd_year.id_for_label }}">Attendance 3rd Year:</label>
+                        {{ student_form.attendance_3rd_year }}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ student_form.attendance_total.id_for_label }}">Attendance Total:</label>
+                {{ student_form.attendance_total }}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ student_form.home_address.id_for_label }}">Home Address for Postal Areas:</label>
+                {{ student_form.home_address }}
+            </div>
+            
+            <!-- Render dynamic camp details -->
+            <div id="campDetailsContainer">
+                {% for camp_form in camp_forms %}
+                <div class="form-row mb-2 camp-details">
+                    <div class="col">
+                        <input type="text" name="camp_no_name" class="form-control" placeholder="No/Name of Camp Attended" required>
+                    </div>
+                    <div class="col">
+                        <input type="text" name="camp_date_month_year" class="form-control" placeholder="Date/Month/Year" required>
+                    </div>
+                    <div class="col">
+                        <input type="text" name="camp_location" class="form-control" placeholder="Location" required>
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-danger" onclick="removeCampDetails(this)">×</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <button type="button" class="btn btn-secondary mt-2" onclick="addCampDetails()">Add Camp Details</button>
+            
+            <button type="submit" class="btn btn-primary mt-2">Generate Admission Card</button>
         </form>
     </div>
-
-  
+    
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
     <script>
         function addCampDetails() {
             const container = document.getElementById('campDetailsContainer');
             const campDetailsTemplate = `
                 <div class="form-row mb-2 camp-details">
                     <div class="col">
-                        <input type="text" class="form-control" placeholder="No/Name of Camp Attended" required>
+                        <input type="text" name="camp_no_name" class="form-control" placeholder="No/Name of Camp Attended" required>
                     </div>
                     <div class="col">
-                        <input type="text" class="form-control" placeholder="Date/Month/Year" required>
+                        <input type="text" name="camp_date_month_year" class="form-control" placeholder="Date/Month/Year" required>
                     </div>
                     <div class="col">
-                        <input type="text" class="form-control" placeholder="Location" required>
-                    </div>
-                </div>
-            `;
-            container.insertAdjacentHTML('beforeend', campDetailsTemplate);
-        }
-    </script>
-    <script>
-        function addCampDetails() {
-            const container = document.getElementById('campDetailsContainer');
-            const campDetailsTemplate = `
-                <div class="form-row mb-2 camp-details">
-                    <div class="col">
-                        <input type="text" class="form-control" placeholder="No/Name of Camp Attended" required>
-                    </div>
-                    <div class="col">
-                        <input type="text" class="form-control" placeholder="Date/Month/Year" required>
-                    </div>
-                    <div class="col">
-                        <input type="text" class="form-control" placeholder="Location" required>
+                        <input type="text" name="camp_location" class="form-control" placeholder="Location" required>
                     </div>
                     <div class="col-auto">
                         <button type="button" class="btn btn-danger" onclick="removeCampDetails(this)">×</button>
@@ -185,6 +179,5 @@
             campDetails.remove();
         }
     </script>
-    
 </body>
 </html>
