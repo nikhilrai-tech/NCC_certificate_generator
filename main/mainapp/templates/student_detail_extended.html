@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Detail Extended Form</title>
+</head>
+<body>
+    <h1>Student Detail Extended Form</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var passFailField = document.getElementById('id_pass_fail');
+                var marksFields = document.querySelectorAll('.marks-fields');
+
+                function toggleMarksFields() {
+                    if (passFailField.value === 'Pass') {
+                        marksFields.forEach(function(field) {
+                            field.style.display = 'block';
+                        });
+                    } else {
+                        marksFields.forEach(function(field) {
+                            field.style.display = 'none';
+                        });
+                    }
+                }
+
+                passFailField.addEventListener('change', function() {
+                    toggleMarksFields();
+                });
+
+                // Initial check if 'Pass' is selected
+                toggleMarksFields();
+            });
+        </script>
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>

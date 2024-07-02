@@ -379,3 +379,111 @@ def student_detail_view(request):
 # def student_detail_view(request):
 #     student_form = StudentDetailForm()
 #     return render(request, 'admincard.html', {"student_form": student_form})
+
+def student_detail_view(request):
+    if request.method == 'POST':
+        form = StudentDetailForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('success')
+    else:
+        form = StudentDetailForm()
+    return render(request, 'student_detail_form.html', {'form': form})
+
+def success_view(request):
+    students = StudentDetail.objects.all()
+    return render(request, 'success copy.html', {'students': students})
+
+from django.shortcuts import render, get_object_or_404
+def student_detail_single_view(request, student_id):
+    student = get_object_or_404(StudentDetail, id=student_id)
+    return render(request, 'student_detail_single.html', {'student': student})
+from .forms import StudentDetailExtendedForm,StudentDetailBasicForm
+
+def student_detail_basic_view(request):
+    if request.method == 'POST':
+        form = StudentDetailBasicForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('success')  # Redirect to success page or another view
+    else:
+        form = StudentDetailBasicForm()
+    return render(request, 'student_detail_basic.html', {'form': form})
+
+def student_detail_extended_view(request, student_id):
+    student = get_object_or_404(StudentDetail, id=student_id)
+    if request.method == 'POST':
+        form = StudentDetailExtendedForm(request.POST, request.FILES, instance=student)
+        if form.is_valid():
+            form.save()
+            return redirect('success')  # Redirect to success page or another view
+    else:
+        form = StudentDetailExtendedForm(instance=student)
+    return render(request, 'student_detail_extended.html', {'form': form})
+
+
+import zipfile
+import os
+from io import BytesIO
+from reportlab.lib.units import inch
+from django.http import HttpResponse
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.utils import ImageReader
+# from myproject.students.models import StudentDetail
+
+def generate_pdf(request):
+    students = StudentDetail.objects.all()
+    
+    # Prepare in-memory zip file
+    zip_buffer = BytesIO()
+    zip_file = zipfile.ZipFile(zip_buffer, 'w')
+
+    # Load JPG template as background
+    template_path = '../main/mainapp/static/t2.jpeg'  # Replace with your template path
+
+    for student in students:
+        # Create PDF document
+        pdf_buffer = BytesIO()
+        c = canvas.Canvas(pdf_buffer, pagesize=letter)
+
+        # Draw template background
+        background_image = ImageReader(template_path)
+        c.drawImage(background_image, 0, 0, width=letter[0], height=letter[1], preserveAspectRatio=True)
+
+        # Draw student details on top of the template
+        y_position = 10 * inch  # Start position from top (adjust as needed)
+        c.drawString(1 * inch, y_position - 0.2 * inch, f"Unit: {student.unit}")
+        c.drawString(1 * inch, y_position - 0.4 * inch, f"CBSE No: {student.cbse_no}")
+        c.drawString(1 * inch, y_position - 0.6 * inch, f"Rank: {student.rank}")
+        c.drawString(1 * inch, y_position - 0.8 * inch, f"Name: {student.name}")
+        c.drawString(1 * inch, y_position - 1.0 * inch, f"Date of Birth: {student.dob}")
+        c.drawString(1 * inch, y_position - 1.2 * inch, f"Father's Name: {student.fathers_name}")
+        c.drawString(1 * inch, y_position - 1.4 * inch, f"School/College: {student.school_college}")
+        c.drawString(1 * inch, y_position - 1.6 * inch, f"Year of Passing B Certificate: {student.year_of_passing_b_certificate}")
+        c.drawString(1 * inch, y_position - 1.8 * inch, f"Fresh or Failure: {student.fresh_or_failure}")
+        c.drawString(1 * inch, y_position - 2.0 * inch, f"Attendance 1st Year: {student.attendance_1st_year}")
+        c.drawString(1 * inch, y_position - 2.2 * inch, f"Attendance 2nd Year: {student.attendance_2nd_year}")
+        c.drawString(1 * inch, y_position - 2.4 * inch, f"Attendance 3rd Year: {student.attendance_3rd_year}")
+        c.drawString(1 * inch, y_position - 2.6 * inch, f"Total Attendance: {student.attendance_total}")
+        c.drawString(1 * inch, y_position - 2.8 * inch, f"Home Address: {student.home_address}")
+        
+        # Display photo if available
+        if student.attach_photo_b_certificate:
+            image_path = student.attach_photo_b_certificate.path
+            c.drawImage(image_path, 1 * inch, y_position - 3.0 * inch, width=100, height=100, preserveAspectRatio=True)
+        
+        # Save the PDF to in-memory buffer
+        c.save()
+        
+        # Add PDF buffer to zip file
+        zip_file.writestr(f"{student.name}_admitcard.pdf", pdf_buffer.getvalue())
+
+    # Close the zip file
+    zip_file.close()
+
+    # Create HttpResponse with zip file content
+    response = HttpResponse(zip_buffer.getvalue(), content_type='application/zip')
+    response['Content-Disposition'] = 'attachment; filename="admitcards.zip"'
+    
+    return response

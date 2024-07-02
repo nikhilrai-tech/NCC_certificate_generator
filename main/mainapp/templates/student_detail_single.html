@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Detail</title>
+</head>
+<body>
+    <h1>Student Detail</h1>
+    <ul>
+        <li><strong>Unit:</strong> {{ student.unit }}</li>
+        <li><strong>CBSE No:</strong> {{ student.cbse_no }}</li>
+        <li><strong>Rank:</strong> {{ student.rank }}</li>
+        <li><strong>Name:</strong> {{ student.name }}</li>
+        <li><strong>Date of Birth:</strong> {{ student.dob }}</li>
+        <li><strong>Father's Name:</strong> {{ student.fathers_name }}</li>
+        <li><strong>School/College:</strong> {{ student.school_college }}</li>
+        <li><strong>Year of Passing B Certificate:</strong> {{ student.year_of_passing_b_certificate }}</li>
+        <li><strong>Fresh or Failure:</strong> {{ student.fresh_or_failure }}</li>
+        <li><strong>Attendance 1st Year:</strong> {{ student.attendance_1st_year }}</li>
+        <li><strong>Attendance 2nd Year:</strong> {{ student.attendance_2nd_year }}</li>
+        <li><strong>Attendance 3rd Year:</strong> {{ student.attendance_3rd_year }}</li>
+        <li><strong>Total Attendance:</strong> {{ student.attendance_total }}</li>
+        <li><strong>Home Address:</strong> {{ student.home_address }}</li>
+        <li><strong>Photo B Certificate:</strong> 
+            {% if student.attach_photo_b_certificate %}
+                <img src="{{ student.attach_photo_b_certificate.url }}" alt="B Certificate Photo" width="100" height="100">
+            {% else %}
+                No Photo
+            {% endif %}
+        </li>
+    </ul>
+    <a href="{% url 'student_detail' %}">Back to All Students</a>
+</body>
+</html>

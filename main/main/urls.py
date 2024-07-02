@@ -40,6 +40,10 @@ urlpatterns = [
     path('main/',mintemplate, name='main'),
     path('admincard/',admincard, name='admincard'),
     path('student/', student_detail_view, name='student_detail'),
+    path('success/', success_view, name='success'),
+    path('admit/', student_detail_basic_view, name='student_detail_basic'),
+    path('extended/<int:student_id>/', student_detail_extended_view, name='student_detail_extended'),
+    path('generate_pdf/', generate_pdf, name='generate_pdf'),
 
 
 
