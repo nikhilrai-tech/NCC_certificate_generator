@@ -15,13 +15,33 @@
         <h2 class="text-center mb-4">Generate Admission Card</h2>
         <form id="student_form" method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ st.as_p }}
-            </div>
-            <button type="button" class="btn btn-secondary mt-2" onclick="addCampDetails()">Add Camp Details</button>
+            {{ student_form.as_p }}
+
+            <!-- Container for camp details -->
+            <div id="campDetailsContainer"></div>
             
+            <button type="button" class="btn btn-secondary mt-2" onclick="addCampDetails()">Add Camp Details</button>
             <button type="submit" class="btn btn-primary mt-2">Generate Admission Card</button>
         </form>
     </div>
+    
+    <!-- Hidden template for camp details form -->
+    <template id="campDetailsTemplate">
+        <div class="form-row mb-2 camp-details">
+            <div class="col">
+                <input type="text" name="camp_no_name[]" class="form-control" placeholder="No/Name of Camp Attended" required>
+            </div>
+            <div class="col">
+                <input type="text" name="camp_date_month_year[]" class="form-control" placeholder="Date/Month/Year" required>
+            </div>
+            <div class="col">
+                <input type="text" name="camp_location[]" class="form-control" placeholder="Location" required>
+            </div>
+            <div class="col-auto">
+                <button type="button" class="btn btn-danger" onclick="removeCampDetails(this)">×</button>
+            </div>
+        </div>
+    </template>
     
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -31,23 +51,8 @@
     <script>
         function addCampDetails() {
             const container = document.getElementById('campDetailsContainer');
-            const campDetailsTemplate = `
-                <div class="form-row mb-2 camp-details">
-                    <div class="col">
-                        <input type="text" name="camp_no_name" class="form-control" placeholder="No/Name of Camp Attended" required>
-                    </div>
-                    <div class="col">
-                        <input type="text" name="camp_date_month_year" class="form-control" placeholder="Date/Month/Year" required>
-                    </div>
-                    <div class="col">
-                        <input type="text" name="camp_location" class="form-control" placeholder="Location" required>
-                    </div>
-                    <div class="col-auto">
-                        <button type="button" class="btn btn-danger" onclick="removeCampDetails(this)">×</button>
-                    </div>
-                </div>
-            `;
-            container.insertAdjacentHTML('beforeend', campDetailsTemplate);
+            const template = document.getElementById('campDetailsTemplate').content.cloneNode(true);
+            container.appendChild(template);
         }
     
         function removeCampDetails(button) {

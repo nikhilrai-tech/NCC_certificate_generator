@@ -337,40 +337,45 @@ def admincard(request):
     return render(request,"admincard.html")
 
 
+from .forms import StudentDetailForm, CampDetailForm
+from django.shortcuts import render, redirect
+from .forms import StudentDetailForm, CampDetailForm
+from .models import StudentDetail, CampDetail
 
 def student_detail_view(request):
     if request.method == 'POST':
         student_form = StudentDetailForm(request.POST, request.FILES)
-        # camp_forms = []
-        # camp_data = []
-        # print(student_form)
+        camp_forms = []
+        camp_data = []
 
-        # for i in range(len(request.POST.getlist('camp_no_name'))):
-        #     camp_form = CampDetailForm({
-        #         'no_name': request.POST.getlist('camp_no_name')[i],
-        #         'date_month_year': request.POST.getlist('camp_date_month_year')[i],
-        #         'location': request.POST.getlist('camp_location')[i],
-        #     })
-        #     camp_forms.append(camp_form)
-        #     if camp_form.is_valid():
-        #         camp_data.append(camp_form.save())
+        for i in range(len(request.POST.getlist('camp_no_name[]'))):
+            camp_form = CampDetailForm({
+                'no_name': request.POST.getlist('camp_no_name[]')[i],
+                'date_month_year': request.POST.getlist('camp_date_month_year[]')[i],
+                'location': request.POST.getlist('camp_location[]')[i],
+            })
+            camp_forms.append(camp_form)
+            if camp_form.is_valid():
+                camp_data.append(camp_form.save())
 
-        # if student_form.is_valid() and all([cf.is_valid() for cf in camp_forms]):
-        #     student = student_form.save(commit=False)
-        #     student.save()
-        #     student.camp_details.set(camp_data)
-        #     student.save()
-        #     return render('success.html')  # Replace with your success URL
+        if student_form.is_valid() and all([cf.is_valid() for cf in camp_forms]):
+            student = student_form.save(commit=False)
+            student.save()
+            student.camp_details.set(camp_data)
+            student.save()
+            return render(request, 'success.html')  # Replace 'success.html' with your success template
 
     else:
-    #     student_form = StudentDetailForm()
-    #     camp_forms = [CampDetailForm()]
-
-    # context = {
-    #     'student_form': student_form,
-    #     'camp_forms': camp_forms,
-    # }
         student_form = StudentDetailForm()
+        empty_camp_form = CampDetailForm()
 
-    return render(request, 'admincard.html', {"st":student_form})
+    context = {
+        'student_form': student_form,
+        'empty_camp_form': empty_camp_form,
+    }
 
+    return render(request, 'admincard.html', context)
+
+# def student_detail_view(request):
+#     student_form = StudentDetailForm()
+#     return render(request, 'admincard.html', {"student_form": student_form})

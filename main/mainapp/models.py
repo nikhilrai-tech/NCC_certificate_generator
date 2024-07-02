@@ -34,7 +34,7 @@ class StudentDetail(models.Model):
     fathers_name = models.CharField(max_length=255)
     school_college = models.CharField(max_length=255)
     year_of_passing_b_certificate = models.CharField(max_length=255)
-    attach_photo_b_certificate = models.ImageField(upload_to='certificates/', blank=True, null=True)
+    attach_photo_b_certificate = models.ImageField(upload_to='static/certificates/', blank=True, null=True)
     fresh_or_failure = models.CharField(max_length=255)
     attendance_1st_year = models.IntegerField()
     attendance_2nd_year = models.IntegerField()
