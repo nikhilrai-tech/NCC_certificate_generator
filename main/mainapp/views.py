@@ -404,10 +404,40 @@ def student_detail_basic_view(request):
     if request.method == 'POST':
         form = StudentDetailBasicForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            return redirect('success')  # Redirect to success page or another view
+            # Save the StudentDetail instance first
+            student_detail = form.save()
+
+            # Check if a Certificate instance already exists for this StudentDetail
+            if not student_detail.certificate:
+                # Create a new Certificate instance with data from StudentDetail
+                certificate = Certificate.objects.create(
+                    Name=student_detail.name,
+                    DOB=student_detail.dob,
+                    Guardian=student_detail.fathers_name,
+                    CertificateType='',  # Leave as empty for now or set accordingly
+                    CadetRank=student_detail.rank,
+                    PassingYear=None,  # Leave as None for now or set accordingly
+                    Grade='',  # Leave as empty for now or set accordingly
+                    Unit=student_detail.unit,
+                    Directorate='',  # Leave as empty for now or set accordingly
+                    Place='',  # Leave as empty for now or set accordingly
+                    Institute=student_detail.school_college,
+                    certificate_number='',  # Leave as empty for now or set accordingly
+                    serial_number='',  # Leave as empty for now or set accordingly
+                    user_image=None,  # Leave as None for now or set accordingly
+                    qr_code=None,  # Leave as None for now or set accordingly
+                    final_certificate=None,  # Leave as None for now or set accordingly
+                )
+                
+                # Associate the new Certificate instance with the StudentDetail
+                student_detail.certificate = certificate
+                student_detail.save()
+
+            # Redirect to success page or another view
+            return redirect('success')
     else:
         form = StudentDetailBasicForm()
+    
     return render(request, 'student_detail_basic.html', {'form': form})
 
 def student_detail_extended_view(request, student_id):
@@ -430,7 +460,7 @@ from django.http import HttpResponse
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.utils import ImageReader
-# from myproject.students.models import StudentDetail
+# from myproject.students.models import StudentDetail  # Uncomment and adjust the import as needed
 
 def generate_pdf(request):
     students = StudentDetail.objects.all()
@@ -451,27 +481,30 @@ def generate_pdf(request):
         background_image = ImageReader(template_path)
         c.drawImage(background_image, 0, 0, width=letter[0], height=letter[1], preserveAspectRatio=True)
 
-        # Draw student details on top of the template
-        y_position = 10 * inch  # Start position from top (adjust as needed)
-        c.drawString(1 * inch, y_position - 0.2 * inch, f"Unit: {student.unit}")
-        c.drawString(1 * inch, y_position - 0.4 * inch, f"CBSE No: {student.cbse_no}")
-        c.drawString(1 * inch, y_position - 0.6 * inch, f"Rank: {student.rank}")
-        c.drawString(1 * inch, y_position - 0.8 * inch, f"Name: {student.name}")
-        c.drawString(1 * inch, y_position - 1.0 * inch, f"Date of Birth: {student.dob}")
-        c.drawString(1 * inch, y_position - 1.2 * inch, f"Father's Name: {student.fathers_name}")
-        c.drawString(1 * inch, y_position - 1.4 * inch, f"School/College: {student.school_college}")
-        c.drawString(1 * inch, y_position - 1.6 * inch, f"Year of Passing B Certificate: {student.year_of_passing_b_certificate}")
-        c.drawString(1 * inch, y_position - 1.8 * inch, f"Fresh or Failure: {student.fresh_or_failure}")
-        c.drawString(1 * inch, y_position - 2.0 * inch, f"Attendance 1st Year: {student.attendance_1st_year}")
-        c.drawString(1 * inch, y_position - 2.2 * inch, f"Attendance 2nd Year: {student.attendance_2nd_year}")
-        c.drawString(1 * inch, y_position - 2.4 * inch, f"Attendance 3rd Year: {student.attendance_3rd_year}")
-        c.drawString(1 * inch, y_position - 2.6 * inch, f"Total Attendance: {student.attendance_total}")
-        c.drawString(1 * inch, y_position - 2.8 * inch, f"Home Address: {student.home_address}")
-        
+        # Function to draw text at specific coordinates
+        def draw_text(c, x, y, text):
+            c.drawString(x, y, text)
+
+        # Manually adjusted coordinates
+        draw_text(c, 100, 700, f"Unit: {student.unit}")
+        draw_text(c, 100, 680, f"CBSE No: {student.cbse_no}")
+        draw_text(c, 100, 660, f"Rank: {student.rank}")
+        draw_text(c, 100, 640, f"Name: {student.name}")
+        draw_text(c, 100, 620, f"Date of Birth: {student.dob}")
+        draw_text(c, 100, 600, f"Father's Name: {student.fathers_name}")
+        draw_text(c, 100, 580, f"School/College: {student.school_college}")
+        draw_text(c, 100, 560, f"Year of Passing B Certificate: {student.year_of_passing_b_certificate}")
+        draw_text(c, 100, 540, f"Fresh or Failure: {student.fresh_or_failure}")
+        draw_text(c, 100, 520, f"Attendance 1st Year: {student.attendance_1st_year}")
+        draw_text(c, 100, 500, f"Attendance 2nd Year: {student.attendance_2nd_year}")
+        draw_text(c, 100, 480, f"Attendance 3rd Year: {student.attendance_3rd_year}")
+        draw_text(c, 100, 460, f"Total Attendance: {student.attendance_total}")
+        draw_text(c, 100, 440, f"Home Address: {student.home_address}")
+
         # Display photo if available
         if student.attach_photo_b_certificate:
             image_path = student.attach_photo_b_certificate.path
-            c.drawImage(image_path, 1 * inch, y_position - 3.0 * inch, width=100, height=100, preserveAspectRatio=True)
+            c.drawImage(image_path, 400, 650, width=100, height=100, preserveAspectRatio=True)
         
         # Save the PDF to in-memory buffer
         c.save()
@@ -487,3 +520,8 @@ def generate_pdf(request):
     response['Content-Disposition'] = 'attachment; filename="admitcards.zip"'
     
     return response
+
+def certhome(request):
+    fm=Certificate.objects.all()
+    print(fm)
+    return render(request,"certhome.html",{"fm":fm})

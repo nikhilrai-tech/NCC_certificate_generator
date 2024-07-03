@@ -44,6 +44,8 @@ urlpatterns = [
     path('admit/', student_detail_basic_view, name='student_detail_basic'),
     path('extended/<int:student_id>/', student_detail_extended_view, name='student_detail_extended'),
     path('generate_pdf/', generate_pdf, name='generate_pdf'),
+    path('cert/', certhome, name='cert'),
+
 
 
 

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Certificates</title>
+</head>
+<body>
+    <h1>Certificate List</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>DOB</th>
+                <th>Guardian</th>
+                <th>Certificate Type</th>
+                <th>Cadet Rank</th>
+                <th>Passing Year</th>
+                <th>Grade</th>
+                <th>Unit</th>
+                <th>Directorate</th>
+                <th>Place</th>
+                <th>Institute</th>
+                <th>Certificate Number</th>
+                <th>Serial Number</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for certificate in fm %}
+            <tr>
+                <td>{{ certificate.Name }}</td>
+                <td>{{ certificate.DOB }}</td>
+                <td>{{ certificate.Guardian }}</td>
+                <td>{{ certificate.CertificateType }}</td>
+                <td>{{ certificate.CadetRank }}</td>
+                <td>{{ certificate.PassingYear }}</td>
+                <td>{{ certificate.Grade }}</td>
+                <td>{{ certificate.Unit }}</td>
+                <td>{{ certificate.Directorate }}</td>
+                <td>{{ certificate.Place }}</td>
+                <td>{{ certificate.Institute }}</td>
+                <td>{{ certificate.certificate_number }}</td>
+                <td>{{ certificate.serial_number }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
