@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Student Detail</title>
+    <!-- Bootstrap CSS (adjust the path as per your project setup) -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <form id="editForm" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <!-- Student Detail Form Fields -->
+            <h4>Student Details</h4>
+            <div class="form-group">
+                <label for="{{ student_form.unit.id_for_label }}">Unit:</label>
+                {{ student_form.unit }}
+            </div>
+            <div class="form-group">
+                <label for="{{ student_form.cbse_no.id_for_label }}">CBSE No:</label>
+                {{ student_form.cbse_no }}
+            </div>
+            <div class="form-group">
+                <label for="{{ student_form.rank.id_for_label }}">Rank:</label>
+                {{ student_form.rank }}
+            </div>
+            <div class="form-group">
+                <label for="{{ student_form.name.id_for_label }}">Name:</label>
+                {{ student_form.name }}
+            </div>
+            <div class="form-group">
+                <label for="{{ student_form.dob.id_for_label }}">Date of Birth:</label>
+                {{ student_form.dob }}
+            </div>
+            <div class="form-group">
+                <label for="{{ student_form.fathers_name.id_for_label }}">Father's Name:</label>
+                {{ student_form.fathers_name }}
+            </div>
+            <div class="form-group">
+                <label for="{{ student_form.school_college.id_for_label }}">School/College:</label>
+                {{ student_form.school_college }}
+            </div>
+            <div class="form-group">
+                <label for="{{ student_form.year_of_passing_b_certificate.id_for_label }}">Year of Passing B Certificate:</label>
+                {{ student_form.year_of_passing_b_certificate }}
+            </div>
+            <div class="form-group">
+                <label for="{{ student_form.attach_photo_b_certificate.id_for_label }}">Attach Photo B Certificate:</label>
+                {{ student_form.attach_photo_b_certificate }}
+            </div>
+            <div class="form-group">
+                <label for="{{ student_form.fresh_or_failure.id_for_label }}">Fresh or Failure:</label>
+                {{ student_form.fresh_or_failure }}
+            </div>
+            <div class="form-group">
+                <label for="{{ student_form.attendance_1st_year.id_for_label }}">Attendance 1st Year:</label>
+                {{ student_form.attendance_1st_year }}
+            </div>
+            <div class="form-group">
+                <label for="{{ student_form.attendance_2nd_year.id_for_label }}">Attendance 2nd Year:</label>
+                {{ student_form.attendance_2nd_year }}
+            </div>
+            <div class="form-group">
+                <label for="{{ student_form.attendance_3rd_year.id_for_label }}">Attendance 3rd Year:</label>
+                {{ student_form.attendance_3rd_year }}
+            </div>
+            <div class="form-group">
+                <label for="{{ student_form.attendance_total.id_for_label }}">Attendance Total:</label>
+                {{ student_form.attendance_total }}
+            </div>
+            <div class="form-group">
+                <label for="{{ student_form.home_address.id_for_label }}">Home Address:</label>
+                {{ student_form.home_address }}
+            </div>
+
+            <!-- Certificate Form Fields -->
+            <h4>Certificate Details</h4>
+            <div class="form-group">
+                <label for="{{ certificate_form.Name.id_for_label }}">Name:</label>
+                {{ certificate_form.Name }}
+            </div>
+            <div class="form-group">
+                <label for="{{ certificate_form.DOB.id_for_label }}">Date of Birth:</label>
+                {{ certificate_form.DOB }}
+            </div>
+            <div class="form-group">
+                <label for="{{ certificate_form.Guardian.id_for_label }}">Guardian:</label>
+                {{ certificate_form.Guardian }}
+            </div>
+            <div class="form-group">
+                <label for="{{ certificate_form.CertificateType.id_for_label }}">Certificate Type:</label>
+                {{ certificate_form.CertificateType }}
+            </div>
+            <div class="form-group">
+                <label for="{{ certificate_form.CadetRank.id_for_label }}">Cadet Rank:</label>
+                {{ certificate_form.CadetRank }}
+            </div>
+            <div class="form-group">
+                <label for="{{ certificate_form.PassingYear.id_for_label }}">Passing Year:</label>
+                {{ certificate_form.PassingYear }}
+            </div>
+            <div class="form-group">
+                <label for="{{ certificate_form.Grade.id_for_label }}">Grade:</label>
+                {{ certificate_form.Grade }}
+            </div>
+            <div class="form-group">
+                <label for="{{ certificate_form.Unit.id_for_label }}">Unit:</label>
+                {{ certificate_form.Unit }}
+            </div>
+            <div class="form-group">
+                <label for="{{ certificate_form.Directorate.id_for_label }}">Directorate:</label>
+                {{ certificate_form.Directorate }}
+            </div>
+            <div class="form-group">
+                <label for="{{ certificate_form.Place.id_for_label }}">Place:</label>
+                {{ certificate_form.Place }}
+            </div>
+            <div class="form-group">
+                <label for="{{ certificate_form.Institute.id_for_label }}">Institute:</label>
+                {{ certificate_form.Institute }}
+            </div>
+            <div class="form-group">
+                <label for="{{ certificate_form.certificate_number.id_for_label }}">Certificate Number:</label>
+                {{ certificate_form.certificate_number }}
+            </div>
+            <div class="form-group">
+                <label for="{{ certificate_form.serial_number.id_for_label }}">Serial Number:</label>
+                {{ certificate_form.serial_number }}
+            </div>
+            <div class="form-group">
+                <label for="{{ certificate_form.user_image.id_for_label }}">User Image:</label>
+                {{ certificate_form.user_image }}
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Generate Certificate</button>
+            <a href="{% url 'cert' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS (optional if you need JavaScript features) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

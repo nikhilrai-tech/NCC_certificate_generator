@@ -26,7 +26,7 @@ urlpatterns = [
     path('view-certificate/<int:certificate_id>/', view_certificate_detail, name='view_certificate_detail'),
     path('download-all-certificates/', download_all_certificates, name='download_all_certificates'),
     path('certificate/<int:certificate_id>/download/',download_certificate_detail, name='download_certificate_detail'),
-    path('certificate-success/', certificate_success, name='certificate_success'),
+    path('certificate-success1/', certificate_success1, name='certificate_success'),
     path('qr_scan/<int:certificate_id>/',qr_scan_view, name='qr_scan'),
     path('login/', custom_login, name='custom_login'),
     path('staff/', register_staff, name='register_staff'),
@@ -40,11 +40,13 @@ urlpatterns = [
     path('main/',mintemplate, name='main'),
     path('admincard/',admincard, name='admincard'),
     path('student/', student_detail_view, name='student_detail'),
-    path('success/', success_view, name='success'),
+    path('success2/', success_view2, name='success'),
     path('admit/', student_detail_basic_view, name='student_detail_basic'),
     path('extended/<int:student_id>/', student_detail_extended_view, name='student_detail_extended'),
     path('generate_pdf/', generate_pdf, name='generate_pdf'),
     path('cert/', certhome, name='cert'),
+    path('edit/<int:id>/', edit_student_detail, name='edit_student_detail'),
+    # path('success/', certificate_success, name='certificate_success1'),
 
 
 

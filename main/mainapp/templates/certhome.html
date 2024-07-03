@@ -21,6 +21,7 @@
                 <th>Institute</th>
                 <th>Certificate Number</th>
                 <th>Serial Number</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -39,6 +40,7 @@
                 <td>{{ certificate.Institute }}</td>
                 <td>{{ certificate.certificate_number }}</td>
                 <td>{{ certificate.serial_number }}</td>
+                <td><a href="{% url 'edit_student_detail' certificate.studentdetail.id %}">Edit</a></td>
             </tr>
             {% endfor %}
         </tbody>

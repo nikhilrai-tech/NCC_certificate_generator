@@ -199,7 +199,7 @@ def download_all_certificates(request):
     response['Content-Disposition'] = 'attachment; filename="all_certificates.pdf"'
     return response
 
-def certificate_success(request):
+def certificate_success1(request):
     return render(request, 'certificate_success.html')
 from django.shortcuts import render, get_object_or_404
 def qr_scan_view(request, certificate_id):
@@ -390,7 +390,7 @@ def student_detail_view(request):
         form = StudentDetailForm()
     return render(request, 'student_detail_form.html', {'form': form})
 
-def success_view(request):
+def success_view2(request):
     students = StudentDetail.objects.all()
     return render(request, 'success copy.html', {'students': students})
 
@@ -424,7 +424,7 @@ def student_detail_basic_view(request):
                     Institute=student_detail.school_college,
                     certificate_number='',  # Leave as empty for now or set accordingly
                     serial_number='',  # Leave as empty for now or set accordingly
-                    user_image=None,  # Leave as None for now or set accordingly
+                    user_image=student_detail.attach_photo_b_certificate,  # Leave as None for now or set accordingly
                     qr_code=None,  # Leave as None for now or set accordingly
                     final_certificate=None,  # Leave as None for now or set accordingly
                 )
@@ -525,3 +525,121 @@ def certhome(request):
     fm=Certificate.objects.all()
     print(fm)
     return render(request,"certhome.html",{"fm":fm})
+
+
+def edit_student_detail(request, id):
+    student_detail = get_object_or_404(StudentDetail, id=id)
+
+    if request.method == 'POST':
+        student_form = StudentDetailBasicForm(request.POST, request.FILES, instance=student_detail)
+        certificate_form = CertificateForm(request.POST, request.FILES, instance=student_detail.certificate)
+
+        if student_form.is_valid() and certificate_form.is_valid():
+            print("Forms are valid.")
+            print("Student Form Data: ", student_form.cleaned_data)
+            print("Certificate Form Data: ", certificate_form.cleaned_data)
+            student_form.save()
+            certificate = certificate_form.save(commit=False)
+
+            # Generate QR code with certificate URL
+            qr_url = request.build_absolute_uri(f"/qr_scan/{certificate.id}/")
+            qr = qrcode.QRCode(
+                version=1,
+                error_correction=qrcode.constants.ERROR_CORRECT_L,
+                box_size=10,
+                border=4,
+            )
+            qr.add_data(qr_url)
+            qr.make(fit=True)
+
+            # Create QR code image
+            qr_img = qr.make_image(fill_color="black", back_color="white")
+
+            # Save QR code image to memory buffer
+            buffer = BytesIO()
+            qr_img.save(buffer, format='PNG')  # Save as PNG format
+            buffer.seek(0)
+
+            # Save QR code image to the model instance's qr_code field
+            certificate.qr_code.save(f'{certificate.Name}_qr.png', File(buffer))
+
+            # Select the appropriate JPG template based on the certificate type
+            jpg_template_path = os.path.join(settings.BASE_DIR, f"templates/certificates/{certificate.CertificateType}.jpg")
+            certificate_img = Image.open(jpg_template_path)
+
+            # Overlay QR code onto the certificate image
+            qr_img = qr_img.resize((100, 100))  # Adjust the size as needed
+            certificate_img.paste(qr_img, (50, 50))  # Adjust the position as needed
+
+            # Draw text on the certificate image
+            draw = ImageDraw.Draw(certificate_img)
+            font_path = os.path.join(settings.BASE_DIR, "arial.ttf")  # Path to a TTF font file
+            font = ImageFont.truetype(font_path, 60)  # Adjust the font size as needed
+
+            # Define positions for the text fields
+            text_positions = {
+                'Name': (436, 1353),
+                'DOB': (200, 110),
+                'Guardian': (200, 140),
+                'CertificateType': (200, 170),
+                'CadetRank': (200, 200),
+                'PassingYear': (200, 230),
+                'Grade': (200, 260),
+                'Unit': (200, 290),
+                'Directorate': (200, 320),
+                'Place': (200, 350),
+                'Institute': (200, 380),
+                'CertificateNumber': (200, 410),
+                'SerialNumber': (200, 440),
+            }
+
+            # Draw each field on the certificate image
+            draw.text(text_positions['Name'], f" {certificate.Name}", font=font, fill="black")
+            draw.text(text_positions['DOB'], f"DOB: {certificate.DOB}", font=font, fill="black")
+            draw.text(text_positions['Guardian'], f"Guardian: {certificate.Guardian}", font=font, fill="black")
+            draw.text(text_positions['CertificateType'], f"Certificate Type: {certificate.CertificateType}", font=font, fill="black")
+            draw.text(text_positions['CadetRank'], f"Cadet Rank: {certificate.CadetRank}", font=font, fill="black")
+            draw.text(text_positions['PassingYear'], f"Passing Year: {certificate.PassingYear}", font=font, fill="black")
+            draw.text(text_positions['Grade'], f"Grade: {certificate.Grade}", font=font, fill="black")
+            draw.text(text_positions['Unit'], f"Unit: {certificate.Unit}", font=font, fill="black")
+            draw.text(text_positions['Directorate'], f"Directorate: {certificate.Directorate}", font=font, fill="black")
+            draw.text(text_positions['Place'], f"Place: {certificate.Place}", font=font, fill="black")
+            draw.text(text_positions['Institute'], f"Institute: {certificate.Institute}", font=font, fill="black")
+            draw.text(text_positions['CertificateNumber'], f"Certificate Number: {certificate.certificate_number}", font=font, fill="black")
+            draw.text(text_positions['SerialNumber'], f"Serial Number: {certificate.serial_number}", font=font, fill="black")
+
+            if certificate.user_image:
+                user_img = Image.open(certificate.user_image.path)
+                user_img = user_img.resize((100, 100))  # Adjust the size as needed
+                certificate_img.paste(user_img, (300, 50)) 
+
+            # Save the final certificate image to memory buffer
+            final_buffer = BytesIO()
+            certificate_img.save(final_buffer, format='JPEG')
+            final_buffer.seek(0)
+
+            # Save the final certificate image to the model instance's final_certificate field
+            certificate.final_certificate.save(f'{certificate.Name}_certificate.jpg', File(final_buffer))
+
+            # Save the complete form data
+            certificate.save()
+
+            return redirect('certificate_success1')  # Redirect to success page after saving
+
+        else:
+            # Debugging: Print form errors
+            print("Student Form Errors: ", student_form.errors)
+            print("Certificate Form Errors: ", certificate_form.errors)
+
+    else:
+        student_form = StudentDetailBasicForm(instance=student_detail)
+        certificate_form = CertificateForm(instance=student_detail.certificate)
+
+    return render(request, 'edit_student_detail.html', {
+        'student_form': student_form,
+        'certificate_form': certificate_form,
+        'student_detail': student_detail,
+    })
+
+def certificate_success(request):
+    return render(request, 'certificate_success1.html')
