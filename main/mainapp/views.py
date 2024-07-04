@@ -535,9 +535,9 @@ def edit_student_detail(request, id):
         certificate_form = CertificateForm(request.POST, request.FILES, instance=student_detail.certificate)
 
         if student_form.is_valid() and certificate_form.is_valid():
-            print("Forms are valid.")
-            print("Student Form Data: ", student_form.cleaned_data)
-            print("Certificate Form Data: ", certificate_form.cleaned_data)
+            # print("Forms are valid.")
+            # print("Student Form Data: ", student_form.cleaned_data)
+            # print("Certificate Form Data: ", certificate_form.cleaned_data)
             student_form.save()
             certificate = certificate_form.save(commit=False)
 
@@ -568,8 +568,8 @@ def edit_student_detail(request, id):
             certificate_img = Image.open(jpg_template_path)
 
             # Overlay QR code onto the certificate image
-            qr_img = qr_img.resize((100, 100))  # Adjust the size as needed
-            certificate_img.paste(qr_img, (50, 50))  # Adjust the position as needed
+            qr_img = qr_img.resize((400, 400))  # Adjust the size as needed
+            certificate_img.paste(qr_img, (215, 251))  # Adjust the position as needed
 
             # Draw text on the certificate image
             draw = ImageDraw.Draw(certificate_img)
@@ -578,40 +578,40 @@ def edit_student_detail(request, id):
 
             # Define positions for the text fields
             text_positions = {
-                'Name': (436, 1353),
-                'DOB': (200, 110),
-                'Guardian': (200, 140),
+                'Name': (376, 1316),
+                'DOB': (1662, 1504),
+                'Guardian': (1763, 1302),
                 'CertificateType': (200, 170),
-                'CadetRank': (200, 200),
-                'PassingYear': (200, 230),
-                'Grade': (200, 260),
-                'Unit': (200, 290),
-                'Directorate': (200, 320),
-                'Place': (200, 350),
+                'CadetRank': (1519 , 1132),
+                'PassingYear': (1239, 2125),
+                'Grade': (486, 2340),
+                'Unit': (408, 1495),
+                'Directorate': (977, 1715),
+                'Place': (408, 2600),
                 'Institute': (200, 380),
-                'CertificateNumber': (200, 410),
-                'SerialNumber': (200, 440),
+                'CertificateNumber': (1882, 50),
+                'SerialNumber': (394, 1114),
             }
 
             # Draw each field on the certificate image
             draw.text(text_positions['Name'], f" {certificate.Name}", font=font, fill="black")
-            draw.text(text_positions['DOB'], f"DOB: {certificate.DOB}", font=font, fill="black")
-            draw.text(text_positions['Guardian'], f"Guardian: {certificate.Guardian}", font=font, fill="black")
-            draw.text(text_positions['CertificateType'], f"Certificate Type: {certificate.CertificateType}", font=font, fill="black")
-            draw.text(text_positions['CadetRank'], f"Cadet Rank: {certificate.CadetRank}", font=font, fill="black")
-            draw.text(text_positions['PassingYear'], f"Passing Year: {certificate.PassingYear}", font=font, fill="black")
-            draw.text(text_positions['Grade'], f"Grade: {certificate.Grade}", font=font, fill="black")
-            draw.text(text_positions['Unit'], f"Unit: {certificate.Unit}", font=font, fill="black")
-            draw.text(text_positions['Directorate'], f"Directorate: {certificate.Directorate}", font=font, fill="black")
-            draw.text(text_positions['Place'], f"Place: {certificate.Place}", font=font, fill="black")
-            draw.text(text_positions['Institute'], f"Institute: {certificate.Institute}", font=font, fill="black")
-            draw.text(text_positions['CertificateNumber'], f"Certificate Number: {certificate.certificate_number}", font=font, fill="black")
-            draw.text(text_positions['SerialNumber'], f"Serial Number: {certificate.serial_number}", font=font, fill="black")
+            draw.text(text_positions['DOB'], f"{certificate.DOB}", font=font, fill="black")
+            draw.text(text_positions['Guardian'], f"{certificate.Guardian}", font=font, fill="black")
+            # draw.text(text_positions['CertificateType'], f"Certificate Type: {certificate.CertificateType}", font=font, fill="black")
+            draw.text(text_positions['CadetRank'], f"{certificate.CadetRank}", font=font, fill="black")
+            draw.text(text_positions['PassingYear'], f"{certificate.PassingYear}", font=font, fill="black")
+            draw.text(text_positions['Grade'], f"{certificate.Grade}", font=font, fill="black")
+            draw.text(text_positions['Unit'], f"{certificate.Unit}", font=font, fill="black")
+            draw.text(text_positions['Directorate'], f"{certificate.Directorate}", font=font, fill="black")
+            draw.text(text_positions['Place'], f"{certificate.Place}", font=font, fill="black")
+            # draw.text(text_positions['Institute'], f"Institute: {certificate.Institute}", font=font, fill="black")
+            draw.text(text_positions['CertificateNumber'], f" {certificate.certificate_number}", font=font, fill="white")
+            draw.text(text_positions['SerialNumber'], f"{certificate.serial_number}", font=font, fill="black")
 
             if certificate.user_image:
                 user_img = Image.open(certificate.user_image.path)
-                user_img = user_img.resize((100, 100))  # Adjust the size as needed
-                certificate_img.paste(user_img, (300, 50)) 
+                user_img = user_img.resize((400, 400))  # Adjust the size as needed
+                certificate_img.paste(user_img, (1721, 251)) 
 
             # Save the final certificate image to memory buffer
             final_buffer = BytesIO()

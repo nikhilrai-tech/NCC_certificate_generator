@@ -1,18 +1,3 @@
-"""main URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/3.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path
 from mainapp . views import *
@@ -46,7 +31,7 @@ urlpatterns = [
     path('generate_pdf/', generate_pdf, name='generate_pdf'),
     path('cert/', certhome, name='cert'),
     path('edit/<int:id>/', edit_student_detail, name='edit_student_detail'),
-    # path('success/', certificate_success, name='certificate_success1'),
+    path('success/', certificate_success, name='certificate_success1'),
 
 
 
