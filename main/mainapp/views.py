@@ -8,9 +8,9 @@ import qrcode
 from PIL import Image, ImageDraw, ImageFont
 import os
 from django.conf import settings
-from .forms import StudentDetailForm, CampDetailForm
+from .forms import StudentDetailForm, CampDetailForm, HelpForm
 from .models import CampDetail
-
+from django.core.mail import send_mail
 def generate_certificate(request):
     if request.method == 'POST':
         form = CertificateForm(request.POST, request.FILES)
@@ -325,9 +325,50 @@ def register_head(request):
 
 
 
-def dashboard(request):
-    return render(request,"dashboard.html")
+from django.core.mail import send_mail
+from django.shortcuts import render
+from django.contrib import messages
+from .forms import HelpForm
+from .models import HelpRequest
 
+def dashboard(request):
+    form = HelpForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        name = form.cleaned_data['name']
+        email = form.cleaned_data['email']
+        message = form.cleaned_data['message']
+        request_type = form.cleaned_data['request_type']
+
+        # Define recipients based on request_type
+        if request_type == 'CEO':
+            recipient = 'nrai91088@gmail.com'
+        elif request_type == 'Staff':
+            recipient = 'kanakchauhan085@gmail.com'
+        elif request_type == 'Colonel':
+            recipient = 'kanakchauhan.142400@gmail.com'
+        elif request_type == 'Cyber3ra Support':
+            recipient = 'info@cyber3ra.com'
+        # Save the form submission to the database
+        help_request = HelpRequest(
+            name=name,
+            email=email,
+            message=message,
+            request_type=request_type
+        )
+        help_request.save()
+
+        # Send the email
+        subject = f"Help Request to {request_type}"
+        email_message = f"Name: {name}\nEmail: {email}\nMessage: {message}"
+        send_mail(subject, email_message, 'your_email@gmail.com', [recipient])
+
+        # Set success message
+        # messages.success(request, 'Thanks for contacting us! Our team will reach you soon.')
+
+        # Clear the form after submission
+        form = HelpForm()
+
+    return render(request, "dashboard.html", {'form': form})
 
 def mintemplate(request):
     return render(request,"maintemp.html")
@@ -531,14 +572,14 @@ def edit_student_detail(request, id):
     student_detail = get_object_or_404(StudentDetail, id=id)
 
     if request.method == 'POST':
-        student_form = StudentDetailBasicForm(request.POST, request.FILES, instance=student_detail)
+        # student_form = StudentDetailBasicForm(request.POST, request.FILES, instance=student_detail)
         certificate_form = CertificateForm(request.POST, request.FILES, instance=student_detail.certificate)
 
-        if student_form.is_valid() and certificate_form.is_valid():
+        if certificate_form.is_valid():
             # print("Forms are valid.")
             # print("Student Form Data: ", student_form.cleaned_data)
             # print("Certificate Form Data: ", certificate_form.cleaned_data)
-            student_form.save()
+            # student_form.save()
             certificate = certificate_form.save(commit=False)
 
             # Generate QR code with certificate URL
@@ -624,7 +665,7 @@ def edit_student_detail(request, id):
             # Save the complete form data
             certificate.save()
 
-            return redirect('certificate_success1')  # Redirect to success page after saving
+            return redirect('certificate_success')  # Redirect to success page after saving
 
         else:
             # Debugging: Print form errors

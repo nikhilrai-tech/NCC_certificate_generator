@@ -1639,59 +1639,41 @@
                         </g>
                     </g>
                 </svg>
-
-
-                <!-- // FORM
-              -------------------------------------------------------------
-              ------------------------------------------------------------>
-
-                <form style="margin-top: -129px;">
-                    <h1 class="title text-center mb-4">Need Help</h1>
-
-                    <!-- Name -->
-                    <div class="form-group position-relative">
-                        <label for="formName" class="d-block">
-                            <i class="icon" data-feather="user"></i>
-                        </label>
-                        <input type="text" id="formName" class="form-control form-control-lg thick" placeholder="Name"
-                            style="margin-bottom: 17px;">
-                    </div>
-
-                    <!-- E-mail -->
-                    <div class="form-group position-relative">
-                        <label for="formEmail" class="d-block">
-                            <i class="icon" data-feather="mail"></i>
-                        </label>
-                        <input type="email" id="formEmail" class="form-control form-control-lg thick"
-                            placeholder="E-mail" style="margin-bottom: 17px;">
-                    </div>
-
-                    <!-- Message -->
-                    <div class="form-group message">
-                        <textarea id="formMessage" class="form-control form-control-lg" rows="7" placeholder="Message"
-                            style="margin-bottom: 17px;"></textarea>
-                    </div>
-
-                    <!-- Raise Request To -->
-                    <div class="form-group position-relative">
-                        <label for="requestType" class="d-block">
-                            <i class="icon" data-feather="users"></i>
-                        </label>
-                        <select id="requestType" class="form-control form-control-lg thick"
-                            style="margin-bottom: 17px;">
-                            <option value=""> Raise Request To:</option>
-                            <option value="CEO">CEO</option>
-                            <option value="Staff">Staff</option>
-                            <option value="Colonel">Colonel</option>
-                        </select>
-                    </div>
-
-                    <!-- Submit btn -->
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-primary" tabIndex="-1" style="
-    margin-top: 25px;">Send message</button>
-                    </div>
-                </form>
+                {% if messages %}
+                <div class="alert alert-success">
+                    {% for message in messages %}
+                        {{ message }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <form id="editForm" method="post" enctype="multipart/form-data" onsubmit="return showAlert()">
+                {% csrf_token %}
+                <h1 class="title text-center mb-4">Need Help</h1>
+    
+                <div class="form-group position-relative">
+                    {{ form.name.label_tag }}
+                    {{ form.name }}
+                </div>
+    
+                <div class="form-group position-relative">
+                    {{ form.email.label_tag }}
+                    {{ form.email }}
+                </div>
+    
+                <div class="form-group message">
+                    {{ form.message.label_tag }}
+                    {{ form.message }}
+                </div>
+    
+                <div class="form-group position-relative">
+                    {{ form.request_type.label_tag }}
+                    {{ form.request_type }}
+                </div>
+    
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary" tabIndex="-1" style="margin-top: 25px;">Send message</button>
+                </div>
+            </form>
 
             </div>
 
@@ -1794,6 +1776,12 @@
             const ctx = document.getElementById('myChart').getContext('2d');
             new Chart(ctx, config);
         };
+    </script>
+    <script>
+        function showAlert() {
+            alert("Thanks for contacting us!");
+            return true; // Allow form submission to proceed
+        }
     </script>
 </body>
 

@@ -47,7 +47,6 @@ class CertificateForm(forms.ModelForm):
             'certificate_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Certificate Number'}),
             'serial_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Serial Number'}),
             'user_image': forms.FileInput(attrs={'class': 'form-control-file'}),
-            # Adjust widget for ImageField as needed, this is a basic example
         }
 
 
@@ -178,3 +177,35 @@ class StudentDetailExtendedForm(forms.ModelForm):
             cleaned_data['marks_subject3'] = None
 
         return cleaned_data
+    
+class HelpForm(forms.Form):
+    name = forms.CharField(
+        max_length=100, 
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Name', 
+            'class': 'form-control form-control-lg thick', 
+            'style': 'margin-bottom: 17px;'
+        })
+    )
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            'placeholder': 'E-mail', 
+            'class': 'form-control form-control-lg thick', 
+            'style': 'margin-bottom: 17px;'
+        })
+    )
+    message = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'placeholder': 'Message', 
+            'class': 'form-control form-control-lg', 
+            'rows': 7, 
+            'style': 'margin-bottom: 17px;'
+        })
+    )
+    request_type = forms.ChoiceField(
+        choices=[('CEO', 'CEO'), ('Staff', 'Staff'), ('Colonel', 'Colonel'),('Cyber3ra Support', 'Cyber3ra Support')],
+        widget=forms.Select(attrs={
+            'class': 'form-control form-control-lg thick', 
+            'style': 'margin-bottom: 17px;'
+        })
+    )

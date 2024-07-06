@@ -68,3 +68,13 @@ class StudentDetail(models.Model):
     marks_subject2 = models.IntegerField(blank=True, null=True)
     marks_subject3 = models.IntegerField(blank=True, null=True)
 
+
+class HelpRequest(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    message = models.TextField()
+    request_type = models.CharField(max_length=50, choices=[('CEO', 'CEO'), ('Staff', 'Staff'), ('Colonel', 'Colonel'),('Cyber3ra Support', 'Cyber3ra Support')])
+    submitted_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Help request from {self.name} to {self.request_type}"
