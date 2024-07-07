@@ -209,3 +209,8 @@ class HelpForm(forms.Form):
             'style': 'margin-bottom: 17px;'
         })
     )
+
+from django.contrib.auth.forms import PasswordResetForm
+
+class CustomPasswordResetForm(PasswordResetForm):
+    email = forms.EmailField(label="Email", max_length=254, widget=forms.EmailInput(attrs={'autocomplete': 'email'}))

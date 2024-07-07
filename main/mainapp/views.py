@@ -8,7 +8,7 @@ import qrcode
 from PIL import Image, ImageDraw, ImageFont
 import os
 from django.conf import settings
-from .forms import StudentDetailForm, CampDetailForm, HelpForm
+from .forms import StudentDetailForm, CampDetailForm, HelpForm,CustomPasswordResetForm
 from .models import CampDetail
 from django.core.mail import send_mail
 def generate_certificate(request):
@@ -291,8 +291,40 @@ def home(request):
 def signuppage(request):
     return render(request, 'signuppage.html')
 
+from django.contrib.auth.views import PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
+from django.urls import reverse_lazy
+from django.shortcuts import render
+from .forms import CustomPasswordResetForm
+
 def forgotpass(request):
-    return render(request, 'forgotpass.html')
+    if request.method == 'POST':
+        form = CustomPasswordResetForm(request.POST)
+        if form.is_valid():
+            form.save(
+                request=request,
+                use_https=request.is_secure(),
+                email_template_name='password_reset_email.html'
+            )
+            return redirect('password_reset_done')
+    else:
+        form = CustomPasswordResetForm()
+    return render(request, 'forgotpass.html', {'form': form})
+
+class CustomPasswordResetView(PasswordResetView):
+    template_name = 'registration/password_reset_form.html'
+    email_template_name = 'registration/password_reset_email.html'
+    success_url = reverse_lazy('password_reset_done')
+    form_class = CustomPasswordResetForm
+
+class CustomPasswordResetDoneView(PasswordResetDoneView):
+    template_name = 'registration/password_reset_done.html'
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    template_name = 'registration/password_reset_confirm.html'
+    success_url = reverse_lazy('password_reset_complete')
+
+class CustomPasswordResetCompleteView(PasswordResetCompleteView):
+    template_name = 'registration/password_reset_complete.html'
 
 
 def register_head(request):

@@ -204,7 +204,7 @@
         }
 
         form {
-            min-width: 25rem;
+            min-width: 31rem;
 
             .title {
                 font-family: 'Pacifico', cursive;
@@ -1160,7 +1160,7 @@
         <div id="help" class="content-section">
 
             <div class="container d-flex justify-content-center align-items-center" style="
-    margin-top: 130px;">
+    margin-top: 50px;">
 
                 <!-- // SVG
                                 from: https://www.freepik.com/free-vector/new-message-concept-landing-page_5777076.htm 
@@ -1639,16 +1639,10 @@
                         </g>
                     </g>
                 </svg>
-                {% if messages %}
-                <div class="alert alert-success">
-                    {% for message in messages %}
-                        {{ message }}
-                    {% endfor %}
-                </div>
-            {% endif %}
+                
             <form id="editForm" method="post" enctype="multipart/form-data" onsubmit="return showAlert()">
                 {% csrf_token %}
-                <h1 class="title text-center mb-4">Need Help</h1>
+                <!-- <h1 class="title text-center mb-4">Need Help</h1> -->
     
                 <div class="form-group position-relative">
                     {{ form.name.label_tag }}
@@ -1671,7 +1665,7 @@
                 </div>
     
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary" tabIndex="-1" style="margin-top: 25px;">Send message</button>
+                    <button type="submit" class="btn btn-primary" tabIndex="-1">Send message</button>
                 </div>
             </form>
 

@@ -1,9 +1,9 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path,include
 from mainapp . views import *
 from django.conf.urls.static import static
 from django.conf import settings
-
+from django.views.generic import TemplateView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('generate/', generate_certificate, name='generate_certificate'),
@@ -32,8 +32,11 @@ urlpatterns = [
     path('cert/', certhome, name='cert'),
     path('edit/<int:id>/', edit_student_detail, name='edit_student_detail'),
     path('success/', certificate_success, name='certificate_success1'),
-
-
+    path('forgotpass/', forgotpass, name='forgotpass'),
+    path('password_reset/', CustomPasswordResetView.as_view(), name='password_reset'),
+    path('password_reset_done/', CustomPasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', CustomPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('reset/done/', CustomPasswordResetCompleteView.as_view(), name='password_reset_complete'),
 
 
 ]
