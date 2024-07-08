@@ -357,12 +357,13 @@ def register_head(request):
 
 
 
-from django.core.mail import send_mail
 from django.shortcuts import render
-from django.contrib import messages
-from .forms import HelpForm
-from .models import HelpRequest
 from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
+from django.db.models import Count
+from .forms import HelpForm
+from .models import HelpRequest, Certificate
+# @login_required
 @login_required
 def dashboard(request):
     form = HelpForm(request.POST or None)
@@ -381,6 +382,7 @@ def dashboard(request):
             recipient = 'kanakchauhan.142400@gmail.com'
         elif request_type == 'Cyber3ra Support':
             recipient = 'info@cyber3ra.com'
+        
         # Save the form submission to the database
         help_request = HelpRequest(
             name=name,
@@ -401,7 +403,25 @@ def dashboard(request):
         # Clear the form after submission
         form = HelpForm()
 
-    return render(request, "dashboard.html", {'form': form})
+    # Fetch certificate data for the chart
+    certificate_data = Certificate.objects.values('CertificateType').annotate(count=Count('CertificateType')).order_by('CertificateType')
+
+    # Prepare data for the chart
+    labels = []
+    data = []
+    for item in certificate_data:
+        cert_type = item['CertificateType']
+        if cert_type:
+            labels.append(dict(Certificate.CERTIFICATE_TYPE_CHOICES).get(cert_type, cert_type))
+            data.append(item['count'])
+
+    context = {
+        'form': form,
+        'labels': labels,
+        'data': data,
+    }
+
+    return render(request, "dashboard.html", context)
 
 def mintemplate(request):
     return render(request,"maintemp.html")

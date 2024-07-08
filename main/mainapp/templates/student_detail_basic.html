@@ -1,14 +1,105 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Student Detail Basic Form</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admit Card Detail Form</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 800px;
+            margin-top: 50px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .btn-primary {
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
-    <h1>Student Detail Basic Form</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Submit</button>
-    </form>
+    <div class="container">
+        <h2>Admit Card Detail Form</h2>
+        <form method="POST" enctype="multipart/form-data" class="form-group">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form.unit.label_tag }}
+                {{ form.unit }}
+            </div>
+            <div class="form-group">
+                {{ form.cbse_no.label_tag }}
+                {{ form.cbse_no }}
+            </div>
+            <div class="form-group">
+                {{ form.rank.label_tag }}
+                {{ form.rank }}
+            </div>
+            <div class="form-group">
+                {{ form.name.label_tag }}
+                {{ form.name }}
+            </div>
+            <div class="form-group">
+                {{ form.dob.label_tag }}
+                {{ form.dob }}
+            </div>
+            <div class="form-group">
+                {{ form.fathers_name.label_tag }}
+                {{ form.fathers_name }}
+            </div>
+            <div class="form-group">
+                {{ form.school_college.label_tag }}
+                {{ form.school_college }}
+            </div>
+            <div class="form-group">
+                {{ form.year_of_passing_b_certificate.label_tag }}
+                {{ form.year_of_passing_b_certificate }}
+            </div>
+            <div class="form-group">
+                {{ form.attach_photo_b_certificate.label_tag }}
+                {{ form.attach_photo_b_certificate }}
+            </div>
+            <div class="form-group">
+                {{ form.fresh_or_failure.label_tag }}
+                {{ form.fresh_or_failure }}
+            </div>
+            <div class="form-group">
+                {{ form.attendance_1st_year.label_tag }}
+                {{ form.attendance_1st_year }}
+            </div>
+            <div class="form-group">
+                {{ form.attendance_2nd_year.label_tag }}
+                {{ form.attendance_2nd_year }}
+            </div>
+            <div class="form-group">
+                {{ form.attendance_3rd_year.label_tag }}
+                {{ form.attendance_3rd_year }}
+            </div>
+            <div class="form-group">
+                {{ form.attendance_total.label_tag }}
+                {{ form.attendance_total }}
+            </div>
+            <div class="form-group">
+                {{ form.home_address.label_tag }}
+                {{ form.home_address }}
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

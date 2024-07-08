@@ -128,10 +128,10 @@
                 <label for="{{ certificate_form.serial_number.id_for_label }}">Serial Number:</label>
                 {{ certificate_form.serial_number }}
             </div>
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <label for="{{ certificate_form.user_image.id_for_label }}">User Image:</label>
                 {{ certificate_form.user_image }}
-            </div>
+            </div> -->
             
             <button type="submit" class="btn btn-primary">Generate Certificate</button>
             <a href="{% url 'cert' %}" class="btn btn-secondary">Cancel</a>

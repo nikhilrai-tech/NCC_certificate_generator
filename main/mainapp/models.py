@@ -28,10 +28,20 @@ class CampDetail(models.Model):
 #     def __str__(self):
 #         return self.name
 class Certificate(models.Model):
+    CERTIFICATE_TYPE_CHOICES = [
+        ('A_Army', 'A Army'),
+        ('A_AirForce', 'A AirForce'),
+        ('A_Navy', 'A Navy'),
+        ('B_AirForce', 'B AirForce'),
+        ('B_Army', 'B Army'),
+        ('B_Navy', 'B Navy'),
+        ('C', 'C'),
+    ]
+
     Name = models.CharField(max_length=100, null=True, blank=True)
     DOB = models.DateField(null=True, blank=True)
     Guardian = models.CharField(max_length=100, null=True, blank=True)
-    CertificateType = models.CharField(max_length=20, null=True, blank=True)
+    CertificateType = models.CharField(max_length=20, choices=CERTIFICATE_TYPE_CHOICES, null=True, blank=True)
     CadetRank = models.CharField(max_length=20, null=True, blank=True)
     PassingYear = models.IntegerField(null=True, blank=True)
     Grade = models.CharField(max_length=10, null=True, blank=True)
@@ -44,6 +54,7 @@ class Certificate(models.Model):
     user_image = models.ImageField(upload_to='media/', null=True, blank=True)
     qr_code = models.ImageField(upload_to='qr_codes/', blank=True)
     final_certificate = models.ImageField(upload_to='media/certificates/', null=True, blank=True)
+
     def __str__(self):
         return self.Name
 class StudentDetail(models.Model):

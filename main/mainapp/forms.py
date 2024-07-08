@@ -31,12 +31,12 @@ class headSignUpForm(UserCreationForm):
 class CertificateForm(forms.ModelForm):
     class Meta:
         model = Certificate
-        exclude = ['qr_code', 'final_certificate']
+        exclude = ['qr_code', 'final_certificate','user_image']
         widgets = {
             'Name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Name'}),
-            'DOB': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'DOB': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'Enter Date of Birth'}),
             'Guardian': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Guardian'}),
-            'CertificateType': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Certificate Type'}),
+            'CertificateType': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select Certificate Type'}),
             'CadetRank': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Cadet Rank'}),
             'PassingYear': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Passing Year'}),
             'Grade': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Grade'}),
@@ -46,7 +46,7 @@ class CertificateForm(forms.ModelForm):
             'Institute': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Institute'}),
             'certificate_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Certificate Number'}),
             'serial_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Serial Number'}),
-            'user_image': forms.FileInput(attrs={'class': 'form-control-file'}),
+            # 'user_image': forms.FileInput(attrs={'class': 'form-control-file'}),
         }
 
 
@@ -118,27 +118,61 @@ class StudentDetailForm(forms.ModelForm):
 class StudentDetailBasicForm(forms.ModelForm):
     class Meta:
         model = StudentDetail
-        fields = ['unit', 'cbse_no', 'rank', 'name', 'dob', 'fathers_name',
-                  'school_college', 'year_of_passing_b_certificate',
-                  'attach_photo_b_certificate', 'fresh_or_failure',
-                  'attendance_1st_year', 'attendance_2nd_year',
-                  'attendance_3rd_year', 'attendance_total', 'home_address']
-        
+        fields = [
+            'unit', 'cbse_no', 'rank', 'name', 'dob', 'fathers_name',
+            'school_college', 'year_of_passing_b_certificate',
+            'attach_photo_b_certificate', 'fresh_or_failure',
+            'attendance_1st_year', 'attendance_2nd_year',
+            'attendance_3rd_year', 'attendance_total', 'home_address'
+        ]
+        widgets = {
+            'unit': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Unit'}),
+            'cbse_no': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter CBSE No'}),
+            'rank': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Rank'}),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Name'}),
+            'dob': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'Enter Date of Birth'}),
+            'fathers_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "Enter Father's Name"}),
+            'school_college': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter School/College'}),
+            'year_of_passing_b_certificate': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Year of Passing B Certificate'}),
+            'attach_photo_b_certificate': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'fresh_or_failure': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Fresh or Failure'}),
+            'attendance_1st_year': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Attendance 1st Year'}),
+            'attendance_2nd_year': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Attendance 2nd Year'}),
+            'attendance_3rd_year': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Attendance 3rd Year'}),
+            'attendance_total': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Total Attendance'}),
+            'home_address': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Enter Home Address'}),
+        }
 
 class StudentDetailExtendedForm(forms.ModelForm):
     class Meta:
         model = StudentDetail
         fields = "__all__"
+        exclude = ['attach_photo_b_certificate',]
+        widgets = {
+            'unit': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Unit'}),
+            'cbse_no': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter CBSE No'}),
+            'rank': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Rank'}),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Name'}),
+            'dob': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'Enter Date of Birth'}),
+            'fathers_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "Enter Father's Name"}),
+            'school_college': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter School/College'}),
+            'year_of_passing_b_certificate': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Year of Passing B Certificate'}),
+            # 'attach_photo_b_certificate': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'fresh_or_failure': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Fresh or Failure'}),
+            'attendance_1st_year': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Attendance 1st Year'}),
+            'attendance_2nd_year': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Attendance 2nd Year'}),
+            'attendance_3rd_year': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Attendance 3rd Year'}),
+            'attendance_total': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Total Attendance'}),
+            'home_address': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Enter Home Address'}),
+            'pass_fail': forms.Select(attrs={'class': 'form-control'}),
+            'marks_subject1': forms.NumberInput(attrs={'class': 'form-control marks-fields', 'placeholder': 'Enter Marks for Subject 1'}),
+            'marks_subject2': forms.NumberInput(attrs={'class': 'form-control marks-fields', 'placeholder': 'Enter Marks for Subject 2'}),
+            'marks_subject3': forms.NumberInput(attrs={'class': 'form-control marks-fields', 'placeholder': 'Enter Marks for Subject 3'}),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        self.fields['pass_fail'].widget = forms.Select(choices=[('', '------'), ('Pass', 'Pass'), ('Fail', 'Fail')])
-        
-        self.fields['marks_subject1'].widget = forms.NumberInput(attrs={'class': 'marks-fields'})
-        self.fields['marks_subject2'].widget = forms.NumberInput(attrs={'class': 'marks-fields'})
-        self.fields['marks_subject3'].widget = forms.NumberInput(attrs={'class': 'marks-fields'})
-        
+        self.fields['pass_fail'].widget.choices = [('', '------'), ('Pass', 'Pass'), ('Fail', 'Fail')]
         if self.instance.pk:
             self.handle_pass_fail(self.instance.pass_fail)
         else:

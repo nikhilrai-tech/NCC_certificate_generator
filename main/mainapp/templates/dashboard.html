@@ -821,7 +821,8 @@
             </div>
         </div>
         <div id="statistics" class="content-section">
-            <div class="container">
+            <div class="mt-5">
+                <h3>Certificate Type Distribution</h3>
                 <canvas id="myChart"></canvas>
             </div>
         </div>
@@ -1774,6 +1775,60 @@
             return true; // Allow form submission to proceed
         }
     </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const labels = {{ labels|safe }};
+        const data = {{ data|safe }};
+        
+        const chartData = {
+            labels: labels,
+            datasets: [{
+                label: 'Number of Certificates',
+                backgroundColor: 'rgba(135, 206, 235, 0.2)',
+                borderColor: 'blue',
+                data: data,
+                fill: true,
+            }]
+        };
+
+        const config = {
+            type: 'line',
+            data: chartData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Certificate Statistics'
+                    }
+                },
+                scales: {
+                    x: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Certificate Types'
+                        }
+                    },
+                    y: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Count'
+                        }
+                    }
+                }
+            },
+        };
+
+        const ctx = document.getElementById('myChart').getContext('2d');
+        new Chart(ctx, config);
+    });
+</script>
 </body>
 
 </html>
