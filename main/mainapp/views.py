@@ -362,7 +362,8 @@ from django.shortcuts import render
 from django.contrib import messages
 from .forms import HelpForm
 from .models import HelpRequest
-
+from django.contrib.auth.decorators import login_required
+@login_required
 def dashboard(request):
     form = HelpForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
@@ -477,40 +478,22 @@ def student_detail_basic_view(request):
     if request.method == 'POST':
         form = StudentDetailBasicForm(request.POST, request.FILES)
         if form.is_valid():
-            # Save the StudentDetail instance first
             student_detail = form.save()
-
-            # Check if a Certificate instance already exists for this StudentDetail
-            if not student_detail.certificate:
-                # Create a new Certificate instance with data from StudentDetail
+            if student_detail.pass_fail == 'Pass' and not student_detail.certificate:
                 certificate = Certificate.objects.create(
                     Name=student_detail.name,
                     DOB=student_detail.dob,
                     Guardian=student_detail.fathers_name,
-                    CertificateType='',  # Leave as empty for now or set accordingly
                     CadetRank=student_detail.rank,
-                    PassingYear=None,  # Leave as None for now or set accordingly
-                    Grade='',  # Leave as empty for now or set accordingly
                     Unit=student_detail.unit,
-                    Directorate='',  # Leave as empty for now or set accordingly
-                    Place='',  # Leave as empty for now or set accordingly
                     Institute=student_detail.school_college,
-                    certificate_number='',  # Leave as empty for now or set accordingly
-                    serial_number='',  # Leave as empty for now or set accordingly
-                    user_image=student_detail.attach_photo_b_certificate,  # Leave as None for now or set accordingly
-                    qr_code=None,  # Leave as None for now or set accordingly
-                    final_certificate=None,  # Leave as None for now or set accordingly
+                    user_image=student_detail.attach_photo_b_certificate,
                 )
-                
-                # Associate the new Certificate instance with the StudentDetail
                 student_detail.certificate = certificate
                 student_detail.save()
-
-            # Redirect to success page or another view
             return redirect('success')
     else:
         form = StudentDetailBasicForm()
-    
     return render(request, 'student_detail_basic.html', {'form': form})
 
 def student_detail_extended_view(request, student_id):
@@ -518,13 +501,39 @@ def student_detail_extended_view(request, student_id):
     if request.method == 'POST':
         form = StudentDetailExtendedForm(request.POST, request.FILES, instance=student)
         if form.is_valid():
-            form.save()
-            return redirect('success')  # Redirect to success page or another view
+            student = form.save()
+            if student.pass_fail == 'Pass':
+                if not student.certificate:
+                    certificate = Certificate.objects.create(
+                        Name=student.name,
+                        DOB=student.dob,
+                        Guardian=student.fathers_name,
+                        CadetRank=student.rank,
+                        Unit=student.unit,
+                        Institute=student.school_college,
+                        user_image=student.attach_photo_b_certificate,
+                    )
+                    student.certificate = certificate
+                    student.save()
+                else:
+                    certificate = student.certificate
+                    certificate.Name = student.name
+                    certificate.DOB = student.dob
+                    certificate.Guardian = student.fathers_name
+                    certificate.CadetRank = student.rank
+                    certificate.Unit = student.unit
+                    certificate.Institute = student.school_college
+                    certificate.user_image = student.attach_photo_b_certificate
+                    certificate.save()
+            else:
+                if student.certificate:
+                    student.certificate.delete()
+                    student.certificate = None
+                    student.save()
+            return redirect('success')
     else:
         form = StudentDetailExtendedForm(instance=student)
     return render(request, 'student_detail_extended.html', {'form': form})
-
-
 import zipfile
 import os
 from io import BytesIO
@@ -716,3 +725,25 @@ def edit_student_detail(request, id):
 
 def certificate_success(request):
     return render(request, 'certificate_success1.html')
+
+from django.contrib.auth import logout
+def logout_view(request):
+    logout(request)
+    return redirect('custom_login')
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from .forms import UserUpdateForm
+from .models import UserProfile
+
+@login_required
+def update_user(request):
+    if request.method == 'POST':
+        form = UserUpdateForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('dashboard')  # Redirect to the profile page or another page after updating
+    else:
+        form = UserUpdateForm(instance=request.user)
+
+    return render(request, 'update_user.html', {'form': form})

@@ -213,4 +213,43 @@ class HelpForm(forms.Form):
 from django.contrib.auth.forms import PasswordResetForm
 
 class CustomPasswordResetForm(PasswordResetForm):
-    email = forms.EmailField(label="Email", max_length=254, widget=forms.EmailInput(attrs={'autocomplete': 'email'}))
+    email = forms.EmailField(
+        label="Email",
+        max_length=254,
+        widget=forms.EmailInput(attrs={
+            'autocomplete': 'email',
+            'class': 'form-control',
+            'placeholder': 'Enter your email address'
+        })
+    )
+from django.contrib.auth.models import User
+from .models import UserProfile
+
+class UserUpdateForm(forms.ModelForm):
+    address = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    profile_pic = forms.ImageField(required=False, widget=forms.FileInput(attrs={'class': 'form-control-file'}))
+
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(UserUpdateForm, self).__init__(*args, **kwargs)
+        if self.instance and hasattr(self.instance, 'userprofile'):
+            self.fields['address'].initial = self.instance.userprofile.address
+            self.fields['profile_pic'].initial = self.instance.userprofile.profile_pic
+
+    def save(self, commit=True):
+        user = super(UserUpdateForm, self).save(commit=commit)
+        user_profile, created = UserProfile.objects.get_or_create(user=user)
+        user_profile.address = self.cleaned_data['address']
+        if self.cleaned_data['profile_pic']:
+            user_profile.profile_pic = self.cleaned_data['profile_pic']
+        user_profile.save()
+        return user

@@ -753,7 +753,7 @@
         </a>
         <a href="#" onclick="showContent(event, 'notification')"><span class="icon">🔔</span>Notification</a>
         <a href="#" onclick="showContent(event, 'settings')"><span class="icon">⚙️</span>Settings</a>
-        <a href="{% url 'custom_login' %}" onclick="showContent(event, 'logout')"><span class="icon">🚪</span>Logout</a>
+        <a href="{% url 'logout' %}" onclick="showContent(event, 'logout')"><span class="icon">🚪</span>Logout</a>
         <a href="#" onclick="showContent(event, 'help')"><span class="icon">❓</span>Help</a>
         <!-- <a href="{% url 'custom_login' %}" id="logout" class="content-section">Logout</a> -->
 
@@ -761,12 +761,16 @@
     </div>
 
     <div class="content">
-        <div class="top-bar" style="margin-top: 30px; margin-bottom: 34px;">
+        <div class="top-bar" >
             <div class="user-info">
-                <img src="{% static 'l1.png' %}" alt="User Image">
+                {% if request.user.userprofile.profile_pic %}
+                <img src="{{ request.user.userprofile.profile_pic.url }}" alt="Profile Picture">
+            {% else %}
+                <img src="{% static 'l3.png' %}" alt="Default Profile Picture">
+            {% endif %}
                 <div>
-                    <strong style="width: 124px;">Rajeev Mishra</strong>
-                    <span>Clerk - IIT Kanpur</span>
+                    <strong style="width: 124px;">{{request.user.username}}</strong>
+                    <span>{{ request.user.userprofile.address}}</span>
                 </div>
             </div>
             <input type="text" class="form-control search-bar" placeholder="Search here..." style="width: 149px;">
@@ -1131,28 +1135,21 @@
             <p class="settings-description">Welcome to the settings page. Here you can customize your experience and
                 manage your account preferences.</p>
 
-            <h2 class="settings-subtitle">Account Settings</h2>
+            <a href="{% url 'update_user' %}">
+                <h2 class="settings-subtitle">Account Settings</h2>
+
+            </a>
             <p class="settings-text">Manage your account information, change your password, and update your email
                 preferences.</p>
 
-            <h2 class="settings-subtitle">Privacy Settings</h2>
+
+            <a href="{% url 'forgotpass' %}">
+                <h2 class="settings-subtitle">Privacy Settings</h2>
+            </a>
             <p class="settings-text">Adjust your privacy settings to control who can see your information and activity.
             </p>
 
-            <h2 class="settings-subtitle">Notification Settings</h2>
-            <p class="settings-text">Choose how you would like to receive notifications and manage your notification
-                preferences.</p>
-
-            <h2 class="settings-subtitle">Appearance Settings</h2>
-            <p class="settings-text">Customize the look and feel of the application, including themes and layout
-                options.</p>
-
-            <h2 class="settings-subtitle">Language Settings</h2>
-            <p class="settings-text">Select your preferred language for the application interface.</p>
-
-            <h2 class="settings-subtitle">Support</h2>
-            <p class="settings-text">If you need help or have any questions, visit our support section for assistance.
-            </p>
+            
         </div>
         <!-- <div >
         </div> -->

@@ -78,3 +78,13 @@ class HelpRequest(models.Model):
 
     def __str__(self):
         return f"Help request from {self.name} to {self.request_type}"
+
+from django.contrib.auth.models import User
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    address = models.CharField(max_length=255, blank=True, null=True)
+    profile_pic = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
+
+    def __str__(self):
+        return self.user.username
