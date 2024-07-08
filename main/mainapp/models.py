@@ -27,6 +27,7 @@ class CampDetail(models.Model):
 
 #     def __str__(self):
 #         return self.name
+from django.contrib.auth.models import User
 class Certificate(models.Model):
     CERTIFICATE_TYPE_CHOICES = [
         ('A_Army', 'A Army'),
@@ -54,6 +55,14 @@ class Certificate(models.Model):
     user_image = models.ImageField(upload_to='media/', null=True, blank=True)
     qr_code = models.ImageField(upload_to='qr_codes/', blank=True)
     final_certificate = models.ImageField(upload_to='media/certificates/', null=True, blank=True)
+
+    reviewer_ceo = models.ForeignKey(User, related_name='ceo_reviews', on_delete=models.SET_NULL, null=True, blank=True)
+    reviewer_register_head = models.ForeignKey(User, related_name='register_head_reviews', on_delete=models.SET_NULL, null=True, blank=True)
+    reviewer_staff = models.ForeignKey(User, related_name='staff_reviews', on_delete=models.SET_NULL, null=True, blank=True)
+    
+    ceo_review_status = models.BooleanField(null=True, blank=True)
+    register_head_review_status = models.BooleanField(null=True, blank=True)
+    staff_review_status = models.BooleanField(null=True, blank=True)
 
     def __str__(self):
         return self.Name

@@ -396,17 +396,9 @@ def dashboard(request):
         subject = f"Help Request to {request_type}"
         email_message = f"Name: {name}\nEmail: {email}\nMessage: {message}"
         send_mail(subject, email_message, 'your_email@gmail.com', [recipient])
-
-        # Set success message
-        # messages.success(request, 'Thanks for contacting us! Our team will reach you soon.')
-
-        # Clear the form after submission
         form = HelpForm()
-
-    # Fetch certificate data for the chart
     certificate_data = Certificate.objects.values('CertificateType').annotate(count=Count('CertificateType')).order_by('CertificateType')
-
-    # Prepare data for the chart
+    
     labels = []
     data = []
     for item in certificate_data:
@@ -767,3 +759,49 @@ def update_user(request):
         form = UserUpdateForm(instance=request.user)
 
     return render(request, 'update_user.html', {'form': form})
+
+@login_required
+def verify_certificate_view(request, certificate_id):
+    certificate = get_object_or_404(Certificate, id=certificate_id)
+    user = request.user
+    can_verify = False
+    group_name = None
+
+    if user.groups.filter(name='CEO').exists():
+        group_name = 'CEO'
+    elif user.groups.filter(name='Register_head').exists():
+        group_name = 'Register_head'
+    elif user.groups.filter(name='Staff').exists():
+        group_name = 'Staff'
+
+    # Determine if the user can verify this certificate based on their group
+    if certificate.CertificateType in ['A_Army', 'A_AirForce', 'A_Navy']:
+        can_verify = group_name in ['CEO', 'Register_head']
+    elif certificate.CertificateType in ['B_Army', 'B_AirForce', 'B_Navy']:
+        can_verify = group_name in ['Staff', 'CEO']
+    elif certificate.CertificateType == 'C':
+        can_verify = False
+
+    if request.method == 'POST' and can_verify:
+        action = request.POST.get('action')
+        if group_name == 'CEO':
+            certificate.reviewer_ceo = user
+            certificate.ceo_review_status = (action == 'approve')
+        elif group_name == 'Register_head':
+            certificate.reviewer_register_head = user
+            certificate.register_head_review_status = (action == 'approve')
+        elif group_name == 'Staff':
+            certificate.reviewer_staff = user
+            certificate.staff_review_status = (action == 'approve')
+        certificate.save()
+        return redirect('dashboard')
+
+    context = {
+        'certificate': certificate,
+        'can_verify': can_verify,
+        'group_name': group_name,
+        'a_certificates': ['A_Army', 'A_AirForce', 'A_Navy'],
+        'b_certificates': ['B_Army', 'B_AirForce', 'B_Navy']
+    }
+
+    return render(request, 'verify_certificate.html', context)

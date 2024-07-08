@@ -1776,59 +1776,59 @@
         }
     </script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', (event) => {
-        const labels = {{ labels|safe }};
-        const data = {{ data|safe }};
-        
-        const chartData = {
-            labels: labels,
-            datasets: [{
-                label: 'Number of Certificates',
-                backgroundColor: 'rgba(135, 206, 235, 0.2)',
-                borderColor: 'blue',
-                data: data,
-                fill: true,
-            }]
-        };
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const labels = {{ labels|safe }};
+            const data = {{ data|safe }};
+            
+            const chartData = {
+                labels: labels,
+                datasets: [{
+                    label: 'Number of Certificates',
+                    backgroundColor: 'rgba(135, 206, 235, 0.2)',
+                    borderColor: 'blue',
+                    data: data,
+                    fill: true,
+                }]
+            };
 
-        const config = {
-            type: 'line',
-            data: chartData,
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
+            const config = {
+                type: 'line',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Certificate Statistics'
+                        }
                     },
-                    title: {
-                        display: true,
-                        text: 'Certificate Statistics'
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Certificate Types'
+                            }
+                        },
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Count'
+                            }
+                        }
                     }
                 },
-                scales: {
-                    x: {
-                        display: true,
-                        title: {
-                            display: true,
-                            text: 'Certificate Types'
-                        }
-                    },
-                    y: {
-                        display: true,
-                        title: {
-                            display: true,
-                            text: 'Count'
-                        }
-                    }
-                }
-            },
-        };
+            };
 
-        const ctx = document.getElementById('myChart').getContext('2d');
-        new Chart(ctx, config);
-    });
-</script>
+            const ctx = document.getElementById('myChart').getContext('2d');
+            new Chart(ctx, config);
+        });
+    </script>
 </body>
 
 </html>

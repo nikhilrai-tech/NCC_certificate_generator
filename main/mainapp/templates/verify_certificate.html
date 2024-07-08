@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Certificate</title>
+</head>
+<body>
+    <h1>Verify Certificate</h1>
+    <div>
+        <p><strong>Name:</strong> {{ certificate.Name }}</p>
+        <p><strong>Date of Birth:</strong> {{ certificate.DOB }}</p>
+        <p><strong>Guardian:</strong> {{ certificate.Guardian }}</p>
+        <p><strong>Certificate Type:</strong> {{ certificate.CertificateType }}</p>
+        <p><strong>Cadet Rank:</strong> {{ certificate.CadetRank }}</p>
+        <p><strong>Passing Year:</strong> {{ certificate.PassingYear }}</p>
+        <p><strong>Grade:</strong> {{ certificate.Grade }}</p>
+        <p><strong>Unit:</strong> {{ certificate.Unit }}</p>
+        <p><strong>Directorate:</strong> {{ certificate.Directorate }}</p>
+        <p><strong>Place:</strong> {{ certificate.Place }}</p>
+        <p><strong>Institute:</strong> {{ certificate.Institute }}</p>
+        <p><strong>Certificate Number:</strong> {{ certificate.certificate_number }}</p>
+        <p><strong>Serial Number:</strong> {{ certificate.serial_number }}</p>
+        <p><strong>User Image:</strong> <img src="{{ certificate.user_image.url }}" alt="User Image"></p>
+        <p><strong>QR Code:</strong> <img src="{{ certificate.qr_code.url }}" alt="QR Code"></p>
+        <p><strong>Final Certificate:</strong> <img src="{{ certificate.final_certificate.url }}" alt="Final Certificate"></p>
+
+        <h2>Review Status</h2>
+        
+        {% if certificate.CertificateType in a_certificates %}
+            <p>
+                CEO:
+                {% if certificate.ceo_review_status is not None %}
+                    {% if certificate.ceo_review_status %}
+                        <span style="color: green;">Approved by {{ certificate.reviewer_ceo.username }}</span>
+                    {% else %}
+                        <span style="color: red;">Rejected by {{ certificate.reviewer_ceo.username }}</span>
+                    {% endif %}
+                {% else %}
+                    <span style="color: orange;">Pending review by CEO</span>
+                {% endif %}
+            </p>
+            <p>
+                Register Head:
+                {% if certificate.register_head_review_status is not None %}
+                    {% if certificate.register_head_review_status %}
+                        <span style="color: green;">Approved by {{ certificate.reviewer_register_head.username }}</span>
+                    {% else %}
+                        <span style="color: red;">Rejected by {{ certificate.reviewer_register_head.username }}</span>
+                    {% endif %}
+                {% else %}
+                    <span style="color: orange;">Pending review by Register Head</span>
+                {% endif %}
+            </p>
+        {% elif certificate.CertificateType in b_certificates %}
+            <p>
+                CEO:
+                {% if certificate.ceo_review_status is not None %}
+                    {% if certificate.ceo_review_status %}
+                        <span style="color: green;">Approved by {{ certificate.reviewer_ceo.username }}</span>
+                    {% else %}
+                        <span style="color: red;">Rejected by {{ certificate.reviewer_ceo.username }}</span>
+                    {% endif %}
+                {% else %}
+                    <span style="color: orange;">Pending review by CEO</span>
+                {% endif %}
+            </p>
+            <p>
+                Staff:
+                {% if certificate.staff_review_status is not None %}
+                    {% if certificate.staff_review_status %}
+                        <span style="color: green;">Approved by {{ certificate.reviewer_staff.username }}</span>
+                    {% else %}
+                        <span style="color: red;">Rejected by {{ certificate.reviewer_staff.username }}</span>
+                    {% endif %}
+                {% else %}
+                    <span style="color: orange;">Pending review by Staff</span>
+                {% endif %}
+            </p>
+        {% endif %}
+
+        {% if can_verify %}
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" name="action" value="approve">Approve</button>
+            <button type="submit" name="action" value="reject">Reject</button>
+        </form>
+        {% else %}
+        <p>You do not have permission to verify this certificate.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

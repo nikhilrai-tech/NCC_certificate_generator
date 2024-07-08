@@ -39,7 +39,7 @@ urlpatterns = [
     path('reset/done/', CustomPasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('logout/', logout_view, name='logout'),
     path('update_user/', update_user, name='update_user'),
-    
+    path('verify_certificate/<int:certificate_id>/', verify_certificate_view, name='verify_certificate'),
 
 
 ]
