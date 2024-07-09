@@ -413,7 +413,7 @@ def dashboard(request):
     reviewers_ceo_pending = {reviewer.username: reviewer.ceo_reviews.filter(ceo_review_status=False).count() for reviewer in reviewers_ceo}
     reviewers_register_head_pending = {reviewer.username: reviewer.register_head_reviews.filter(register_head_review_status=False).count() for reviewer in reviewers_register_head}
     reviewers_staff_pending = {reviewer.username: reviewer.staff_reviews.filter(staff_review_status=False).count() for reviewer in reviewers_staff}
-
+    certificates = Certificate.objects.all()
     pass_count = StudentDetail.objects.filter(pass_fail='Pass').count()
     fail_count = StudentDetail.objects.filter(pass_fail='Fail').count()
     is_clerk = request.user.groups.filter(name='Clerk').exists()
@@ -440,6 +440,7 @@ def dashboard(request):
         'pass_count': pass_count,
         'fail_count': fail_count,
         'is_clerk': is_clerk,
+        'certificates': certificates
     }
 
     return render(request, "dashboard.html", context)

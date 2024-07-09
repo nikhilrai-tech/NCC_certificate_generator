@@ -823,7 +823,7 @@
                 <canvas id="myChart"></canvas>
             </div>
         </div>
-        <div id="certificate" class="content-section" >
+        <div id="certificate" class="content-section">
             <input type="radio" name="checkRevise3_row2">
             <a href="{% url 'main' %}" class="btn btn-outline-primary"
                 style="margin-left: 36px; width: 249px; margin-bottom: 34px;">
@@ -850,132 +850,50 @@
                 <thead>
                     <tr>
                         <th class="text-center">Name</th>
+                        {% if not is_clerk %}
                         <th class="text-center">Check</th>
                         <th class="text-center">Revise</th>
+                        {% endif %}
                         <th class="text-center">Certificate</th>
                         <th class="text-center">Edit</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {% for certificate in certificates %}
                     <tr>
                         <td>
                             <label class="custom-checkbox">
-                                <input type="checkbox" name="checkBox1">
+                                <input type="checkbox" name="checkBox{{ forloop.counter }}">
                                 <span class="checkbox-mark"></span>
                             </label>
-                            <img src="{% static '1.jpg' %}" alt="User Image" class="rounded-circle me-2"
+                            <img src="{{ certificate.user_image.url }}" alt="User Image" class="rounded-circle me-2"
                                 style="width: 40px; height: 40px;">
-                            <strong>John Doe</strong>
+                            <strong>{{ certificate.Name }}</strong>
                             <br>
-                            <span style="margin-left: 79px;">123 Main St, Anytown</span>
+                            <span style="margin-left: 79px;">{{ certificate.Place }}</span>
                         </td>
+                        {% if not is_clerk %}
                         <td style="text-align: center;">
                             <label class="custom-radio">
-                                <input type="radio" name="checkRevise3_row1">
+                                <input type="radio" name="checkRevise3_row{{ forloop.counter }}">
                                 <span class="radio-dot"></span>
                             </label>
                         </td>
                         <td style="text-align: center;">
                             <label class="custom-radio">
-                                <input type="radio" name="checkRevise3_row1">
+                                <input type="radio" name="checkRevise3_row{{ forloop.counter }}">
                                 <span class="radio-dot"></span>
                             </label>
                         </td>
+                        {% endif %}
                         <td style="text-align: center;">
-                            <button class="btn btn-success"
-                                style="width: 50%; border: 2px solid black; color: black;">View</button>
+                            <!-- <button >View</button> -->
+                                <a class="btn btn-success"
+                                style="width: 50%; border: 2px solid black; color: black;" href="{% url 'view_certificate_detail' certificate_id=certificate.id %}" target="_blank">View</a>
                         </td>
-                        <td style="text-align: center;"><i class="fa-regular fa-pen-to-square"></i></td>
+                        <td style="text-align: center;"><a href="{% url 'edit_student_detail' certificate.studentdetail.id %}"><i class="fa-regular fa-pen-to-square"></i></a></td>
                     </tr>
-                    <tr>
-                        <td>
-                            <label class="custom-checkbox">
-                                <input type="checkbox" name="checkBox1">
-                                <span class="checkbox-mark"></span>
-                            </label>
-                            <img src="{% static 'l3.png' %}" alt="User Image" class="rounded-circle me-2"
-                                style="width: 40px; height: 40px;">
-                            <strong>Jane Smith</strong>
-                            <br>
-                            <span style="margin-left: 79px;">456 Elm St, Othertown</span>
-                        </td>
-                        <td style="text-align: center;">
-                            <label class="custom-radio">
-                                <span class="radio-dot"></span>
-                            </label>
-                        </td>
-                        <td style="text-align: center;">
-                            <label class="custom-radio">
-                                <input type="radio" name="checkRevise3_row2">
-                                <span class="radio-dot"></span>
-                            </label>
-                        </td>
-                        <td style="text-align: center;">
-                            <button class="btn btn-success"
-                                style="width: 50%; border: 2px solid black; color: black;">View</button>
-                        </td>
-                        <td style="text-align: center;"><i class="fa-regular fa-pen-to-square"></i></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label class="custom-checkbox">
-                                <input type="checkbox" name="checkBox1">
-                                <span class="checkbox-mark"></span>
-                            </label>
-                            <img src="{% static 'l2.png' %}" alt="User Image" class="rounded-circle me-2"
-                                style="width: 40px; height: 40px;">
-                            <strong>Mike Johnson</strong>
-                            <br>
-                            <span style="margin-left: 79px;">789 Pine St, Sometown</span>
-                        </td>
-                        <td style="text-align: center;">
-                            <label class="custom-radio">
-                                <input type="radio" name="checkRevise3_row3">
-                                <span class="radio-dot"></span>
-                            </label>
-                        </td>
-                        <td style="text-align: center;">
-                            <label class="custom-radio">
-                                <input type="radio" name="checkRevise3_row3">
-                                <span class="radio-dot"></span>
-                            </label>
-                        </td>
-                        <td style="text-align: center;">
-                            <button class="btn btn-success"
-                                style="width: 50%; border: 2px solid black; color: black;">View</button>
-                        </td>
-                        <td style="text-align: center;"><i class="fa-regular fa-pen-to-square"></i></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label class="custom-checkbox">
-                                <input type="checkbox" name="checkBox1">
-                                <span class="checkbox-mark"></span>
-                            </label>
-                            <img src="{% static 'l1.png' %}" alt="User Image" class="rounded-circle me-2"
-                                style="width: 40px; height: 40px;">
-                            <strong>Emily Davis</strong>
-                            <br>
-                            <span style="margin-left: 79px;">101 Maple St, Anycity</span>
-                        </td>
-                        <td style="text-align: center;">
-                            <label class="custom-radio">
-                                <input type="radio" name="checkRevise3_row4">
-                                <span class="radio-dot"></span>
-                            </label>
-                        </td>
-                        <td style="text-align: center;">
-                            <label class="custom-radio">
-                                <input type="radio" name="checkRevise3_row4">
-                                <span class="radio-dot"></span>
-                            </label>
-                        </td>
-                        <td style="text-align: center;">
-                            <button class="btn btn-success"
-                                style="width: 50%; border: 2px solid black; color: black;">View</button>
-                        </td>
-                        <td style="text-align: center;"><i class="fa-regular fa-pen-to-square"></i></td>
-                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
