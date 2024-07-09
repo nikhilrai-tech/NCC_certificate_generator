@@ -761,25 +761,23 @@
     </div>
 
     <div class="content">
-        <div class="top-bar" >
+        <div class="top-bar">
             <div class="user-info">
                 {% if request.user.userprofile.profile_pic %}
                 <img src="{{ request.user.userprofile.profile_pic.url }}" alt="Profile Picture">
-            {% else %}
+                {% else %}
                 <img src="{% static 'l3.png' %}" alt="Default Profile Picture">
-            {% endif %}
+                {% endif %}
                 <div>
                     <strong style="width: 124px;">{{request.user.username}}</strong>
                     <span>{{ request.user.userprofile.address}}</span>
                 </div>
             </div>
             <input type="text" class="form-control search-bar" placeholder="Search here..." style="width: 149px;">
-            <!-- <button class="btn btn-outline-success" style="width: 248px; margin: 10px;">+ Create Certificate</button> -->
-            <a href="{% url 'cert' %}" class="btn btn-outline-success"
-                style="width: 248px; margin: 10px;">+ Create Certificate</a>
-                <a href="{% url 'student_detail_basic' %}" class="btn btn-outline-primary"
-                style="width: 248px;">+ Create Admit Card</a>
-            <!-- <button class="btn btn-outline-primary" style="width: 248px;">+ Create Admit Card</button> -->
+            {% if is_clerk %}
+                        <a href="{% url 'cert' %}" class="btn btn-outline-success" style="width: 248px; margin: 10px;">+ Create Certificate</a>
+                        <a href="{% url 'student_detail_basic' %}" class="btn btn-outline-primary" style="width: 248px;">+ Create Admit Card</a>
+                    {% endif %}
         </div>
         <div id="dashboard" class="content-section active">
             <div class="main-content">
@@ -804,29 +802,28 @@
                 <div class="right-column" style="margin-top: -10px;">
                     <div class="summary-card">
                         <h2>Total Certificates</h2>
-                        <p>3,000</p>
-                        <span>📈 Up to 10% From Last Batch</span>
+                        <p>{{ total_certificates }}</p>
+                        <!-- <span>📈 Up to 10% From Last Batch</span> -->
                     </div>
                     <div class="summary-card">
-                        <h2>Accepted Certificates</h2>
-                        <p>2,750</p>
-                        <span>📈 Up to 6% From Last Batch</span>
+                        <h2>Pass/Fail Summary</h2>
+                        <p>Pass: {{ pass_count }}</p>
+                        <p>Fail: {{ fail_count }}</p>
                     </div>
                     <div class="summary-card">
-                        <h2>Revised Certificates</h2>
-                        <p>650</p>
-                        <span>📈 Up to 7% From Last Batch</span>
+                        <h2>Rejected Approvals</h2>
+                        <p>CO: {{ pending_ceo_approval }}</p>
+                        <p>Head: {{ pending_register_head_approval }}</p>
                     </div>
                 </div>
             </div>
         </div>
         <div id="statistics" class="content-section">
-            <div class="mt-5">
-                <h3>Certificate Type Distribution</h3>
+            <div >
                 <canvas id="myChart"></canvas>
             </div>
         </div>
-        <div id="certificate" class="content-section" style="margin-top: 108px;">
+        <div id="certificate" class="content-section" >
             <input type="radio" name="checkRevise3_row2">
             <a href="{% url 'main' %}" class="btn btn-outline-primary"
                 style="margin-left: 36px; width: 249px; margin-bottom: 34px;">
@@ -836,12 +833,10 @@
                 <div class="d-flex align-items-center" style="margin-left: 75px;">
                     <label for="actionDropdown" class="me-2"><strong>Action</strong></label>
                     <select id="actionDropdown" class="form-select me-2" style="width: auto;">
-                        <option>Select Action</option>
-                        <option>Action 1</option>
-                        <option>Action 2</option>
-                        <option>Action 3</option>
+                        <option value="">Select Action</option>
+                        <option value="{% url 'download_all_certificates' %}">Download All Certificates</option>
                     </select>
-                    <button class="btn btn-success">Go</button>
+                    <button class="btn btn-success" onclick="performAction()">Go</button>
                 </div>
                 <div>
                     <input type="text" class="form-control d-inline-block" placeholder="Search here..."
@@ -1049,7 +1044,8 @@
                     <button class="btn btn-success">Go</button>
                 </div>
                 <div>
-                    <input type="text" class="form-control d-inline-block" placeholder="Search here..." style="width: 200px; margin-right:87px">
+                    <input type="text" class="form-control d-inline-block" placeholder="Search here..."
+                        style="width: 200px; margin-right:87px">
                 </div>
                 <div style="margin-left: -750px;">
                     <button class="btn btn-outline-primary me-2" style="width: 150px;">See All</button>
@@ -1070,13 +1066,15 @@
                                 <input type="checkbox" name="checkBox1">
                                 <span class="checkbox-mark"></span>
                             </label>
-                            <img src="{% static '1.jpg' %}" alt="User Image" class="rounded-circle me-2" style="width: 40px; height: 40px;">
+                            <img src="{% static '1.jpg' %}" alt="User Image" class="rounded-circle me-2"
+                                style="width: 40px; height: 40px;">
                             <strong>John Doe</strong>
                             <br>
                             <span style="margin-left: 79px;">123 Main St, Anytown</span>
                         </td>
                         <td style="text-align: center;">
-                            <button class="btn btn-success" style="width: 50%; border: 2px solid black; color: black;">View</button>
+                            <button class="btn btn-success"
+                                style="width: 50%; border: 2px solid black; color: black;">View</button>
                         </td>
                         <td style="text-align: center;"><i class="fa-regular fa-pen-to-square"></i></td>
                     </tr>
@@ -1086,13 +1084,15 @@
                                 <input type="checkbox" name="checkBox1">
                                 <span class="checkbox-mark"></span>
                             </label>
-                            <img src="{% static 'l3.png' %}" alt="User Image" class="rounded-circle me-2" style="width: 40px; height: 40px;">
+                            <img src="{% static 'l3.png' %}" alt="User Image" class="rounded-circle me-2"
+                                style="width: 40px; height: 40px;">
                             <strong>Jane Smith</strong>
                             <br>
                             <span style="margin-left: 79px;">456 Elm St, Othertown</span>
                         </td>
                         <td style="text-align: center;">
-                            <button class="btn btn-success" style="width: 50%; border: 2px solid black; color: black;">View</button>
+                            <button class="btn btn-success"
+                                style="width: 50%; border: 2px solid black; color: black;">View</button>
                         </td>
                         <td style="text-align: center;"><i class="fa-regular fa-pen-to-square"></i></td>
                     </tr>
@@ -1102,13 +1102,15 @@
                                 <input type="checkbox" name="checkBox1">
                                 <span class="checkbox-mark"></span>
                             </label>
-                            <img src="{% static 'l2.png' %}" alt="User Image" class="rounded-circle me-2" style="width: 40px; height: 40px;">
+                            <img src="{% static 'l2.png' %}" alt="User Image" class="rounded-circle me-2"
+                                style="width: 40px; height: 40px;">
                             <strong>Mike Johnson</strong>
                             <br>
                             <span style="margin-left: 79px;">789 Pine St, Sometown</span>
                         </td>
                         <td style="text-align: center;">
-                            <button class="btn btn-success" style="width: 50%; border: 2px solid black; color: black;">View</button>
+                            <button class="btn btn-success"
+                                style="width: 50%; border: 2px solid black; color: black;">View</button>
                         </td>
                         <td style="text-align: center;"><i class="fa-regular fa-pen-to-square"></i></td>
                     </tr>
@@ -1118,13 +1120,15 @@
                                 <input type="checkbox" name="checkBox1">
                                 <span class="checkbox-mark"></span>
                             </label>
-                            <img src="{% static 'l1.png' %}" alt="User Image" class="rounded-circle me-2" style="width: 40px; height: 40px;">
+                            <img src="{% static 'l1.png' %}" alt="User Image" class="rounded-circle me-2"
+                                style="width: 40px; height: 40px;">
                             <strong>Emily Davis</strong>
                             <br>
                             <span style="margin-left: 79px;">101 Maple St, Anycity</span>
                         </td>
                         <td style="text-align: center;">
-                            <button class="btn btn-success" style="width: 50%; border: 2px solid black; color: black;">View</button>
+                            <button class="btn btn-success"
+                                style="width: 50%; border: 2px solid black; color: black;">View</button>
                         </td>
                         <td style="text-align: center;"><i class="fa-regular fa-pen-to-square"></i></td>
                     </tr>
@@ -1150,7 +1154,7 @@
             <p class="settings-text">Adjust your privacy settings to control who can see your information and activity.
             </p>
 
-            
+
         </div>
         <!-- <div >
         </div> -->
@@ -1637,35 +1641,35 @@
                         </g>
                     </g>
                 </svg>
-                
-            <form id="editForm" method="post" enctype="multipart/form-data" onsubmit="return showAlert()">
-                {% csrf_token %}
-                <!-- <h1 class="title text-center mb-4">Need Help</h1> -->
-    
-                <div class="form-group position-relative">
-                    {{ form.name.label_tag }}
-                    {{ form.name }}
-                </div>
-    
-                <div class="form-group position-relative">
-                    {{ form.email.label_tag }}
-                    {{ form.email }}
-                </div>
-    
-                <div class="form-group message">
-                    {{ form.message.label_tag }}
-                    {{ form.message }}
-                </div>
-    
-                <div class="form-group position-relative">
-                    {{ form.request_type.label_tag }}
-                    {{ form.request_type }}
-                </div>
-    
-                <div class="text-center">
-                    <button type="submit" class="btn btn-primary" tabIndex="-1">Send message</button>
-                </div>
-            </form>
+
+                <form id="editForm" method="post" enctype="multipart/form-data" onsubmit="return showAlert()">
+                    {% csrf_token %}
+                    <!-- <h1 class="title text-center mb-4">Need Help</h1> -->
+
+                    <div class="form-group position-relative">
+                        {{ form.name.label_tag }}
+                        {{ form.name }}
+                    </div>
+
+                    <div class="form-group position-relative">
+                        {{ form.email.label_tag }}
+                        {{ form.email }}
+                    </div>
+
+                    <div class="form-group message">
+                        {{ form.message.label_tag }}
+                        {{ form.message }}
+                    </div>
+
+                    <div class="form-group position-relative">
+                        {{ form.request_type.label_tag }}
+                        {{ form.request_type }}
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary" tabIndex="-1">Send message</button>
+                    </div>
+                </form>
 
             </div>
 
@@ -1691,96 +1695,59 @@
             event.currentTarget.classList.add('active');
             document.getElementById(section).classList.add('active');
         }
+    </script>
 
-        // Chart.js setup
-        var ctx = document.getElementById('analyticsChart').getContext('2d');
-        var analyticsChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5'],
-                datasets: [
-                    {
-                        label: 'Total Certificate',
-                        data: [5, 10, 15, 20, 25, 30],
-                        borderColor: 'green',
-                        fill: false
-                    },
-                    {
-                        label: 'Reviewed',
-                        data: [3, 6, 9, 12, 15, 18],
-                        borderColor: 'orange',
-                        fill: false
-                    },
-                    {
-                        label: 'Rejected',
-                        data: [2, 4, 6, 8, 10, 12],
-                        borderColor: 'red',
-                        fill: false
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    x: {
-                        beginAtZero: true
-                    },
-                    y: {
-                        beginAtZero: true
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var ctx = document.getElementById('analyticsChart').getContext('2d');
+            var analyticsChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Total Certificates', 'Pass', 'Fail', 'Rejected CEO', 'Rejected Register Head'],
+                    datasets: [{
+                        label: 'Analytics Data',
+                        data: [
+                            {{ total_certificates }},
+                            {{ pass_count }},
+                            {{ fail_count }},
+                            {{ pending_ceo_approval }},
+                            {{ pending_register_head_approval }},
+                        ],
+                        backgroundColor: [
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
                     }
                 }
-            }
+            });
         });
-
-    </script>
-    <script>
-        // Sample data for the bar graph
-        const labels = ['Category A', 'Category B', 'Category C'];
-        const data = {
-            labels: labels,
-            datasets: [{
-                label: 'Values',
-                backgroundColor: 'skyblue',
-                borderColor: 'blue',
-                data: [10, 24, 36],
-            }]
-        };
-
-        const config = {
-            type: 'bar',
-            data: data,
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    title: {
-                        display: true,
-                        text: 'Statistics'
-                    }
-                }
-            },
-        };
-
-        // Render the chart
-        window.onload = function () {
-            const ctx = document.getElementById('myChart').getContext('2d');
-            new Chart(ctx, config);
-        };
-    </script>
-    <script>
-        function showAlert() {
-            alert("Thanks for contacting us!");
-            return true; // Allow form submission to proceed
-        }
     </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
             const labels = {{ labels|safe }};
             const data = {{ data|safe }};
-            
+
             const chartData = {
                 labels: labels,
                 datasets: [{
@@ -1829,6 +1796,23 @@
             new Chart(ctx, config);
         });
     </script>
+
+    <script>
+        function showAlert() {
+            alert("Thanks for contacting us!");
+            return true; // Allow form submission to proceed
+        }
+    </script>
+    <script>
+        function performAction() {
+            const actionDropdown = document.getElementById('actionDropdown');
+            const selectedAction = actionDropdown.value;
+            if (selectedAction) {
+                window.location.href = selectedAction;
+            }
+        }
+    </script>
+    
 </body>
 
 </html>

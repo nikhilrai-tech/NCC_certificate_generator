@@ -281,6 +281,8 @@ def custom_login(request):
                 return redirect('dashboard')
             elif user.groups.filter(name='CEO').exists():
                 return redirect('dashboard')
+            elif user.groups.filter(name='register_head').exists():
+                return redirect('dashboard')
         else:
             return HttpResponse('Invalid login credentials')
     return render(request, 'login.html')
@@ -398,7 +400,24 @@ def dashboard(request):
         send_mail(subject, email_message, 'your_email@gmail.com', [recipient])
         form = HelpForm()
     certificate_data = Certificate.objects.values('CertificateType').annotate(count=Count('CertificateType')).order_by('CertificateType')
-    
+    total_certificates = Certificate.objects.count()
+    pending_ceo_approval = Certificate.objects.filter(ceo_review_status=False).count()
+    pending_register_head_approval = Certificate.objects.filter(register_head_review_status=False).count()
+    pending_staff_approval = Certificate.objects.filter(staff_review_status=False).count()
+
+    # Get pending approvals per user
+    reviewers_ceo = User.objects.filter(ceo_reviews__ceo_review_status=False).distinct()
+    reviewers_register_head = User.objects.filter(register_head_reviews__register_head_review_status=False).distinct()
+    reviewers_staff = User.objects.filter(staff_reviews__staff_review_status=False).distinct()
+
+    reviewers_ceo_pending = {reviewer.username: reviewer.ceo_reviews.filter(ceo_review_status=False).count() for reviewer in reviewers_ceo}
+    reviewers_register_head_pending = {reviewer.username: reviewer.register_head_reviews.filter(register_head_review_status=False).count() for reviewer in reviewers_register_head}
+    reviewers_staff_pending = {reviewer.username: reviewer.staff_reviews.filter(staff_review_status=False).count() for reviewer in reviewers_staff}
+
+    pass_count = StudentDetail.objects.filter(pass_fail='Pass').count()
+    fail_count = StudentDetail.objects.filter(pass_fail='Fail').count()
+    is_clerk = request.user.groups.filter(name='Clerk').exists()
+
     labels = []
     data = []
     for item in certificate_data:
@@ -411,6 +430,16 @@ def dashboard(request):
         'form': form,
         'labels': labels,
         'data': data,
+        'total_certificates': total_certificates,
+        'pending_ceo_approval': pending_ceo_approval,
+        'pending_register_head_approval': pending_register_head_approval,
+        'pending_staff_approval': pending_staff_approval,
+        'reviewers_ceo_pending': reviewers_ceo_pending,
+        'reviewers_register_head_pending': reviewers_register_head_pending,
+        'reviewers_staff_pending': reviewers_staff_pending,
+        'pass_count': pass_count,
+        'fail_count': fail_count,
+        'is_clerk': is_clerk,
     }
 
     return render(request, "dashboard.html", context)
@@ -769,14 +798,14 @@ def verify_certificate_view(request, certificate_id):
 
     if user.groups.filter(name='CEO').exists():
         group_name = 'CEO'
-    elif user.groups.filter(name='Register_head').exists():
-        group_name = 'Register_head'
+    elif user.groups.filter(name='register_head').exists():
+        group_name = 'register_head'
     elif user.groups.filter(name='Staff').exists():
         group_name = 'Staff'
 
     # Determine if the user can verify this certificate based on their group
     if certificate.CertificateType in ['A_Army', 'A_AirForce', 'A_Navy']:
-        can_verify = group_name in ['CEO', 'Register_head']
+        can_verify = group_name in ['CEO', 'register_head']
     elif certificate.CertificateType in ['B_Army', 'B_AirForce', 'B_Navy']:
         can_verify = group_name in ['Staff', 'CEO']
     elif certificate.CertificateType == 'C':
@@ -787,7 +816,7 @@ def verify_certificate_view(request, certificate_id):
         if group_name == 'CEO':
             certificate.reviewer_ceo = user
             certificate.ceo_review_status = (action == 'approve')
-        elif group_name == 'Register_head':
+        elif group_name == 'register_head':
             certificate.reviewer_register_head = user
             certificate.register_head_review_status = (action == 'approve')
         elif group_name == 'Staff':
