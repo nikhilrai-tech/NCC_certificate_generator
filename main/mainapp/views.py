@@ -417,6 +417,7 @@ def dashboard(request):
     pass_count = StudentDetail.objects.filter(pass_fail='Pass').count()
     fail_count = StudentDetail.objects.filter(pass_fail='Fail').count()
     is_clerk = request.user.groups.filter(name='Clerk').exists()
+    students = StudentDetail.objects.all()
 
     labels = []
     data = []
@@ -440,7 +441,8 @@ def dashboard(request):
         'pass_count': pass_count,
         'fail_count': fail_count,
         'is_clerk': is_clerk,
-        'certificates': certificates
+        'certificates': certificates,
+        'students': students
     }
 
     return render(request, "dashboard.html", context)
@@ -835,3 +837,4 @@ def verify_certificate_view(request, certificate_id):
     }
 
     return render(request, 'verify_certificate.html', context)
+

@@ -40,7 +40,8 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('update_user/', update_user, name='update_user'),
     path('verify_certificate/<int:certificate_id>/', verify_certificate_view, name='verify_certificate'),
-
+    # path('view_admit_card/<int:student_id>/', view_admit_card, name='view_admit_card'),
+    # path('view_admit_card/<int:student_id>/', view_admit_card, name='view_admit_card'),
 
 ]
 if settings.DEBUG:

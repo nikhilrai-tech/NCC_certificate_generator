@@ -775,9 +775,11 @@
             </div>
             <input type="text" class="form-control search-bar" placeholder="Search here..." style="width: 149px;">
             {% if is_clerk %}
-                        <a href="{% url 'cert' %}" class="btn btn-outline-success" style="width: 248px; margin: 10px;">+ Create Certificate</a>
-                        <a href="{% url 'student_detail_basic' %}" class="btn btn-outline-primary" style="width: 248px;">+ Create Admit Card</a>
-                    {% endif %}
+            <a href="{% url 'cert' %}" class="btn btn-outline-success" style="width: 248px; margin: 10px;">+ Create
+                Certificate</a>
+            <a href="{% url 'student_detail_basic' %}" class="btn btn-outline-primary" style="width: 248px;">+ Create
+                Admit Card</a>
+            {% endif %}
         </div>
         <div id="dashboard" class="content-section active">
             <div class="main-content">
@@ -819,12 +821,12 @@
             </div>
         </div>
         <div id="statistics" class="content-section">
-            <div >
+            <div>
                 <canvas id="myChart"></canvas>
             </div>
         </div>
         <div id="certificate" class="content-section">
-            <input type="radio" name="checkRevise3_row2">
+            <!-- <input type="radio" name="checkRevise3_row2"> -->
             <a href="{% url 'main' %}" class="btn btn-outline-primary"
                 style="margin-left: 36px; width: 249px; margin-bottom: 34px;">
                 Interactive Slideshow
@@ -840,7 +842,7 @@
                 </div>
                 <div>
                     <input type="text" class="form-control d-inline-block" placeholder="Search here..."
-                        style="width: 200px; margin-right:87px">
+                        style="width: 200px; margin-right:394px">
                 </div>
                 <div style="margin-left: -750px;">
                     <button class="btn btn-outline-primary me-2" style="width: 150px;">See All</button>
@@ -887,11 +889,16 @@
                         </td>
                         {% endif %}
                         <td style="text-align: center;">
-                            <!-- <button >View</button> -->
-                                <a class="btn btn-success"
-                                style="width: 50%; border: 2px solid black; color: black;" href="{% url 'view_certificate_detail' certificate_id=certificate.id %}" target="_blank">View</a>
+                            {% if certificate.final_certificate %}
+                            <a class="btn btn-success" style="width: 50%; border: 2px solid black; color: black;"
+                                href="{{ certificate.final_certificate.url }}" target="_blank">View</a>
+                            {% else %}
+                            <span style="color: red;">Certificate not generated yet</span>
+                            {% endif %}
                         </td>
-                        <td style="text-align: center;"><a href="{% url 'edit_student_detail' certificate.studentdetail.id %}"><i class="fa-regular fa-pen-to-square"></i></a></td>
+                        <td style="text-align: center;"><a
+                                href="{% url 'edit_student_detail' certificate.studentdetail.id %}"><i
+                                    class="fa-regular fa-pen-to-square"></i></a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -951,105 +958,60 @@
         </div>
         <div id="adminCard" class="content-section adminCard">
             <div class="d-flex justify-content-between mb-3">
-                <div class="d-flex align-items-center" style="margin-left: 75px;">
+                <div class="d-flex align-items-center">
                     <label for="actionDropdown" class="me-2"><strong>Action</strong></label>
-                    <select id="actionDropdown" class="form-select me-2" style="width: auto;">
-                        <option>Select Action</option>
-                        <option>Action 1</option>
-                        <option>Action 2</option>
-                        <option>Action 3</option>
-                    </select>
-                    <button class="btn btn-success">Go</button>
+                    <form id="actionForm" method="GET" action="{% url 'generate_pdf' %}">
+                        <select id="actionDropdown" class="form-select me-2" style="width: 250px; margin-top: 28px;"
+                            name="action" onchange="this.form.action=this.value;">
+                            <option value="">Select Action</option>
+                            <option value="{% url 'generate_pdf' %}">Download All AdmitCard</option>
+                        </select>
+                        <button type="submit" class="btn btn-success"
+                            style="margin-left: 262px; margin-top: -66px;">Go</button>
+
+                    </form>
+
                 </div>
-                <div>
-                    <input type="text" class="form-control d-inline-block" placeholder="Search here..."
-                        style="width: 200px; margin-right:87px">
-                </div>
-                <div style="margin-left: -750px;">
-                    <button class="btn btn-outline-primary me-2" style="width: 150px;">See All</button>
+                <div class="d-flex align-items-center">
+                    <input type="text" class="form-control mx-3" placeholder="Search here..." style="width: 200px;">
+                    <button class="btn btn-outline-primary" style="width: 150px;">See All</button>
                 </div>
             </div>
             <table class="table table-bordered">
                 <thead>
                     <tr>
                         <th class="text-center">Name</th>
-                        <th class="text-center">Certificate</th>
+                        <th class="text-center">Pass/Fail</th>
+                        <!-- <th class="text-center">Certificate</th> -->
                         <th class="text-center">Edit</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {% for student in students %}
                     <tr>
                         <td>
                             <label class="custom-checkbox">
-                                <input type="checkbox" name="checkBox1">
+                                <input type="checkbox" name="checkBox{{ forloop.counter }}">
                                 <span class="checkbox-mark"></span>
                             </label>
-                            <img src="{% static '1.jpg' %}" alt="User Image" class="rounded-circle me-2"
-                                style="width: 40px; height: 40px;">
-                            <strong>John Doe</strong>
+                            <img src="{{ student.attach_photo_b_certificate.url }}" alt="User Image"
+                                class="rounded-circle me-2" style="width: 40px; height: 40px;">
+                            <strong>{{ student.name }}</strong>
                             <br>
-                            <span style="margin-left: 79px;">123 Main St, Anytown</span>
+                            <span style="margin-left: 79px;">{{ student.home_address }}</span>
                         </td>
                         <td style="text-align: center;">
+                            {{ student.pass_fail }}
+                        </td>
+                        <!-- <td style="text-align: center;">
                             <button class="btn btn-success"
                                 style="width: 50%; border: 2px solid black; color: black;">View</button>
-                        </td>
-                        <td style="text-align: center;"><i class="fa-regular fa-pen-to-square"></i></td>
+                        </td> -->
+                        <td style="text-align: center;"><a href="{% url 'student_detail_extended' student.id %}"><i
+                                    class="fa-regular fa-pen-to-square"></i></a></td>
+
                     </tr>
-                    <tr>
-                        <td>
-                            <label class="custom-checkbox">
-                                <input type="checkbox" name="checkBox1">
-                                <span class="checkbox-mark"></span>
-                            </label>
-                            <img src="{% static 'l3.png' %}" alt="User Image" class="rounded-circle me-2"
-                                style="width: 40px; height: 40px;">
-                            <strong>Jane Smith</strong>
-                            <br>
-                            <span style="margin-left: 79px;">456 Elm St, Othertown</span>
-                        </td>
-                        <td style="text-align: center;">
-                            <button class="btn btn-success"
-                                style="width: 50%; border: 2px solid black; color: black;">View</button>
-                        </td>
-                        <td style="text-align: center;"><i class="fa-regular fa-pen-to-square"></i></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label class="custom-checkbox">
-                                <input type="checkbox" name="checkBox1">
-                                <span class="checkbox-mark"></span>
-                            </label>
-                            <img src="{% static 'l2.png' %}" alt="User Image" class="rounded-circle me-2"
-                                style="width: 40px; height: 40px;">
-                            <strong>Mike Johnson</strong>
-                            <br>
-                            <span style="margin-left: 79px;">789 Pine St, Sometown</span>
-                        </td>
-                        <td style="text-align: center;">
-                            <button class="btn btn-success"
-                                style="width: 50%; border: 2px solid black; color: black;">View</button>
-                        </td>
-                        <td style="text-align: center;"><i class="fa-regular fa-pen-to-square"></i></td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label class="custom-checkbox">
-                                <input type="checkbox" name="checkBox1">
-                                <span class="checkbox-mark"></span>
-                            </label>
-                            <img src="{% static 'l1.png' %}" alt="User Image" class="rounded-circle me-2"
-                                style="width: 40px; height: 40px;">
-                            <strong>Emily Davis</strong>
-                            <br>
-                            <span style="margin-left: 79px;">101 Maple St, Anycity</span>
-                        </td>
-                        <td style="text-align: center;">
-                            <button class="btn btn-success"
-                                style="width: 50%; border: 2px solid black; color: black;">View</button>
-                        </td>
-                        <td style="text-align: center;"><i class="fa-regular fa-pen-to-square"></i></td>
-                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
@@ -1626,94 +1588,99 @@
                         label: 'Analytics Data',
                         data: [
                             {{ total_certificates }},
-                            {{ pass_count }},
+                    {{ pass_count }},
                             {{ fail_count }},
-                            {{ pending_ceo_approval }},
-                            {{ pending_register_head_approval }},
+            {{ pending_ceo_approval }},
+            {{ pending_register_head_approval }},
                         ],
-                        backgroundColor: [
-                            'rgba(75, 192, 192, 0.2)',
-                            'rgba(54, 162, 235, 0.2)',
-                            'rgba(255, 99, 132, 0.2)',
-                            'rgba(255, 206, 86, 0.2)',
-                            'rgba(153, 102, 255, 0.2)',
-                            'rgba(255, 159, 64, 0.2)'
-                        ],
-                        borderColor: [
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)'
-                        ],
-                        borderWidth: 1
+            backgroundColor: [
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(255, 159, 64, 0.2)'
+        ],
+            borderColor: [
+            'rgba(75, 192, 192, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 99, 132, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(153, 102, 255, 1)',
+            'rgba(255, 159, 64, 1)'
+        ],
+            borderWidth: 1
                     }]
                 },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
+            options: {
+            scales: {
+                y: {
+                    beginAtZero: true
                 }
+            }
+        }
             });
         });
     </script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', (event) => {
-            const labels = {{ labels|safe }};
-            const data = {{ data|safe }};
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const labels = {{ labels|safe }};
+        const data = {{ data|safe }};
 
-            const chartData = {
-                labels: labels,
-                datasets: [{
-                    label: 'Number of Certificates',
-                    backgroundColor: 'rgba(135, 206, 235, 0.2)',
-                    borderColor: 'blue',
-                    data: data,
-                    fill: true,
-                }]
-            };
+        const chartData = {
+            labels: labels,
+            datasets: [{
+                label: 'Number of Certificates',
+                backgroundColor: 'rgba(135, 206, 235, 0.2)',
+                borderColor: 'blue',
+                data: data,
+                fill: true,
+            }]
+        };
 
-            const config = {
-                type: 'line',
-                data: chartData,
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        },
-                        title: {
-                            display: true,
-                            text: 'Certificate Statistics'
-                        }
+        const config = {
+            type: 'line',
+            data: chartData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
                     },
-                    scales: {
-                        x: {
-                            display: true,
-                            title: {
-                                display: true,
-                                text: 'Certificate Types'
-                            }
-                        },
-                        y: {
-                            display: true,
-                            title: {
-                                display: true,
-                                text: 'Count'
-                            }
-                        }
+                    title: {
+                        display: true,
+                        text: 'Certificate Statistics'
                     }
                 },
-            };
+                scales: {
+                    x: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Certificate Types'
+                        }
+                    },
+                    y: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Count'
+                        }
+                    }
+                }
+            },
+        };
 
-            const ctx = document.getElementById('myChart').getContext('2d');
+        // Ensure the DOM element exists before attempting to render the chart
+        const ctx = document.getElementById('myChart');
+        if (ctx) {
             new Chart(ctx, config);
-        });
-    </script>
+        } else {
+            console.error('Canvas element with id "myChart" not found.');
+        }
+    });
+</script>
 
     <script>
         function showAlert() {
@@ -1730,7 +1697,29 @@
             }
         }
     </script>
-    
+    <!-- <script>
+    function performAction1() {
+        const actionDropdown = document.getElementById('actionDropdown');
+        const selectedAction = actionDropdown.value;
+        if (selectedAction) {
+            window.location.href = selectedAction;
+        }
+    }
+</script>  -->
+    <script>
+        function performAction1() {
+            const dropdown = document.getElementById('actionDropdown');
+            const form = document.getElementById('actionForm');
+            const selectedValue = dropdown.value;
+
+            if (selectedValue) {
+                form.action = selectedValue;
+                form.submit();
+            } else {
+                alert('Please select an action');
+            }
+        }
+    </script>
 </body>
 
 </html>

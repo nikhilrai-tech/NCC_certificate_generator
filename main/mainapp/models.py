@@ -82,6 +82,7 @@ class StudentDetail(models.Model):
     attendance_2nd_year = models.IntegerField()
     attendance_3rd_year = models.IntegerField()
     attendance_total = models.IntegerField()
+    # admit_card_path = models.CharField(max_length=255, blank=True, null=True)
     home_address = models.TextField()
     pass_fail = models.CharField(max_length=10, choices=[('Pass', 'Pass'), ('Fail', 'Fail')])
     marks_subject1 = models.IntegerField(blank=True, null=True)
