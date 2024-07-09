@@ -816,7 +816,15 @@ def verify_certificate_view(request, certificate_id):
 
     if request.method == 'POST' and can_verify:
         action = request.POST.get('action')
-        if group_name == 'CEO':
+        if action == 'check':
+            # Implement the logic for the check action
+            certificate.checked_by = user
+            certificate.save()
+        elif action == 'revise':
+            # Implement the logic for the revise action
+            certificate.revised_by = user
+            certificate.save()
+        elif group_name == 'CEO':
             certificate.reviewer_ceo = user
             certificate.ceo_review_status = (action == 'approve')
         elif group_name == 'register_head':
@@ -837,4 +845,3 @@ def verify_certificate_view(request, certificate_id):
     }
 
     return render(request, 'verify_certificate.html', context)
-

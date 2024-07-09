@@ -857,7 +857,9 @@
                         <th class="text-center">Revise</th>
                         {% endif %}
                         <th class="text-center">Certificate</th>
-                        <th class="text-center">Edit</th>
+                        {% if is_clerk %}
+            <th class="text-center">Edit</th>
+            {% endif %}
                     </tr>
                 </thead>
                 <tbody>
@@ -876,16 +878,22 @@
                         </td>
                         {% if not is_clerk %}
                         <td style="text-align: center;">
-                            <label class="custom-radio">
-                                <input type="radio" name="checkRevise3_row{{ forloop.counter }}">
-                                <span class="radio-dot"></span>
-                            </label>
+                            <form method="post" action="{% url 'verify_certificate_view' certificate.id %}" class="check-revise-form">
+                                {% csrf_token %}
+                                <label class="custom-radio">
+                                    <input type="radio" name="action" value="approve" class="auto-submit-radio" {% if certificate.accepted_by == user %}checked{% endif %}>
+                                    <span class="radio-dot"></span>
+                                </label>
+                            </form>
                         </td>
                         <td style="text-align: center;">
-                            <label class="custom-radio">
-                                <input type="radio" name="checkRevise3_row{{ forloop.counter }}">
-                                <span class="radio-dot"></span>
-                            </label>
+                            <form method="post" action="{% url 'verify_certificate_view' certificate.id %}" class="check-revise-form">
+                                {% csrf_token %}
+                                <label class="custom-radio">
+                                    <input type="radio" name="action" value="reject" class="auto-submit-radio" {% if certificate.rejected_by == user %}checked{% endif %}>
+                                    <span class="radio-dot"></span>
+                                </label>
+                            </form>
                         </td>
                         {% endif %}
                         <td style="text-align: center;">
@@ -896,9 +904,14 @@
                             <span style="color: red;">Certificate not generated yet</span>
                             {% endif %}
                         </td>
-                        <td style="text-align: center;"><a
+                        {% if is_clerk %}
+            <td style="text-align: center;"><a
+                    href="{% url 'edit_student_detail' certificate.studentdetail.id %}"><i
+                        class="fa-regular fa-pen-to-square"></i></a></td>
+            {% endif %}
+                        <!-- <td style="text-align: center;"><a
                                 href="{% url 'edit_student_detail' certificate.studentdetail.id %}"><i
-                                    class="fa-regular fa-pen-to-square"></i></a></td>
+                                    class="fa-regular fa-pen-to-square"></i></a></td> -->
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -983,7 +996,10 @@
                         <th class="text-center">Name</th>
                         <th class="text-center">Pass/Fail</th>
                         <!-- <th class="text-center">Certificate</th> -->
+                         {% if is_clerk %}
                         <th class="text-center">Edit</th>
+
+        {% endif %}
                     </tr>
                 </thead>
                 <tbody>
@@ -1007,8 +1023,12 @@
                             <button class="btn btn-success"
                                 style="width: 50%; border: 2px solid black; color: black;">View</button>
                         </td> -->
+                        {% if is_clerk %}
                         <td style="text-align: center;"><a href="{% url 'student_detail_extended' student.id %}"><i
-                                    class="fa-regular fa-pen-to-square"></i></a></td>
+                            class="fa-regular fa-pen-to-square"></i></a></td>
+
+        {% endif %}
+                        
 
                     </tr>
                     {% endfor %}
@@ -1719,6 +1739,16 @@
                 alert('Please select an action');
             }
         }
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var radios = document.querySelectorAll('.auto-submit-radio');
+            radios.forEach(function(radio) {
+                radio.addEventListener('change', function() {
+                    this.form.submit();
+                });
+            });
+        });
     </script>
 </body>
 
