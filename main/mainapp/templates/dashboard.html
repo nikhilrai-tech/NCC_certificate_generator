@@ -13,6 +13,50 @@
         rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
+.table th,
+.table td {
+    white-space: nowrap;
+    /* text-align: center; */
+    vertical-align: middle;
+    padding: 4px; /* Adjust padding for better spacing */
+    font-size: 14px; /* Adjust font size if necessary */
+}
+
+.table th.status-col,
+.table td.status-col {
+    width: 20%; /* Increase width for Status column */
+}
+
+.table th.check-col,
+.table td.check-col,
+.table th.revise-col,
+.table td.revise-col {
+    width: 3%; /* Reduce width for Check and Revise columns */
+    padding: 1px; /* Reduce padding */
+}
+
+.custom-checkbox,
+.custom-radio {
+    display: inline-block;
+    margin-right: 1px; /* Reduce margin */
+}
+
+.checkbox-mark,
+.radio-dot {
+    margin-left: 1px; /* Reduce margin */
+}
+
+/* .btn-success {
+    width: 100%;
+    color: black;
+    border: 2px solid black;
+} */
+
+.rounded-circle {
+    width: 40px;
+    height: 40px;
+}
+
         .settings {
             /* max-width: 800px; */
             margin: 20px auto;
@@ -898,7 +942,7 @@
                         {% endif %}
                         <td style="text-align: center;">
                             {% if certificate.final_certificate %}
-                            <a class="btn btn-success" style="width: 50%; border: 2px solid black; color: black;"
+                            <a class="btn btn-success" style="width: 100%; border: 2px solid black; color: black;"
                                 href="{{ certificate.final_certificate.url }}" target="_blank">View</a>
                             {% else %}
                             <span style="color: red;">Certificate not generated yet</span>

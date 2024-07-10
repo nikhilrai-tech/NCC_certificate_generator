@@ -112,7 +112,7 @@ USE_I18N = True
 
 USE_TZ = True
 CSRF_TRUSTED_ORIGINS = [
-    'https://3e04-202-3-77-208.ngrok-free.app',  # when you try to connect ngrok or any other port forwarding tool
+    'https://4cd6-202-3-77-208.ngrok-free.app',  # when you try to connect ngrok or any other port forwarding tool
 ]
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
