@@ -448,7 +448,11 @@ def dashboard(request):
     return render(request, "dashboard.html", context)
 
 def mintemplate(request):
-    return render(request,"maintemp.html")
+    certificates = Certificate.objects.all()
+    is_clerk = request.user.groups.filter(name='Clerk').exists()
+    
+    return render(request, "maintemp.html", {'certificates': certificates, 'is_clerk': is_clerk})
+
 
 
 def admincard(request):

@@ -6,25 +6,8 @@
     <title>Verify Certificate</title>
 </head>
 <body>
-    <h1>Verify Certificate</h1>
     <div>
-        <p><strong>Name:</strong> {{ certificate.Name }}</p>
-        <p><strong>Date of Birth:</strong> {{ certificate.DOB }}</p>
-        <p><strong>Guardian:</strong> {{ certificate.Guardian }}</p>
-        <p><strong>Certificate Type:</strong> {{ certificate.CertificateType }}</p>
-        <p><strong>Cadet Rank:</strong> {{ certificate.CadetRank }}</p>
-        <p><strong>Passing Year:</strong> {{ certificate.PassingYear }}</p>
-        <p><strong>Grade:</strong> {{ certificate.Grade }}</p>
-        <p><strong>Unit:</strong> {{ certificate.Unit }}</p>
-        <p><strong>Directorate:</strong> {{ certificate.Directorate }}</p>
-        <p><strong>Place:</strong> {{ certificate.Place }}</p>
-        <p><strong>Institute:</strong> {{ certificate.Institute }}</p>
-        <p><strong>Certificate Number:</strong> {{ certificate.certificate_number }}</p>
-        <p><strong>Serial Number:</strong> {{ certificate.serial_number }}</p>
-        <p><strong>User Image:</strong> <img src="{{ certificate.user_image.url }}" alt="User Image"></p>
-        <p><strong>QR Code:</strong> <img src="{{ certificate.qr_code.url }}" alt="QR Code"></p>
-        <p><strong>Final Certificate:</strong> <img src="{{ certificate.final_certificate.url }}" alt="Final Certificate"></p>
-
+        
         <h2>Review Status</h2>
         
         {% if certificate.CertificateType in a_certificates %}
@@ -88,6 +71,8 @@
         {% else %}
         <p>You do not have permission to verify this certificate.</p>
         {% endif %}
+
+        <a href="{% url 'dashboard' %}">Back to Dashboard</a>
     </div>
 </body>
 </html>

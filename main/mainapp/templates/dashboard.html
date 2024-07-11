@@ -922,22 +922,26 @@
                         </td>
                         {% if not is_clerk %}
                         <td style="text-align: center;">
-                            <form method="post" action="{% url 'verify_certificate_view' certificate.id %}" class="check-revise-form">
-                                {% csrf_token %}
-                                <label class="custom-radio">
-                                    <input type="radio" name="action" value="approve" class="auto-submit-radio" {% if certificate.accepted_by == user %}checked{% endif %}>
-                                    <span class="radio-dot"></span>
-                                </label>
-                            </form>
+                            {% if certificate.CertificateType != 'C' %}
+                                <form method="post" action="{% url 'verify_certificate_view' certificate.id %}" class="check-revise-form">
+                                    {% csrf_token %}
+                                    <label class="custom-radio">
+                                        <input type="radio" name="action" value="approve" class="auto-submit-radio" {% if certificate.accepted_by == user %}checked{% endif %}>
+                                        <span class="radio-dot"></span>
+                                    </label>
+                                </form>
+                            {% endif %}
                         </td>
                         <td style="text-align: center;">
-                            <form method="post" action="{% url 'verify_certificate_view' certificate.id %}" class="check-revise-form">
-                                {% csrf_token %}
-                                <label class="custom-radio">
-                                    <input type="radio" name="action" value="reject" class="auto-submit-radio" {% if certificate.rejected_by == user %}checked{% endif %}>
-                                    <span class="radio-dot"></span>
-                                </label>
-                            </form>
+                            {% if certificate.CertificateType != 'C' %}
+                                <form method="post" action="{% url 'verify_certificate_view' certificate.id %}" class="check-revise-form">
+                                    {% csrf_token %}
+                                    <label class="custom-radio">
+                                        <input type="radio" name="action" value="reject" class="auto-submit-radio" {% if certificate.rejected_by == user %}checked{% endif %}>
+                                        <span class="radio-dot"></span>
+                                    </label>
+                                </form>
+                            {% endif %}
                         </td>
                         {% endif %}
                         <td style="text-align: center;">
