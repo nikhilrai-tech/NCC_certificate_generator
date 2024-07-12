@@ -63,6 +63,7 @@ class Certificate(models.Model):
     ceo_review_status = models.BooleanField(null=True, blank=True)
     register_head_review_status = models.BooleanField(null=True, blank=True)
     staff_review_status = models.BooleanField(null=True, blank=True)
+    signature_image = models.ImageField(upload_to='signatures/', null=True, blank=True)
 
     def __str__(self):
         return self.Name

@@ -594,7 +594,7 @@ from reportlab.lib.utils import ImageReader
 
 def generate_pdf(request):
     students = StudentDetail.objects.all()
-    
+
     # Prepare in-memory zip file
     zip_buffer = BytesIO()
     zip_file = zipfile.ZipFile(zip_buffer, 'w')
@@ -615,30 +615,42 @@ def generate_pdf(request):
         def draw_text(c, x, y, text):
             c.drawString(x, y, text)
 
-        # Manually adjusted coordinates
-        draw_text(c, 100, 700, f"Unit: {student.unit}")
-        draw_text(c, 100, 680, f"CBSE No: {student.cbse_no}")
-        draw_text(c, 100, 660, f"Rank: {student.rank}")
-        draw_text(c, 100, 640, f"Name: {student.name}")
-        draw_text(c, 100, 620, f"Date of Birth: {student.dob}")
-        draw_text(c, 100, 600, f"Father's Name: {student.fathers_name}")
-        draw_text(c, 100, 580, f"School/College: {student.school_college}")
-        draw_text(c, 100, 560, f"Year of Passing B Certificate: {student.year_of_passing_b_certificate}")
-        draw_text(c, 100, 540, f"Fresh or Failure: {student.fresh_or_failure}")
-        draw_text(c, 100, 520, f"Attendance 1st Year: {student.attendance_1st_year}")
-        draw_text(c, 100, 500, f"Attendance 2nd Year: {student.attendance_2nd_year}")
-        draw_text(c, 100, 480, f"Attendance 3rd Year: {student.attendance_3rd_year}")
-        draw_text(c, 100, 460, f"Total Attendance: {student.attendance_total}")
-        draw_text(c, 100, 440, f"Home Address: {student.home_address}")
+        # Adjusted coordinates for your template
+        coordinates = {
+            'unit': (330, 740),
+            'cbse_no': (330, 695),
+            'rank': (330, 675),
+            'name': (330, 655),
+            'dob': (330, 590),
+            'fathers_name': (330, 540),
+            'school_college': (330, 480),
+            'year_of_passing_b_certificate': (330, 450),
+            'fresh_or_failure': (330, 410),
+            'attendance_total': (260, 350),
+            'home_address': (310, 230),
+        }
+
+        # Draw the text at specified coordinates
+        draw_text(c, *coordinates['unit'], f"{student.unit}")
+        draw_text(c, *coordinates['cbse_no'], f" {student.cbse_no}")
+        draw_text(c, *coordinates['rank'], f" {student.rank}")
+        draw_text(c, *coordinates['name'], f"{student.name}")
+        draw_text(c, *coordinates['dob'], f" {student.dob}")
+        draw_text(c, *coordinates['fathers_name'], f"{student.fathers_name}")
+        draw_text(c, *coordinates['school_college'], f"{student.school_college}")
+        draw_text(c, *coordinates['year_of_passing_b_certificate'], f"{student.year_of_passing_b_certificate}")
+        draw_text(c, *coordinates['fresh_or_failure'], f"{student.fresh_or_failure}")
+        draw_text(c, *coordinates['attendance_total'], f"{student.attendance_total}")
+        draw_text(c, *coordinates['home_address'], f" {student.home_address}")
 
         # Display photo if available
         if student.attach_photo_b_certificate:
             image_path = student.attach_photo_b_certificate.path
-            c.drawImage(image_path, 400, 650, width=100, height=100, preserveAspectRatio=True)
-        
+            c.drawImage(image_path, 500, 650, width=100, height=80, preserveAspectRatio=True)
+
         # Save the PDF to in-memory buffer
         c.save()
-        
+
         # Add PDF buffer to zip file
         zip_file.writestr(f"{student.name}_admitcard.pdf", pdf_buffer.getvalue())
 
@@ -648,7 +660,7 @@ def generate_pdf(request):
     # Create HttpResponse with zip file content
     response = HttpResponse(zip_buffer.getvalue(), content_type='application/zip')
     response['Content-Disposition'] = 'attachment; filename="admitcards.zip"'
-    
+
     return response
 
 def certhome(request):
@@ -754,7 +766,7 @@ def edit_student_detail(request, id):
             # Save the complete form data
             certificate.save()
 
-            return redirect('certificate_success')  # Redirect to success page after saving
+            return redirect('dashboard')  # Redirect to success page after saving
 
         else:
             # Debugging: Print form errors

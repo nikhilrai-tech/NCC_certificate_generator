@@ -37,9 +37,10 @@
         </li>
         {% endfor %}
     </ul>
-    <form action="{% url 'generate_pdf' %}" method="post">
+    <a href="{% url 'dashboard' %}">Back to Dashboard</a>
+    <!-- <form action="{% url 'generate_pdf' %}" method="post">
         {% csrf_token %}
         <button type="submit">Download All Student Details as PDF</button>
-    </form>
+    </form> -->
 </body>
 </html>

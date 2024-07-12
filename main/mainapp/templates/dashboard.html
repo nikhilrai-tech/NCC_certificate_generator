@@ -880,7 +880,7 @@
                     <label for="actionDropdown" class="me-2"><strong>Action</strong></label>
                     <select id="actionDropdown" class="form-select me-2" style="width: auto;">
                         <option value="">Select Action</option>
-                        <option value="{% url 'download_all_certificates' %}">Download All Certificates</option>
+                        <option value="{% url 'download_all_certificates' %}">Print All Certificates</option>
                     </select>
                     <button class="btn btn-success" onclick="performAction()">Go</button>
                 </div>
@@ -1025,7 +1025,7 @@
                         <select id="actionDropdown" class="form-select me-2" style="width: 250px; margin-top: 28px;"
                             name="action" onchange="this.form.action=this.value;">
                             <option value="">Select Action</option>
-                            <option value="{% url 'generate_pdf' %}">Download All AdmitCard</option>
+                            <option value="{% url 'generate_pdf' %}">Print All AdmitCard</option>
                         </select>
                         <button type="submit" class="btn btn-success"
                             style="margin-left: 262px; margin-top: -66px;">Go</button>
