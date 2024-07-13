@@ -227,10 +227,10 @@ def register_staff(request):
             return redirect('custom_login')
         else:
             # Capture form errors and display them
-            return render(request, 'signup_form.html', {'form': form, 'role': 'Commanding Staff', 'errors': form.errors})
+            return render(request, 'signup_form.html', {'form': form, 'role': 'Group Commander', 'errors': form.errors})
     else:
         form = StaffSignUpForm()
-    return render(request, 'signup_form.html', {'form': form, 'role': 'Commanding Staff'})
+    return render(request, 'signup_form.html', {'form': form, 'role': 'Group Commander'})
 
 def register_clerk(request):
     if request.method == 'POST':
@@ -351,10 +351,10 @@ def register_head(request):
             return redirect('custom_login')
         else:
             # Capture form errors and display them
-            return render(request, 'signuphead_form.html', {'form': form, 'role': 'state head', 'errors': form.errors})
+            return render(request, 'signuphead_form.html', {'form': form, 'role': 'ADG', 'errors': form.errors})
     else:
         form = headSignUpForm()
-    return render(request, 'signuphead_form.html', {'form': form, 'role': 'state head'})
+    return render(request, 'signuphead_form.html', {'form': form, 'role': 'ADG'})
 
 
 
@@ -399,6 +399,7 @@ def dashboard(request):
         email_message = f"Name: {name}\nEmail: {email}\nMessage: {message}"
         send_mail(subject, email_message, 'your_email@gmail.com', [recipient])
         form = HelpForm()
+
     certificate_data = Certificate.objects.values('CertificateType').annotate(count=Count('CertificateType')).order_by('CertificateType')
     total_certificates = Certificate.objects.count()
     pending_ceo_approval = Certificate.objects.filter(ceo_review_status=False).count()
@@ -413,7 +414,22 @@ def dashboard(request):
     reviewers_ceo_pending = {reviewer.username: reviewer.ceo_reviews.filter(ceo_review_status=False).count() for reviewer in reviewers_ceo}
     reviewers_register_head_pending = {reviewer.username: reviewer.register_head_reviews.filter(register_head_review_status=False).count() for reviewer in reviewers_register_head}
     reviewers_staff_pending = {reviewer.username: reviewer.staff_reviews.filter(staff_review_status=False).count() for reviewer in reviewers_staff}
-    certificates = Certificate.objects.all()
+    
+    # Filter certificates based on user's group
+    user = request.user
+    group_name = None
+    if user.groups.filter(name='CEO').exists():
+        group_name = 'CEO'
+        certificates = Certificate.objects.filter(CertificateType__in=['A_Army', 'A_AirForce', 'A_Navy', 'B_Army', 'B_AirForce', 'B_Navy', 'C'])
+    elif user.groups.filter(name='Staff').exists():
+        group_name = 'Staff'
+        certificates = Certificate.objects.filter(CertificateType__in=['B_Army', 'B_AirForce', 'B_Navy', 'C'])
+    elif user.groups.filter(name='register_head').exists():
+        group_name = 'register_head'
+        certificates = Certificate.objects.filter(CertificateType='C')
+    else:
+        certificates = Certificate.objects.all()
+    
     pass_count = StudentDetail.objects.filter(pass_fail='Pass').count()
     fail_count = StudentDetail.objects.filter(pass_fail='Fail').count()
     is_clerk = request.user.groups.filter(name='Clerk').exists()
@@ -578,7 +594,7 @@ def student_detail_extended_view(request, student_id):
                     student.certificate.delete()
                     student.certificate = None
                     student.save()
-            return redirect('success')
+            return redirect('dashboard')
     else:
         form = StudentDetailExtendedForm(instance=student)
     return render(request, 'student_detail_extended.html', {'form': form})
@@ -815,6 +831,7 @@ def verify_certificate_view(request, certificate_id):
     can_verify = False
     group_name = None
 
+    # Determine the user's group
     if user.groups.filter(name='CEO').exists():
         group_name = 'CEO'
     elif user.groups.filter(name='register_head').exists():
@@ -824,11 +841,11 @@ def verify_certificate_view(request, certificate_id):
 
     # Determine if the user can verify this certificate based on their group
     if certificate.CertificateType in ['A_Army', 'A_AirForce', 'A_Navy']:
-        can_verify = group_name in ['CEO', 'register_head']
+        can_verify = group_name == 'CEO'
     elif certificate.CertificateType in ['B_Army', 'B_AirForce', 'B_Navy']:
-        can_verify = group_name in ['Staff', 'CEO']
+        can_verify = group_name in ['CEO', 'Staff']
     elif certificate.CertificateType == 'C':
-        can_verify = False
+        can_verify = group_name in ['CEO', 'register_head', 'Staff']
 
     if request.method == 'POST' and can_verify:
         action = request.POST.get('action')
@@ -857,7 +874,8 @@ def verify_certificate_view(request, certificate_id):
         'can_verify': can_verify,
         'group_name': group_name,
         'a_certificates': ['A_Army', 'A_AirForce', 'A_Navy'],
-        'b_certificates': ['B_Army', 'B_AirForce', 'B_Navy']
+        'b_certificates': ['B_Army', 'B_AirForce', 'B_Navy'],
+        'c_certificates': ['C']
     }
 
     return render(request, 'verify_certificate.html', context)

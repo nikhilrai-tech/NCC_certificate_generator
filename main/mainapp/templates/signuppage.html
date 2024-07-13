@@ -15,6 +15,19 @@
   integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
 <style>
+  .card {
+      height: 200px; /* Set the height of the card */
+      width: 100%; /* Set the width to 100% of the parent container */
+      display: flex;
+      justify-content: center; /* Center the content horizontally */
+      align-items: center; /* Center the content vertically */
+      text-align: center;
+    }
+    .card-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
   @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
 
   * {
@@ -271,7 +284,7 @@
               <a href="{% url 'register_clerk' %}" style="text-decoration: none;">
                 <div class="card-body">
                   <h5 class="card-title">I am a Clerk</h5>
-                  <p class="card-text">Signup as a staff member.</p>
+                  <p class="card-text">Signup as a Clerk</p>
                 </div>
               </a>
             </div>
@@ -280,8 +293,8 @@
             <div class="card">
               <a href="{% url 'register_ceo' %}" style="text-decoration: none;">
                 <div class="card-body">
-                  <h5 class="card-title">I am a CEO</h5>
-                  <p class="card-text">Signup as a staff member.</p>
+                  <h5 class="card-title">I am a commanding officer</h5>
+                  <p class="card-text">Signup as a commanding officer</p>
                 </div>
               </a>
             </div>
@@ -290,8 +303,8 @@
             <div class="card">
               <a href="{% url 'register_staff' %}" style="text-decoration: none;">
                 <div class="card-body">
-                  <h5 class="card-title">I am a Commanding Officer</h5>
-                  <p class="card-text">Signup as a staff member.</p>
+                  <h5 class="card-title">I am a Group Commander</h5>
+                  <p class="card-text">Signup as a Group Commander</p>
                 </div>
               </a>
             </div>
@@ -300,8 +313,8 @@
             <div class="card">
               <a href="{% url 'register_head' %}" style="text-decoration: none;">
                 <div class="card-body">
-                  <h5 class="card-title">I am a State Head</h5>
-                  <p class="card-text">Signup as a staff member.</p>
+                  <h5 class="card-title">I am a ADG</h5>
+                  <p class="card-text">Signup as a ADG</p>
                 </div>
               </a>
             </div>

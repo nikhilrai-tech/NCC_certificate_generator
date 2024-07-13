@@ -12,7 +12,7 @@
         
         {% if certificate.CertificateType in a_certificates %}
             <p>
-                CEO:
+                CO:
                 {% if certificate.ceo_review_status is not None %}
                     {% if certificate.ceo_review_status %}
                         <span style="color: green;">Approved by {{ certificate.reviewer_ceo.username }}</span>
@@ -20,11 +20,11 @@
                         <span style="color: red;">Rejected by {{ certificate.reviewer_ceo.username }}</span>
                     {% endif %}
                 {% else %}
-                    <span style="color: orange;">Pending review by CEO</span>
+                    <span style="color: orange;">Pending review by CO</span>
                 {% endif %}
             </p>
             <p>
-                Register Head:
+                ADG:
                 {% if certificate.register_head_review_status is not None %}
                     {% if certificate.register_head_review_status %}
                         <span style="color: green;">Approved by {{ certificate.reviewer_register_head.username }}</span>
@@ -32,12 +32,12 @@
                         <span style="color: red;">Rejected by {{ certificate.reviewer_register_head.username }}</span>
                     {% endif %}
                 {% else %}
-                    <span style="color: orange;">Pending review by Register Head</span>
+                    <span style="color: orange;">Pending review by ADG</span>
                 {% endif %}
             </p>
         {% elif certificate.CertificateType in b_certificates %}
             <p>
-                CEO:
+                CO:
                 {% if certificate.ceo_review_status is not None %}
                     {% if certificate.ceo_review_status %}
                         <span style="color: green;">Approved by {{ certificate.reviewer_ceo.username }}</span>
@@ -45,11 +45,11 @@
                         <span style="color: red;">Rejected by {{ certificate.reviewer_ceo.username }}</span>
                     {% endif %}
                 {% else %}
-                    <span style="color: orange;">Pending review by CEO</span>
+                    <span style="color: orange;">Pending review by CO</span>
                 {% endif %}
             </p>
             <p>
-                Staff:
+                group commander:
                 {% if certificate.staff_review_status is not None %}
                     {% if certificate.staff_review_status %}
                         <span style="color: green;">Approved by {{ certificate.reviewer_staff.username }}</span>
@@ -57,7 +57,7 @@
                         <span style="color: red;">Rejected by {{ certificate.reviewer_staff.username }}</span>
                     {% endif %}
                 {% else %}
-                    <span style="color: orange;">Pending review by Staff</span>
+                    <span style="color: orange;">Pending review by group commander</span>
                 {% endif %}
             </p>
         {% endif %}
