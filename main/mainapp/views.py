@@ -467,6 +467,7 @@ def mintemplate(request):
     certificates = Certificate.objects.all()
     is_clerk = request.user.groups.filter(name='Clerk').exists()
     
+    
     return render(request, "maintemp.html", {'certificates': certificates, 'is_clerk': is_clerk})
 
 
