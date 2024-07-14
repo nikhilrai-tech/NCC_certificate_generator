@@ -761,7 +761,6 @@ def edit_student_detail(request, id):
                 'Unit': (408, 1495),
                 'Directorate': (977, 1715),
                 'Place': (408, 2600),
-                # 'Institute': (200, 380),
                 'certificate_number': (1652, 58),
                 'serial_number': (394, 1114),
             }
@@ -868,7 +867,7 @@ def verify_certificate_view(request, certificate_id):
             certificate.reviewer_staff = user
             certificate.staff_review_status = (action == 'approve')
         certificate.save()
-        return redirect('dashboard')
+        return redirect('main')
 
     context = {
         'certificate': certificate,

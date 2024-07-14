@@ -101,12 +101,11 @@
     </style>
 </head>
 <body>
-    <div class="container" style="
-    margin-top: 90px;">
+    <div class="container" style="margin-top: 90px;">
         <i class="bi bi-arrow-left-circle-fill custom-icon" onclick="navigate('prev')"></i>
         <div class="button-container" style="margin-left: 67px;">
             {% if not is_clerk %}
-            <form method="post" action="{% url 'verify_certificate_view' certificates.0.id %}" class="check-revise-form">
+            <form method="post" action="{% url 'verify_certificate_view' certificates.0.id %}" class="check-revise-form" onsubmit="handleFormSubmit(event)">
                 {% csrf_token %}
                 <label class="custom-radio">
                     <input type="radio" name="action" value="approve" class="auto-submit-radio" onclick="this.form.submit();">
@@ -114,17 +113,16 @@
                 </label>
             </form>
             <p class="accept">Accept</p>
-
             {% endif %}
         </div>
         <div class="image-container">
             {% for certificate in certificates %}
-            <img src="{{ certificate.final_certificate.url }}" alt="Certificate" style=" display: {% if forloop.first %}block{% else %}none{% endif %};" data-id="{{ certificate.id }}">
+            <img src="{{ certificate.final_certificate.url }}" alt="Certificate" style="display: {% if forloop.first %}block{% else %}none{% endif %};" data-id="{{ certificate.id }}">
             {% endfor %}
         </div>
         <div class="button-container" style="margin-left: 140px;">
             {% if not is_clerk %}
-            <form method="post" action="{% url 'verify_certificate_view' certificates.0.id %}" class="check-revise-form">
+            <form method="post" action="{% url 'verify_certificate_view' certificates.0.id %}" class="check-revise-form" onsubmit="handleFormSubmit(event)">
                 {% csrf_token %}
                 <label class="custom-radio">
                     <input type="radio" name="action" value="reject" class="auto-submit-radio" onclick="this.form.submit();">
@@ -132,7 +130,6 @@
                 </label>
             </form>
             <p class="reject">Reject</p>
-
             {% endif %}
         </div>
         <i class="bi bi-arrow-right-circle-fill custom-icon" onclick="navigate('next')"></i>
@@ -163,6 +160,24 @@
                 form.action = `{% url 'verify_certificate_view' 0 %}`.replace('/0/', `/${certificateId}/`);
             });
         }
+
+        function handleFormSubmit(event) {
+            const action = event.target.querySelector('input[type="radio"]:checked').value;
+            if (action === 'approve') {
+                localStorage.setItem('certificateAction', 'accepted');
+            } else if (action === 'reject') {
+                localStorage.setItem('certificateAction', 'rejected');
+            }
+        }
+
+        // Show alert based on stored action
+        document.addEventListener('DOMContentLoaded', () => {
+            const action = localStorage.getItem('certificateAction');
+            if (action) {
+                alert(`Certificate ${action}`);
+                localStorage.removeItem('certificateAction');
+            }
+        });
 
         // Initialize form action on page load
         updateFormAction();
