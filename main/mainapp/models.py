@@ -27,6 +27,8 @@ class CampDetail(models.Model):
 
 #     def __str__(self):
 #         return self.name
+import uuid
+from django.utils import timezone
 from django.contrib.auth.models import User
 class Certificate(models.Model):
     CERTIFICATE_TYPE_CHOICES = [
@@ -36,7 +38,7 @@ class Certificate(models.Model):
         ('B_AirForce', 'B AirForce'),
         ('B_Army', 'B Army'),
         ('B_Navy', 'B Navy'),
-        ('C', 'C'),
+        ('C_Army', 'C Army'),
     ]
 
     Name = models.CharField(max_length=100, null=True, blank=True)
@@ -56,9 +58,9 @@ class Certificate(models.Model):
     qr_code = models.ImageField(upload_to='qr_codes/', blank=True)
     final_certificate = models.ImageField(upload_to='media/certificates/', null=True, blank=True)
 
-    reviewer_ceo = models.ForeignKey(User, related_name='ceo_reviews', on_delete=models.SET_NULL, null=True, blank=True)
-    reviewer_register_head = models.ForeignKey(User, related_name='register_head_reviews', on_delete=models.SET_NULL, null=True, blank=True)
-    reviewer_staff = models.ForeignKey(User, related_name='staff_reviews', on_delete=models.SET_NULL, null=True, blank=True)
+    reviewer_ceo = models.ForeignKey('auth.User', related_name='ceo_reviews', on_delete=models.SET_NULL, null=True, blank=True)
+    reviewer_register_head = models.ForeignKey('auth.User', related_name='register_head_reviews', on_delete=models.SET_NULL, null=True, blank=True)
+    reviewer_staff = models.ForeignKey('auth.User', related_name='staff_reviews', on_delete=models.SET_NULL, null=True, blank=True)
     
     ceo_review_status = models.BooleanField(null=True, blank=True)
     register_head_review_status = models.BooleanField(null=True, blank=True)
@@ -67,6 +69,37 @@ class Certificate(models.Model):
 
     def __str__(self):
         return self.Name
+
+    def save(self, *args, **kwargs):
+        if not self.certificate_number:
+            self.generate_numbers()
+        super().save(*args, **kwargs)
+
+    def generate_numbers(self):
+        if self.CertificateType:
+            print(f"CertificateType before splitting: {self.CertificateType}")  # Add this line for debugging
+            cert_type_split = self.CertificateType.split('_')
+            print(f"Split result: {cert_type_split}")  # Add this line for debugging
+
+            if len(cert_type_split) != 2:
+                raise ValueError("CertificateType should be in format 'Type_Branch'")
+            
+            cert_type, cert_branch = cert_type_split
+            prefix = f"UP/{cert_type[0]} Cert/{cert_branch}/{timezone.now().year}"
+            
+            last_certificate = Certificate.objects.filter(CertificateType=self.CertificateType).order_by('-serial_number').first()
+            
+            if last_certificate and last_certificate.serial_number:
+                last_serial_number = last_certificate.serial_number.split('/')[-1]
+                serial_parts = last_serial_number.split('-')
+                new_serial_number = int(serial_parts[-1], 16) + 1
+            else:
+                new_serial_number = 1
+
+            self.certificate_number = f"{prefix}/{new_serial_number:03}"
+            self.serial_number = f"{prefix}/{new_serial_number:03}"
+        else:
+            raise ValueError("CertificateType must be set before generating numbers")
 class StudentDetail(models.Model):
     unit = models.CharField(max_length=255)
     cbse_no = models.CharField(max_length=255)
