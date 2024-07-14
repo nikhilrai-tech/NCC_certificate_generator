@@ -761,8 +761,8 @@ def edit_student_detail(request, id):
                 'Unit': (408, 1495),
                 'Directorate': (977, 1715),
                 'Place': (408, 2600),
-                'Institute': (200, 380),
-                'certificate_number': (1882, 50),
+                # 'Institute': (200, 380),
+                'certificate_number': (1652, 58),
                 'serial_number': (394, 1114),
             }
 

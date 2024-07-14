@@ -77,29 +77,33 @@ class Certificate(models.Model):
 
     def generate_numbers(self):
         if self.CertificateType:
-            print(f"CertificateType before splitting: {self.CertificateType}")  # Add this line for debugging
             cert_type_split = self.CertificateType.split('_')
-            print(f"Split result: {cert_type_split}")  # Add this line for debugging
 
             if len(cert_type_split) != 2:
                 raise ValueError("CertificateType should be in format 'Type_Branch'")
             
             cert_type, cert_branch = cert_type_split
-            prefix = f"UP/{cert_type[0]} Cert/{cert_branch}/{timezone.now().year}"
+            prefix = f"UP{timezone.now().year}{cert_type[0]}{cert_branch[0]}A"  # Adjust the prefix as needed
             
-            last_certificate = Certificate.objects.filter(CertificateType=self.CertificateType).order_by('-serial_number').first()
+            # Find the last serial number for the given CertificateType
+            last_certificate = Certificate.objects.filter(CertificateType=self.CertificateType).order_by('-id').first()
             
             if last_certificate and last_certificate.serial_number:
-                last_serial_number = last_certificate.serial_number.split('/')[-1]
-                serial_parts = last_serial_number.split('-')
-                new_serial_number = int(serial_parts[-1], 16) + 1
+                # Extract the numeric part from serial_number
+                last_serial_number = last_certificate.serial_number.split('/')[-1].split('A')[-1]
+                new_serial_number = int(last_serial_number) + 1
             else:
                 new_serial_number = 1
 
-            self.certificate_number = f"{prefix}/{new_serial_number:03}"
-            self.serial_number = f"{prefix}/{new_serial_number:03}"
+            # Format new serial number for serial_number
+            self.serial_number = f"UP{timezone.now().year}{cert_type[0]}{cert_branch[0]}A{new_serial_number:06}"
+            
+            # For certificate_number, keep the existing format
+            self.certificate_number = f"UP/{cert_type[0]} Cert/{cert_branch}/{timezone.now().year}/{new_serial_number:03}"
         else:
             raise ValueError("CertificateType must be set before generating numbers")
+
+
 class StudentDetail(models.Model):
     unit = models.CharField(max_length=255)
     cbse_no = models.CharField(max_length=255)
