@@ -886,6 +886,10 @@
                     <select id="actionDropdown" class="form-select me-2" style="width: auto;">
                         <option value="">Select Action</option>
                         <option value="{% url 'download_all_certificates' %}">Print All Certificates</option>
+                        <option value="{% url 'rejected_certificates_register_head' %}">Rejected Certificates from ADG</option>
+                        <option value="{% url 'rejected_certificates_ceo' %}">Rejected Certificates from CO</option>
+                        <option value="{% url 'rejected_certificates_staff' %}">Rejected Certificates from Group Commander</option>
+                
                     </select>
                     <button class="btn btn-success" onclick="performAction()">Go</button>
                 </div>

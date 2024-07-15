@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rejected Certificates - {{ role }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #0056b3;
+        }
+        .certificate-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .certificate-item {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .certificate-item img {
+            max-width: 100px;
+            max-height: 100px;
+            margin-right: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Rejected Certificates - {{ role }}</h1>
+    
+    <ul class="certificate-list">
+        {% for certificate in certificates %}
+        <li class="certificate-item">
+            <h3>{{ certificate.certificate_number }}</h3>
+            <p>Name: {{ certificate.Name }}</p>
+            <p>DOB: {{ certificate.DOB }}</p>
+            <!-- Add other details as needed -->
+            <img src="{{ certificate.user_image.url }}" alt="User Image">
+        </li>
+        {% empty %}
+        <li>No rejected certificates found.</li>
+        {% endfor %}
+    </ul>
+    
+</body>
+</html>

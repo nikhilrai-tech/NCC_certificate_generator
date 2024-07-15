@@ -43,6 +43,9 @@ urlpatterns = [
     path('verify_certificate/<int:certificate_id>/', verify_certificate_view, name='verify_certificate_view'),
     path('generate_duplicate_certificate/', generate_duplicate_certificate, name='generate_duplicate_certificate'),
     path('download_duplicate_certificate/', download_duplicate_certificate, name='download_duplicate_certificate'),
+    path('rejected_certificates/register_head/', rejected_certificates_register_head, name='rejected_certificates_register_head'),
+    path('rejected_certificates/ceo/', rejected_certificates_ceo, name='rejected_certificates_ceo'),
+    path('rejected_certificates/staff/', rejected_certificates_staff, name='rejected_certificates_staff'),
     # path('view_admit_card/<int:student_id>/', view_admit_card, name='view_admit_card'),
     # path('view_admit_card/<int:student_id>/', view_admit_card, name='view_admit_card'),
 

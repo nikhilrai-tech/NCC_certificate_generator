@@ -948,22 +948,14 @@ def download_duplicate_certificate(request):
             return response
     return HttpResponse("Invalid request method.")
 
-# def generate_duplicate_certificate_image(certificate):
-#     try:
-#         # Try to use a system font as a fallback
-#         font = ImageFont.load_default()
-        
-#         # Example: Create an image and draw text
-#         image = Image.new('RGB', (200, 100), color='white')
-#         draw = ImageDraw.Draw(image)
-#         text = "Duplicate Certificate"
-#         draw.text((10, 10), text, font=font, fill='black')
-        
-#         # Save or return the image
-#         image.save('duplicate_certificate.png')
-        
-#         return image
-    
-#     except OSError as e:
-#         print(f"Error generating duplicate certificate: {e}")
-#         raise  # Rethrow the error for further diagnosis
+def rejected_certificates_register_head(request):
+    rejected_certificates = Certificate.objects.filter(register_head_review_status=False)
+    return render(request, 'rejected_certificates.html', {'certificates': rejected_certificates, 'role': 'Register Head'})
+
+def rejected_certificates_ceo(request):
+    rejected_certificates = Certificate.objects.filter(ceo_review_status=False)
+    return render(request, 'rejected_certificates.html', {'certificates': rejected_certificates, 'role': 'CEO'})
+
+def rejected_certificates_staff(request):
+    rejected_certificates = Certificate.objects.filter(staff_review_status=False)
+    return render(request, 'rejected_certificates.html', {'certificates': rejected_certificates, 'role': 'Staff'})
