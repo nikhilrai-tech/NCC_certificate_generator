@@ -2,45 +2,95 @@
 <html>
 <head>
     <title>Success</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #0056b3;
+        }
+        .card {
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: #0056b3;
+            color: white;
+            font-weight: bold;
+        }
+        .card-body ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .card-body ul li {
+            padding: 5px 0;
+        }
+        .back-button {
+            display: block;
+            width: fit-content;
+            margin: 20px auto;
+            padding: 10px 20px;
+            color: white;
+            background-color: #0056b3;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+        }
+        .back-button:hover {
+            background-color: #004494;
+        }
+    </style>
 </head>
 <body>
-    <h1>Form submitted successfully!</h1>
-    <h2>All Student Details</h2>
-    <ul>
-        {% for student in students %}
-        <li>
-            <a href="{% url 'student_detail_extended' student.id %}">{{ student.name }}</a>
-            <!-- Display other relevant details -->
-            <ul>
-                <li><strong>Unit:</strong> {{ student.unit }}</li>
-                <li><strong>CBSE No:</strong> {{ student.cbse_no }}</li>
-                <li><strong>Rank:</strong> {{ student.rank }}</li>
-                <li><strong>Name:</strong> {{ student.name }}</li>
-                <li><strong>Date of Birth:</strong> {{ student.dob }}</li>
-                <li><strong>Father's Name:</strong> {{ student.fathers_name }}</li>
-                <li><strong>School/College:</strong> {{ student.school_college }}</li>
-                <li><strong>Year of Passing B Certificate:</strong> {{ student.year_of_passing_b_certificate }}</li>
-                <li><strong>Fresh or Failure:</strong> {{ student.fresh_or_failure }}</li>
-                <li><strong>Attendance 1st Year:</strong> {{ student.attendance_1st_year }}</li>
-                <li><strong>Attendance 2nd Year:</strong> {{ student.attendance_2nd_year }}</li>
-                <li><strong>Attendance 3rd Year:</strong> {{ student.attendance_3rd_year }}</li>
-                <li><strong>Total Attendance:</strong> {{ student.attendance_total }}</li>
-                <li><strong>Home Address:</strong> {{ student.home_address }}</li>
-                <li><strong>Photo B Certificate:</strong> 
-                    {% if student.attach_photo_b_certificate %}
-                        <img src="{{ student.attach_photo_b_certificate.url }}" alt="B Certificate Photo" width="100" height="100">
-                    {% else %}
-                        No Photo
-                    {% endif %}
-                </li>
-            </ul>
-        </li>
-        {% endfor %}
-    </ul>
-    <a href="{% url 'dashboard' %}">Back to Dashboard</a>
-    <!-- <form action="{% url 'generate_pdf' %}" method="post">
-        {% csrf_token %}
-        <button type="submit">Download All Student Details as PDF</button>
-    </form> -->
+    <div class="container">
+        <div class="row">
+            {% for student in students %}
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <a href="{% url 'student_detail_extended' student.id %}" style="color: white;">{{ student.name }}</a>
+                    </div>
+                    <div class="card-body">
+                        <ul>
+                            <li><strong>Unit:</strong> {{ student.unit }}</li>
+                            <li><strong>CBSE No:</strong> {{ student.cbse_no }}</li>
+                            <li><strong>Rank:</strong> {{ student.rank }}</li>
+                            <li><strong>Name:</strong> {{ student.name }}</li>
+                            <li><strong>Date of Birth:</strong> {{ student.dob }}</li>
+                            <li><strong>Father's Name:</strong> {{ student.fathers_name }}</li>
+                            <li><strong>School/College:</strong> {{ student.school_college }}</li>
+                            <li><strong>Year of Passing B Certificate:</strong> {{ student.year_of_passing_b_certificate }}</li>
+                            <li><strong>Fresh or Failure:</strong> {{ student.fresh_or_failure }}</li>
+                            <li><strong>Attendance 1st Year:</strong> {{ student.attendance_1st_year }}</li>
+                            <li><strong>Attendance 2nd Year:</strong> {{ student.attendance_2nd_year }}</li>
+                            <li><strong>Attendance 3rd Year:</strong> {{ student.attendance_3rd_year }}</li>
+                            <li><strong>Total Attendance:</strong> {{ student.attendance_total }}</li>
+                            <li><strong>Home Address:</strong> {{ student.home_address }}</li>
+                            <li><strong>Photo B Certificate:</strong> 
+                                {% if student.attach_photo_b_certificate %}
+                                    <img src="{{ student.attach_photo_b_certificate.url }}" alt="B Certificate Photo" width="100" height="100">
+                                {% else %}
+                                    No Photo
+                                {% endif %}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <a href="{% url 'dashboard' %}" class="back-button">Back to Dashboard</a>
+        <!-- <form action="{% url 'generate_pdf' %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Download All Student Details as PDF</button>
+        </form> -->
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

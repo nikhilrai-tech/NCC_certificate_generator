@@ -2,48 +2,90 @@
 <html>
 <head>
     <title>Certificates</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f4f4;
+            color: #333;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .table-container {
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .table th, .table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+        .table thead th {
+            background-color: #0056b3;
+            color: #fff;
+        }
+        .table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+        .action-btn {
+            text-decoration: none;
+            color: #0056b3;
+            font-weight: bold;
+        }
+        .action-btn:hover {
+            text-decoration: underline;
+            color: #004494;
+        }
+    </style>
 </head>
 <body>
-    <h1>Certificate List</h1>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>DOB</th>
-                <th>Guardian</th>
-                <th>Certificate Type</th>
-                <th>Cadet Rank</th>
-                <th>Passing Year</th>
-                <th>Grade</th>
-                <th>Unit</th>
-                <th>Directorate</th>
-                <th>Place</th>
-                <th>Institute</th>
-                <th>Certificate Number</th>
-                <th>Serial Number</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for certificate in fm %}
-            <tr>
-                <td>{{ certificate.Name }}</td>
-                <td>{{ certificate.DOB }}</td>
-                <td>{{ certificate.Guardian }}</td>
-                <td>{{ certificate.CertificateType }}</td>
-                <td>{{ certificate.CadetRank }}</td>
-                <td>{{ certificate.PassingYear }}</td>
-                <td>{{ certificate.Grade }}</td>
-                <td>{{ certificate.Unit }}</td>
-                <td>{{ certificate.Directorate }}</td>
-                <td>{{ certificate.Place }}</td>
-                <td>{{ certificate.Institute }}</td>
-                <td>{{ certificate.certificate_number }}</td>
-                <td>{{ certificate.serial_number }}</td>
-                <td><a href="{% url 'edit_student_detail' certificate.studentdetail.id %}">Edit</a></td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="container">
+        <div class="table-container">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>DOB</th>
+                        <th>Guardian</th>
+                        <th>Certificate Type</th>
+                        <th>Cadet Rank</th>
+                        <th>Passing Year</th>
+                        <!-- <th>Grade</th>
+                        <th>Unit</th>
+                        <th>Directorate</th>
+                        <th>Place</th>
+                        <th>Institute</th> -->
+                        <th>Certificate Number</th>
+                        <th>Serial Number</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for certificate in fm %}
+                    <tr>
+                        <td>{{ certificate.Name }}</td>
+                        <td>{{ certificate.DOB }}</td>
+                        <td>{{ certificate.Guardian }}</td>
+                        <td>{{ certificate.CertificateType }}</td>
+                        <td>{{ certificate.CadetRank }}</td>
+                        <td>{{ certificate.PassingYear }}</td>
+                        <!-- <td>{{ certificate.Grade }}</td> -->
+                        <!-- <td>{{ certificate.Unit }}</td>
+                        <td>{{ certificate.Directorate }}</td>
+                        <td>{{ certificate.Place }}</td>
+                        <td>{{ certificate.Institute }}</td> -->
+                        <td>{{ certificate.certificate_number }}</td>
+                        <td>{{ certificate.serial_number }}</td>
+                        <td><a href="{% url 'edit_student_detail' certificate.studentdetail.id %}" class="action-btn">Edit</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
