@@ -1,0 +1,10 @@
+{% if certificate %}
+    <h2>Certificate Generated</h2>
+    <p>Certificate Number: {{ certificate.certificate_number }}</p>
+    {% if certificate.is_duplicate %}
+        <p><strong>Duplicate Certificate</strong></p>
+    {% endif %}
+    <a href="{{ certificate.final_certificate.url }}" download>Download Certificate</a>
+{% else %}
+    <p>Certificate not found.</p>
+{% endif %}

@@ -4,6 +4,7 @@ from mainapp . views import *
 from django.conf.urls.static import static
 from django.conf import settings
 from django.views.generic import TemplateView
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('generate/', generate_certificate, name='generate_certificate'),
@@ -40,6 +41,8 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('update_user/', update_user, name='update_user'),
     path('verify_certificate/<int:certificate_id>/', verify_certificate_view, name='verify_certificate_view'),
+    path('generate_duplicate_certificate/', generate_duplicate_certificate, name='generate_duplicate_certificate'),
+    path('download_duplicate_certificate/', download_duplicate_certificate, name='download_duplicate_certificate'),
     # path('view_admit_card/<int:student_id>/', view_admit_card, name='view_admit_card'),
     # path('view_admit_card/<int:student_id>/', view_admit_card, name='view_admit_card'),
 

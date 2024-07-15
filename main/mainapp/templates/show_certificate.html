@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Show Certificate</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #0056b3;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #0056b3;
+        }
+        .certificate-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .certificate-image {
+            width: 60%;
+            max-width: 700px;
+            height: auto;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #0056b3;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .button:hover {
+            background-color: #004494;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Existing Final Certificate</h1>
+    
+    <div class="certificate-container">
+        <h2>{{ certificate.certificate_number }}</h2>
+        
+        <img src="{{ certificate.final_certificate.url }}" alt="Final Certificate" class="certificate-image">
+        
+        <div class="button-container">
+            <form method="post" action="{% url 'download_duplicate_certificate' %}">
+                {% csrf_token %}
+                <input type="hidden" name="certificate_id" value="{{ certificate.id }}">
+                <button type="submit" class="button">Download Duplicate Certificate</button>
+            </form>
+            <a href="{% url 'dashboard' %}" class="button">Return To Dashboard</a>
+        </div>
+    </div>
+    
+</body>
+</html>

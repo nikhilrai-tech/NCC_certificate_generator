@@ -7,26 +7,7 @@ class CampDetail(models.Model):
     date_month_year = models.CharField(max_length=255)
     location = models.CharField(max_length=255)
 
-# class StudentDetail(models.Model):
-#     unit = models.CharField(max_length=255)
-#     cbse_no = models.CharField(max_length=255)
-#     rank = models.CharField(max_length=255)
-#     name = models.CharField(max_length=255)
-#     dob = models.DateField()
-#     fathers_name = models.CharField(max_length=255)
-#     school_college = models.CharField(max_length=255)
-#     year_of_passing_b_certificate = models.CharField(max_length=255)
-#     attach_photo_b_certificate = models.ImageField(upload_to='static/certificates/', blank=True, null=True)
-#     fresh_or_failure = models.CharField(max_length=255)
-#     attendance_1st_year = models.IntegerField()
-#     attendance_2nd_year = models.IntegerField()
-#     attendance_3rd_year = models.IntegerField()
-#     attendance_total = models.IntegerField()
-#     home_address = models.TextField()
-#     camp_details = models.ManyToManyField(CampDetail, related_name='student_details')
 
-#     def __str__(self):
-#         return self.name
 import uuid
 from django.utils import timezone
 from django.contrib.auth.models import User
@@ -57,6 +38,7 @@ class Certificate(models.Model):
     user_image = models.ImageField(upload_to='media/', null=True, blank=True)
     qr_code = models.ImageField(upload_to='qr_codes/', blank=True)
     final_certificate = models.ImageField(upload_to='media/certificates/', null=True, blank=True)
+    is_duplicate = models.BooleanField(default=False)
 
     reviewer_ceo = models.ForeignKey('auth.User', related_name='ceo_reviews', on_delete=models.SET_NULL, null=True, blank=True)
     reviewer_register_head = models.ForeignKey('auth.User', related_name='register_head_reviews', on_delete=models.SET_NULL, null=True, blank=True)

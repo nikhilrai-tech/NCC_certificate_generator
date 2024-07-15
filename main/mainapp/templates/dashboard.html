@@ -875,6 +875,11 @@
             <a href="{% url 'main' %}" class="btn btn-outline-primary" style="margin-left: 36px; width: 249px; margin-bottom: 34px;">
                 Interactive Slideshow
             </a>
+            {% if is_clerk %}
+            <a href="{% url 'generate_duplicate_certificate' %}" class="btn btn-outline-success" style="margin-left: 36px; width: 249px; margin-bottom: 34px;">
+                Generate Duplicate Certificate
+            </a>
+            {% endif %}
             <div class="d-flex justify-content-between mb-3">
                 <div class="d-flex align-items-center" style="margin-left: 75px;">
                     <label for="actionDropdown" class="me-2"><strong>Action</strong></label>

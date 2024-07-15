@@ -879,3 +879,91 @@ def verify_certificate_view(request, certificate_id):
     }
 
     return render(request, 'verify_certificate.html', context)
+
+
+from PIL import Image, ImageDraw, ImageFont
+from mainapp.models import Certificate  # Import your Certificate model here
+
+def generate_duplicate_certificate(request):
+    if request.method == 'POST':
+        certificate_number = request.POST.get('certificate_number')
+        print(f"Certificate Number from POST: {certificate_number}")  # Debugging print
+        
+        try:
+            certificate = Certificate.objects.get(certificate_number=certificate_number)
+            print(f"Certificate found: {certificate}")  # Debugging print
+            
+            # Check if a final certificate exists
+            if certificate.final_certificate:
+                return render(request, 'show_certificate.html', {'certificate': certificate})
+            else:
+                return HttpResponse("No final certificate found for this certificate.")
+        
+        except Certificate.DoesNotExist:
+            print("No Certificate matches the given query.")  # Debugging print
+            return HttpResponse("No Certificate matches the given query.")
+    
+    return render(request, 'generate_certificate.html')
+
+def download_duplicate_certificate(request):
+    if request.method == 'POST':
+        certificate_id = request.POST.get('certificate_id')
+        certificate = get_object_or_404(Certificate, id=certificate_id)
+        
+        # Load the existing certificate image
+        original_image_path = certificate.final_certificate.path
+        original_image = Image.open(original_image_path)
+        
+        # Create a drawing context
+        draw = ImageDraw.Draw(original_image)
+        
+        # Define the text and font
+        text = "Duplicate Certificate"
+        font_path = os.path.join(settings.BASE_DIR, 'fonts', 'arial.ttf')  # Adjust the font path as needed
+        font_size = 50  # Adjust the font size as needed
+        try:
+            font = ImageFont.truetype(font_path, font_size)
+        except IOError:
+            return HttpResponse("Error opening font file: cannot open resource")
+        
+        # Calculate text size and position using textbbox
+        bbox = draw.textbbox((0, 0), text, font=font)
+        text_width = bbox[2] - bbox[0]
+        text_height = bbox[3] - bbox[1]
+        width, height = original_image.size
+        x = (width - text_width) / 2
+        y = height - text_height - 50  # Adjust position as needed
+        
+        # Draw the text on the image
+        draw.text((x, y), text, font=font, fill="black")  # Adjust the color as needed
+        
+        # Save the modified image to a temporary location
+        temp_image_path = os.path.join(settings.MEDIA_ROOT, 'temp_duplicate_certificate.png')
+        original_image.save(temp_image_path)
+        
+        # Serve the modified image for download
+        with open(temp_image_path, 'rb') as f:
+            response = HttpResponse(f.read(), content_type="image/png")
+            response['Content-Disposition'] = 'attachment; filename="duplicate_certificate.png"'
+            return response
+    return HttpResponse("Invalid request method.")
+
+# def generate_duplicate_certificate_image(certificate):
+#     try:
+#         # Try to use a system font as a fallback
+#         font = ImageFont.load_default()
+        
+#         # Example: Create an image and draw text
+#         image = Image.new('RGB', (200, 100), color='white')
+#         draw = ImageDraw.Draw(image)
+#         text = "Duplicate Certificate"
+#         draw.text((10, 10), text, font=font, fill='black')
+        
+#         # Save or return the image
+#         image.save('duplicate_certificate.png')
+        
+#         return image
+    
+#     except OSError as e:
+#         print(f"Error generating duplicate certificate: {e}")
+#         raise  # Rethrow the error for further diagnosis
