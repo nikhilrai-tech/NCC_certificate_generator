@@ -102,6 +102,13 @@
 </head>
 <body>
     <div class="container" style="margin-top: 90px;">
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="alert {{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
         <i class="bi bi-arrow-left-circle-fill custom-icon" onclick="navigate('prev')"></i>
         <div class="button-container" style="margin-left: 67px;">
             {% if not is_clerk %}

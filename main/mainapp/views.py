@@ -742,16 +742,25 @@ def edit_student_detail(request, id):
             jpg_template_path = os.path.join(settings.BASE_DIR, f"templates/certificates/{certificate.CertificateType}.jpg")
             certificate_img = Image.open(jpg_template_path)
 
-            # Overlay QR code onto the certificate image
-            qr_img = qr_img.resize((400, 400))
-            certificate_img.paste(qr_img, (215, 251))
+            # Define text positions for C Army certificate, including QR code and user image
+            c_army_text_positions = {
+                'Name': (197, 816),
+                'DOB': (952, 930),
+                'Guardian': (989, 837),
+                'CadetRank': (896, 754),
+                'PassingYear': (565, 1260),
+                'Grade': (500, 2400),
+                'Unit': (195, 927),
+                'Directorate': (460, 1047),
+                'Place': (180, 1550),
+                'certificate_number': (757, 20),
+                'serial_number': (172, 729),
+                'qr_code': (68, 286),  # Example position for QR code
+                'user_image': (888, 286),  # Example position for user image
+            }
 
-            # Draw text on the certificate image
-            draw = ImageDraw.Draw(certificate_img)
-            font_path = os.path.join(settings.BASE_DIR, "arial.ttf")
-            font = ImageFont.truetype(font_path, 60)
-
-            text_positions = {
+            # Default text positions for other certificates
+            default_text_positions = {
                 'Name': (376, 1316),
                 'DOB': (1662, 1504),
                 'Guardian': (1763, 1302),
@@ -761,19 +770,42 @@ def edit_student_detail(request, id):
                 'Unit': (408, 1495),
                 'Directorate': (977, 1715),
                 'Place': (408, 2600),
-                'certificate_number': (1652, 58),
+                'certificate_number': (1593, 52),
                 'serial_number': (394, 1114),
+                'qr_code': (215, 251),  # Example position for QR code
+                'user_image': (1721, 251),  # Example position for user image
             }
 
-            for field, pos in text_positions.items():
-                if hasattr(certificate, field):
-                    value = str(getattr(certificate, field))
-                    draw.text(pos, value, font=font, fill="black")
+            # Select text positions based on certificate type
+            if certificate.CertificateType == 'C_Army':
+                text_positions = c_army_text_positions
+                qr_img_size = (200, 200)  # Reduced size of QR code for C Army
+                user_img_size = (200, 200)  # Reduced size of user image for C Army
+                font_size = 35  # Reduced font size for C Army
+            else:
+                text_positions = default_text_positions
+                qr_img_size = (400, 400)  # Default size of QR code for others
+                user_img_size = (400, 400)  # Default size of user image for others
+                font_size = 60  # Default font size for others
+
+            # Overlay QR code onto the certificate image
+            qr_img = qr_img.resize(qr_img_size)
+            certificate_img.paste(qr_img, text_positions['qr_code'])
 
             if certificate.user_image:
                 user_img = Image.open(certificate.user_image.path)
-                user_img = user_img.resize((400, 400))
-                certificate_img.paste(user_img, (1721, 251))
+                user_img = user_img.resize(user_img_size)
+                certificate_img.paste(user_img, text_positions['user_image'])
+
+            # Draw text on the certificate image
+            draw = ImageDraw.Draw(certificate_img)
+            font_path = os.path.join(settings.BASE_DIR, "arial.ttf")
+            font = ImageFont.truetype(font_path, font_size)
+
+            for field, pos in text_positions.items():
+                if field not in ['qr_code', 'user_image'] and hasattr(certificate, field):
+                    value = str(getattr(certificate, field))
+                    draw.text(pos, value, font=font, fill="black")
 
             # Save the final certificate image to memory buffer
             final_buffer = BytesIO()
@@ -918,7 +950,7 @@ def download_duplicate_certificate(request):
         draw = ImageDraw.Draw(original_image)
         
         # Define the text and font
-        text = "Duplicate Certificate"
+        text = "Duplicate"
         font_path = os.path.join(settings.BASE_DIR, 'fonts', 'arial.ttf')  # Adjust the font path as needed
         font_size = 50  # Adjust the font size as needed
         try:
@@ -926,13 +958,15 @@ def download_duplicate_certificate(request):
         except IOError:
             return HttpResponse("Error opening font file: cannot open resource")
         
-        # Calculate text size and position using textbbox
+        # Calculate text size
         bbox = draw.textbbox((0, 0), text, font=font)
         text_width = bbox[2] - bbox[0]
         text_height = bbox[3] - bbox[1]
         width, height = original_image.size
-        x = (width - text_width) / 2
-        y = height - text_height - 50  # Adjust position as needed
+        
+        # Custom position
+        x = 202  # Adjust x position as needed
+        y = 72  # Adjust y position as needed
         
         # Draw the text on the image
         draw.text((x, y), text, font=font, fill="black")  # Adjust the color as needed
@@ -946,6 +980,7 @@ def download_duplicate_certificate(request):
             response = HttpResponse(f.read(), content_type="image/png")
             response['Content-Disposition'] = 'attachment; filename="duplicate_certificate.png"'
             return response
+    
     return HttpResponse("Invalid request method.")
 
 def rejected_certificates_register_head(request):
