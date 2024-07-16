@@ -31,7 +31,7 @@ class headSignUpForm(UserCreationForm):
 class CertificateForm(forms.ModelForm):
     class Meta:
         model = Certificate
-        exclude = ['qr_code', 'final_certificate','user_image']
+        exclude = ['qr_code', 'final_certificate', 'user_image']
         widgets = {
             'Name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Name'}),
             'DOB': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'Enter Date of Birth'}),
@@ -40,14 +40,21 @@ class CertificateForm(forms.ModelForm):
             'CadetRank': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Cadet Rank'}),
             'PassingYear': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Passing Year'}),
             'Grade': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Grade'}),
-            'Unit': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Unit'}),
-            'Directorate': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Directorate'}),
-            'Place': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Place'}),
-            'Institute': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Institute'}),
+            'Unit': forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),
+            'Directorate': forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly', 'value': 'UP DIRECTORATE'}),
+            'Place': forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly', 'value': 'kanpur'}),
+            'Institute': forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),
             'certificate_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Certificate Number'}),
             'serial_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Serial Number'}),
             # 'user_image': forms.FileInput(attrs={'class': 'form-control-file'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['Directorate'].initial = 'UP DIRECTORATE'
+        self.fields['Place'].initial = 'kanpur'
+        self.fields['Directorate'].widget.attrs['readonly'] = True
+        self.fields['Place'].widget.attrs['readonly'] = True
 
 
 from django import forms
@@ -127,13 +134,13 @@ class StudentDetailBasicForm(forms.ModelForm):
             'camp_name', 'camp_date_from', 'camp_date_to', 'camp_location'
         ]
         widgets = {
-            'unit': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Unit'}),
+            'unit': forms.TextInput(attrs={'class': 'form-control','readonly': 'readonly'}),
             'cbse_no': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter CBSE No'}),
             'rank': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Rank'}),
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Name'}),
             'dob': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'Enter Date of Birth'}),
             'fathers_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "Enter Father's Name"}),
-            'school_college': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter School/College'}),
+            'school_college': forms.TextInput(attrs={'class': 'form-control', 'readonly': 'readonly'}),
             'year_of_passing_b_certificate': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Year of Passing B Certificate'}),
             'attach_photo_b_certificate': forms.FileInput(attrs={'class': 'form-control-file'}),
             'fresh_or_failure': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Fresh or Failure'}),
@@ -148,6 +155,10 @@ class StudentDetailBasicForm(forms.ModelForm):
             'camp_location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Camp Location'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['unit'].initial = '2UP CTR'
+        self.fields['school_college'].initial = 'IIT Kanpur'
 class StudentDetailExtendedForm(forms.ModelForm):
     class Meta:
         model = StudentDetail
@@ -180,6 +191,8 @@ class StudentDetailExtendedForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['unit'].initial = '2UP CTR'
+        self.fields['school_college'].initial = 'IIT Kanpur'
         self.fields['pass_fail'].widget.choices = [('', '------'), ('Pass', 'Pass'), ('Fail', 'Fail')]
         if self.instance.pk:
             self.handle_pass_fail(self.instance.pass_fail)
