@@ -123,7 +123,8 @@ class StudentDetailBasicForm(forms.ModelForm):
             'school_college', 'year_of_passing_b_certificate',
             'attach_photo_b_certificate', 'fresh_or_failure',
             'attendance_1st_year', 'attendance_2nd_year',
-            'attendance_3rd_year', 'attendance_total', 'home_address'
+            'attendance_3rd_year', 'attendance_total', 'home_address',
+            'camp_name', 'camp_date_from', 'camp_date_to', 'camp_location'
         ]
         widgets = {
             'unit': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Unit'}),
@@ -141,6 +142,10 @@ class StudentDetailBasicForm(forms.ModelForm):
             'attendance_3rd_year': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Attendance 3rd Year'}),
             'attendance_total': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Total Attendance'}),
             'home_address': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Enter Home Address'}),
+            'camp_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Name of Camp Attended'}),
+            'camp_date_from': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'Enter Start Date'}),
+            'camp_date_to': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'Enter End Date'}),
+            'camp_location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Camp Location'}),
         }
 
 class StudentDetailExtendedForm(forms.ModelForm):
@@ -157,7 +162,6 @@ class StudentDetailExtendedForm(forms.ModelForm):
             'fathers_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "Enter Father's Name"}),
             'school_college': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter School/College'}),
             'year_of_passing_b_certificate': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Year of Passing B Certificate'}),
-            # 'attach_photo_b_certificate': forms.FileInput(attrs={'class': 'form-control-file'}),
             'fresh_or_failure': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Fresh or Failure'}),
             'attendance_1st_year': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Attendance 1st Year'}),
             'attendance_2nd_year': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Attendance 2nd Year'}),
@@ -168,6 +172,10 @@ class StudentDetailExtendedForm(forms.ModelForm):
             'marks_subject1': forms.NumberInput(attrs={'class': 'form-control marks-fields', 'placeholder': 'Enter Marks for Subject 1'}),
             'marks_subject2': forms.NumberInput(attrs={'class': 'form-control marks-fields', 'placeholder': 'Enter Marks for Subject 2'}),
             'marks_subject3': forms.NumberInput(attrs={'class': 'form-control marks-fields', 'placeholder': 'Enter Marks for Subject 3'}),
+            'camp_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Name of Camp Attended'}),
+            'camp_date_from': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'Enter Start Date'}),
+            'camp_date_to': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'Enter End Date'}),
+            'camp_location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Camp Location'}),
         }
 
     def __init__(self, *args, **kwargs):

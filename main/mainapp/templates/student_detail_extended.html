@@ -94,6 +94,22 @@
                 {{ form.home_address }}
             </div>
             <div class="form-group">
+                {{ form.camp_name.label_tag }}
+                {{ form.camp_name }}
+            </div>
+            <div class="form-group">
+                {{ form.camp_date_from.label_tag }}
+                {{ form.camp_date_from }}
+            </div>
+            <div class="form-group">
+                {{ form.camp_date_to.label_tag }}
+                {{ form.camp_date_to }}
+            </div>
+            <div class="form-group">
+                {{ form.camp_location.label_tag }}
+                {{ form.camp_location }}
+            </div>
+            <div class="form-group">
                 {{ form.pass_fail.label_tag }}
                 {{ form.pass_fail }}
             </div>
@@ -109,6 +125,7 @@
                 {{ form.marks_subject3.label_tag }}
                 {{ form.marks_subject3 }}
             </div>
+            
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     var passFailField = document.getElementById('id_pass_fail');

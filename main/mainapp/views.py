@@ -423,7 +423,7 @@ def dashboard(request):
         certificates = Certificate.objects.filter(CertificateType__in=['A_Army', 'A_AirForce', 'A_Navy', 'B_Army', 'B_AirForce', 'B_Navy', 'C'])
     elif user.groups.filter(name='Staff').exists():
         group_name = 'Staff'
-        certificates = Certificate.objects.filter(CertificateType__in=['B_Army', 'B_AirForce', 'B_Navy', 'C'])
+        certificates = Certificate.objects.filter(CertificateType__in=['B_Army', 'B_AirForce', 'B_Navy', 'C_Army'])
     elif user.groups.filter(name='register_head').exists():
         group_name = 'register_head'
         certificates = Certificate.objects.filter(CertificateType='C_Army')
@@ -563,31 +563,27 @@ def student_detail_basic_view(request):
 
 def student_detail_extended_view(request, student_id):
     student = get_object_or_404(StudentDetail, id=student_id)
+    
     if request.method == 'POST':
         form = StudentDetailExtendedForm(request.POST, request.FILES, instance=student)
         if form.is_valid():
             student = form.save(commit=False)
             if student.pass_fail == 'Pass':
                 if not student.certificate:
-                    # Ensure CertificateType is set before creating Certificate
-                    if student.unit and student.rank:  # Adjust this condition as per your logic
+                    if student.unit and student.rank:
                         certificate_type = f"{student.unit}_{student.rank}"
                         certificate = Certificate.objects.create(
                             Name=student.name,
                             DOB=student.dob,
                             Guardian=student.fathers_name,
                             CadetRank=student.rank,
-                            CertificateType=certificate_type,  # Set CertificateType here
+                            CertificateType=certificate_type,
                             Unit=student.unit,
                             Institute=student.school_college,
                             user_image=student.attach_photo_b_certificate,
                         )
                         student.certificate = certificate
                         student.save()
-                    else:
-                        # Handle case where unit and rank are not available
-                        # You may want to handle this condition accordingly
-                        pass
                 else:
                     certificate = student.certificate
                     certificate.Name = student.name
@@ -638,7 +634,8 @@ def generate_pdf(request):
         c.drawImage(background_image, 0, 0, width=letter[0], height=letter[1], preserveAspectRatio=True)
 
         # Function to draw text at specific coordinates
-        def draw_text(c, x, y, text):
+        def draw_text(c, x, y, text, font_size=12):
+            c.setFont("Helvetica", font_size)
             c.drawString(x, y, text)
 
         # Adjusted coordinates for your template
@@ -653,21 +650,33 @@ def generate_pdf(request):
             'year_of_passing_b_certificate': (330, 450),
             'fresh_or_failure': (330, 410),
             'attendance_total': (260, 350),
-            'home_address': (310, 230),
+            'camp_name': (150, 275),  # Adjusted to fit within the page
+            'camp_date_from': (310, 275),  # Adjusted to fit within the page
+            'camp_date_to': (360, 275),  # Adjusted to fit within the page
+            'camp_location': (415, 275),  # Adjusted to fit within the page
+            'home_address': (330, 230),  # Adjusted to fit within the page
         }
 
         # Draw the text at specified coordinates
         draw_text(c, *coordinates['unit'], f"{student.unit}")
-        draw_text(c, *coordinates['cbse_no'], f" {student.cbse_no}")
-        draw_text(c, *coordinates['rank'], f" {student.rank}")
+        draw_text(c, *coordinates['cbse_no'], f"{student.cbse_no}")
+        draw_text(c, *coordinates['rank'], f"{student.rank}")
         draw_text(c, *coordinates['name'], f"{student.name}")
-        draw_text(c, *coordinates['dob'], f" {student.dob}")
+
+        # Format the date as dd/mm/yyyy
+        formatted_dob = student.dob.strftime('%d/%m/%Y')
+        draw_text(c, *coordinates['dob'], f"{formatted_dob}")
+
         draw_text(c, *coordinates['fathers_name'], f"{student.fathers_name}")
         draw_text(c, *coordinates['school_college'], f"{student.school_college}")
         draw_text(c, *coordinates['year_of_passing_b_certificate'], f"{student.year_of_passing_b_certificate}")
         draw_text(c, *coordinates['fresh_or_failure'], f"{student.fresh_or_failure}")
         draw_text(c, *coordinates['attendance_total'], f"{student.attendance_total}")
-        draw_text(c, *coordinates['home_address'], f" {student.home_address}")
+        draw_text(c, *coordinates['home_address'], f"{student.home_address}")
+        draw_text(c, *coordinates['camp_name'], f"{student.camp_name}")
+        draw_text(c, *coordinates['camp_date_from'], f"{student.camp_date_from.strftime('%d/%m/%Y') if student.camp_date_from else ''}", font_size=8)
+        draw_text(c, *coordinates['camp_date_to'], f"{student.camp_date_to.strftime('%d/%m/%Y') if student.camp_date_to else ''}", font_size=8)
+        draw_text(c, *coordinates['camp_location'], f"{student.camp_location}")
 
         # Display photo if available
         if student.attach_photo_b_certificate:

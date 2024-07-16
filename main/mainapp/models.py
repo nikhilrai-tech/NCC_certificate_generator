@@ -149,6 +149,10 @@ class StudentDetail(models.Model):
     marks_subject1 = models.IntegerField(blank=True, null=True)
     marks_subject2 = models.IntegerField(blank=True, null=True)
     marks_subject3 = models.IntegerField(blank=True, null=True)
+    camp_name = models.CharField(max_length=255)  # New field
+    camp_date_from = models.DateField()  # New field
+    camp_date_to = models.DateField()  # New field
+    camp_location = models.CharField(max_length=255)  # New field
 
 
 class HelpRequest(models.Model):
