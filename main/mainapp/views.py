@@ -426,7 +426,7 @@ def dashboard(request):
         certificates = Certificate.objects.filter(CertificateType__in=['B_Army', 'B_AirForce', 'B_Navy', 'C'])
     elif user.groups.filter(name='register_head').exists():
         group_name = 'register_head'
-        certificates = Certificate.objects.filter(CertificateType='C')
+        certificates = Certificate.objects.filter(CertificateType='C_Army')
     else:
         certificates = Certificate.objects.all()
     
@@ -856,6 +856,22 @@ def update_user(request):
 
     return render(request, 'update_user.html', {'form': form})
 
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.decorators import login_required
+from .models import Certificate
+import logging
+
+logger = logging.getLogger(__name__)
+
+import logging
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.decorators import login_required
+from .models import Certificate
+from django.conf import settings
+import os
+
+logger = logging.getLogger(__name__)
+
 @login_required
 def verify_certificate_view(request, certificate_id):
     certificate = get_object_or_404(Certificate, id=certificate_id)
@@ -876,19 +892,19 @@ def verify_certificate_view(request, certificate_id):
         can_verify = group_name == 'CEO'
     elif certificate.CertificateType in ['B_Army', 'B_AirForce', 'B_Navy']:
         can_verify = group_name in ['CEO', 'Staff']
-    elif certificate.CertificateType == 'C':
+    elif certificate.CertificateType == 'C_Army':
         can_verify = group_name in ['CEO', 'register_head', 'Staff']
+
+    logger.debug(f"Certificate ID: {certificate_id}, Group: {group_name}, Can Verify: {can_verify}")
 
     if request.method == 'POST' and can_verify:
         action = request.POST.get('action')
+        logger.debug(f"Action: {action}")
+
         if action == 'check':
-            # Implement the logic for the check action
             certificate.checked_by = user
-            certificate.save()
         elif action == 'revise':
-            # Implement the logic for the revise action
             certificate.revised_by = user
-            certificate.save()
         elif group_name == 'CEO':
             certificate.reviewer_ceo = user
             certificate.ceo_review_status = (action == 'approve')
@@ -898,7 +914,25 @@ def verify_certificate_view(request, certificate_id):
         elif group_name == 'Staff':
             certificate.reviewer_staff = user
             certificate.staff_review_status = (action == 'approve')
+
         certificate.save()
+        logger.debug(f"Certificate {certificate_id} updated with new review status")
+
+        # Apply signature if approved
+        if action == 'approve':
+            if certificate.CertificateType in ['A_Army', 'A_AirForce', 'A_Navy'] and group_name == 'CEO':
+                signature_path = os.path.join(settings.BASE_DIR, 'mainapp', 'static', 'signatures', 'ceo_signature.png')
+                certificate.apply_signature('CEO', signature_path)
+            elif certificate.CertificateType in ['B_Army', 'B_AirForce', 'B_Navy'] and group_name == 'Staff':
+                signature_path = os.path.join(settings.BASE_DIR, 'mainapp', 'static', 'signatures', 'staff_signature.png')
+                certificate.apply_signature('Staff', signature_path)
+            elif certificate.CertificateType == 'C_Army' and group_name == 'register_head':
+                signature_path = os.path.join(settings.BASE_DIR, 'mainapp', 'static', 'signatures', 'register_head_signature.png')
+                certificate.apply_signature('register_head', signature_path)
+
+            certificate.save()
+            logger.debug(f"Signature applied to Certificate {certificate_id}")
+
         return redirect('main')
 
     context = {
@@ -907,11 +941,10 @@ def verify_certificate_view(request, certificate_id):
         'group_name': group_name,
         'a_certificates': ['A_Army', 'A_AirForce', 'A_Navy'],
         'b_certificates': ['B_Army', 'B_AirForce', 'B_Navy'],
-        'c_certificates': ['C']
+        'c_certificates': ['C_Army']
     }
 
     return render(request, 'verify_certificate.html', context)
-
 
 from PIL import Image, ImageDraw, ImageFont
 from mainapp.models import Certificate  # Import your Certificate model here
@@ -994,3 +1027,23 @@ def rejected_certificates_ceo(request):
 def rejected_certificates_staff(request):
     rejected_certificates = Certificate.objects.filter(staff_review_status=False)
     return render(request, 'rejected_certificates.html', {'certificates': rejected_certificates, 'role': 'Staff'})
+
+
+
+import logging
+
+logger = logging.getLogger(__name__)
+
+def signed_certificates_view(request):
+    logger.debug("Entered signed_certificates_view")
+    signed_certificates = Certificate.objects.filter(is_signed=True)
+    logger.debug(f"Fetching signed certificates, count: {signed_certificates.count()}")
+
+    for cert in signed_certificates:
+        logger.debug(f"Signed certificate: {cert.Name}, Serial Number: {cert.serial_number}, is_signed: {cert.is_signed}")
+
+    context = {
+        'certificates': signed_certificates
+    }
+    
+    return render(request, 'signed_certificates.html', context)

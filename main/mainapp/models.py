@@ -8,9 +8,19 @@ class CampDetail(models.Model):
     location = models.CharField(max_length=255)
 
 
-import uuid
-from django.utils import timezone
+from django.db import models
+from django.conf import settings
+from django.core.files.base import ContentFile
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
+from PIL import Image
+import io
+import os
+import logging
+from django.contrib.auth.models import User
+
+logger = logging.getLogger(__name__)
 class Certificate(models.Model):
     CERTIFICATE_TYPE_CHOICES = [
         ('A_Army', 'A Army'),
@@ -39,15 +49,14 @@ class Certificate(models.Model):
     qr_code = models.ImageField(upload_to='qr_codes/', blank=True)
     final_certificate = models.ImageField(upload_to='media/certificates/', null=True, blank=True)
     is_duplicate = models.BooleanField(default=False)
-
-    reviewer_ceo = models.ForeignKey('auth.User', related_name='ceo_reviews', on_delete=models.SET_NULL, null=True, blank=True)
-    reviewer_register_head = models.ForeignKey('auth.User', related_name='register_head_reviews', on_delete=models.SET_NULL, null=True, blank=True)
-    reviewer_staff = models.ForeignKey('auth.User', related_name='staff_reviews', on_delete=models.SET_NULL, null=True, blank=True)
-    
+    reviewer_ceo = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='ceo_reviews', on_delete=models.SET_NULL, null=True, blank=True)
+    reviewer_register_head = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='register_head_reviews', on_delete=models.SET_NULL, null=True, blank=True)
+    reviewer_staff = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='staff_reviews', on_delete=models.SET_NULL, null=True, blank=True)
     ceo_review_status = models.BooleanField(null=True, blank=True)
     register_head_review_status = models.BooleanField(null=True, blank=True)
     staff_review_status = models.BooleanField(null=True, blank=True)
     signature_image = models.ImageField(upload_to='signatures/', null=True, blank=True)
+    is_signed = models.BooleanField(default=False)
 
     def __str__(self):
         return self.Name
@@ -56,6 +65,35 @@ class Certificate(models.Model):
         if not self.certificate_number:
             self.generate_numbers()
         super().save(*args, **kwargs)
+
+    def apply_signature(self, role, signature_file):
+        logger.debug(f"Applying signature for role: {role}, Certificate ID: {self.id}, Signature file: {signature_file}")
+        if self.final_certificate and signature_file:
+            try:
+                with Image.open(self.final_certificate.path) as base_image:
+                    with Image.open(signature_file) as signature:
+                        signature = signature.convert("RGBA")
+                        
+                        # Determine the position based on CertificateType
+                        if self.CertificateType == 'C_Army':
+                            position = (684, 1416)  # Adjust the position for C_Army
+                        else:
+                            position = (1372, 2409)  # Default position for other types
+
+                        # Paste signature onto certificate
+                        base_image.paste(signature, position, signature)
+                        
+                        # Save modified image back to final_certificate
+                        buffer = io.BytesIO()
+                        base_image.save(buffer, format='PNG')
+                        self.final_certificate.save(f"{self.Name}_signed.png", ContentFile(buffer.getvalue()))
+                        
+                        # Update is_signed status
+                        self.is_signed = True
+                        self.save()
+                        logger.debug(f"Signature successfully applied to Certificate {self.id}")
+            except Exception as e:
+                logger.error(f"Error applying signature to Certificate {self.id}: {e}")
 
     def generate_numbers(self):
         if self.CertificateType:
@@ -84,6 +122,9 @@ class Certificate(models.Model):
             self.certificate_number = f"UP/{cert_type[0]} Cert/{cert_branch}/{timezone.now().year}/{new_serial_number:03}"
         else:
             raise ValueError("CertificateType must be set before generating numbers")
+        
+
+
 
 
 class StudentDetail(models.Model):

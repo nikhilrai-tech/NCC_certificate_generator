@@ -1,0 +1,25 @@
+<!-- signed_certificates.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Signed Certificates</title>
+</head>
+<body>
+    <h1>Signed Certificates</h1>
+    {% if certificates %}
+        <ul>
+            {% for certificate in certificates %}
+                <li>
+                    <h2>{{ certificate.Name }}</h2>
+                    <p><strong>Certificate Type:</strong> {{ certificate.get_CertificateType_display }}</p>
+                    <p><strong>Serial Number:</strong> {{ certificate.serial_number }}</p>
+                    <img src="{{ certificate.final_certificate.url }}" alt="Signed Certificate">
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No signed certificates available.</p>
+    {% endif %}
+</body>
+</html>
