@@ -1035,16 +1035,22 @@ def download_duplicate_certificate(request):
     return HttpResponse("Invalid request method.")
 
 def rejected_certificates_register_head(request):
+    user = request.user
+    is_clerk = user.groups.filter(name='Clerk').exists()
     rejected_certificates = Certificate.objects.filter(register_head_review_status=False)
-    return render(request, 'rejected_certificates.html', {'certificates': rejected_certificates, 'role': 'Register Head'})
+    return render(request, 'rejected_certificates.html', {'certificates': rejected_certificates, 'role': 'ADG','is_clerk':is_clerk})
 
 def rejected_certificates_ceo(request):
+    user = request.user
+    is_clerk = user.groups.filter(name='Clerk').exists()
     rejected_certificates = Certificate.objects.filter(ceo_review_status=False)
-    return render(request, 'rejected_certificates.html', {'certificates': rejected_certificates, 'role': 'CEO'})
+    return render(request, 'rejected_certificates.html', {'certificates': rejected_certificates, 'role': 'CO','is_clerk':is_clerk})
 
 def rejected_certificates_staff(request):
+    user = request.user
+    is_clerk = user.groups.filter(name='Clerk').exists()
     rejected_certificates = Certificate.objects.filter(staff_review_status=False)
-    return render(request, 'rejected_certificates.html', {'certificates': rejected_certificates, 'role': 'Staff'})
+    return render(request, 'rejected_certificates.html', {'certificates': rejected_certificates, 'role': 'Group Commander','is_clerk':is_clerk})
 
 
 
@@ -1070,3 +1076,7 @@ def signed_certificates_view(request):
 def signed_certificates_viewtrue(request):
     signed_certificates = Certificate.objects.filter(is_signed=True)
     return render(request, 'signed_certificatestrue.html', {'certificates': signed_certificates})
+
+def unsigned_certificates_view(request):
+    certificates = Certificate.objects.filter(is_signed=False)
+    return render(request, 'unsigned_certificates.html', {'certificates': certificates})

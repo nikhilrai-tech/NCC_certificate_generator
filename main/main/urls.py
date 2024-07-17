@@ -48,6 +48,7 @@ urlpatterns = [
     path('rejected_certificates/staff/', rejected_certificates_staff, name='rejected_certificates_staff'),
     path('signed_certificates/', signed_certificates_view, name='signed_certificates'),
     path('signed_certificatestrue/', signed_certificates_viewtrue, name='signed_certificatestrue'),
+    path('unsigned-certificates/', unsigned_certificates_view, name='unsigned_certificates'),
     # path('view_admit_card/<int:student_id>/', view_admit_card, name='view_admit_card'),
     # path('view_admit_card/<int:student_id>/', view_admit_card, name='view_admit_card'),
 
