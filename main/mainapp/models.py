@@ -19,8 +19,25 @@ import io
 import os
 import logging
 from django.contrib.auth.models import User
-
+from django.core.exceptions import ValidationError
 logger = logging.getLogger(__name__)
+class CertificateNumberConfig(models.Model):
+    CERTIFICATE_TYPE_CHOICES = [
+        ('A_Army', 'A Army'),
+        ('A_AirForce', 'A AirForce'),
+        ('A_Navy', 'A Navy'),
+        ('B_AirForce', 'B AirForce'),
+        ('B_Army', 'B Army'),
+        ('B_Navy', 'B Navy'),
+        ('C_Army', 'C Army'),
+    ]
+    certificate_type = models.CharField(max_length=20, choices=CERTIFICATE_TYPE_CHOICES, unique=True)
+    starting_number = models.PositiveIntegerField()
+    ending_number = models.PositiveIntegerField()
+    current_number = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.get_certificate_type_display()} Configuration"
 class Certificate(models.Model):
     CERTIFICATE_TYPE_CHOICES = [
         ('A_Army', 'A Army'),
@@ -57,6 +74,7 @@ class Certificate(models.Model):
     staff_review_status = models.BooleanField(null=True, blank=True)
     signature_image = models.ImageField(upload_to='signatures/', null=True, blank=True)
     is_signed = models.BooleanField(default=False)
+    issue_date = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return self.Name
@@ -65,6 +83,37 @@ class Certificate(models.Model):
         if not self.certificate_number:
             self.generate_numbers()
         super().save(*args, **kwargs)
+
+    def generate_numbers(self):
+        if not self.CertificateType:
+            raise ValueError("CertificateType must be set before generating numbers")
+        
+        cert_type = self.CertificateType
+        
+        # Debugging statement
+        print(f"Generating numbers for CertificateType: {cert_type}")
+
+        # Fetch the configuration for the current certificate type
+        try:
+            config = CertificateNumberConfig.objects.get(certificate_type=cert_type)
+        except CertificateNumberConfig.DoesNotExist:
+            raise ValidationError(f"Configuration for CertificateType {cert_type} does not exist")
+
+        if config.current_number < config.starting_number:
+            config.current_number = config.starting_number
+        elif config.current_number >= config.ending_number:
+            raise ValidationError(f"Certificate numbers for {cert_type} type have reached the ending number")
+
+        new_serial_number = config.current_number + 1
+        config.current_number = new_serial_number
+        config.save()
+
+        cert_type_split = cert_type.split('_')
+        cert_type_initial = cert_type_split[0][0]
+        cert_branch_initial = cert_type_split[1][0]
+
+        self.serial_number = f"UP{timezone.now().year}{cert_type_initial}{cert_branch_initial}A{new_serial_number:06}"
+        self.certificate_number = f"UP/{cert_type_initial} Cert/{cert_type_split[1]}/{timezone.now().year}/{new_serial_number:01}"
 
     def apply_signature(self, role, signature_file):
         logger.debug(f"Applying signature for role: {role}, Certificate ID: {self.id}, Signature file: {signature_file}")
@@ -95,33 +144,33 @@ class Certificate(models.Model):
             except Exception as e:
                 logger.error(f"Error applying signature to Certificate {self.id}: {e}")
 
-    def generate_numbers(self):
-        if self.CertificateType:
-            cert_type_split = self.CertificateType.split('_')
+    # def generate_numbers(self):
+    #     if self.CertificateType:
+    #         cert_type_split = self.CertificateType.split('_')
 
-            if len(cert_type_split) != 2:
-                raise ValueError("CertificateType should be in format 'Type_Branch'")
+    #         if len(cert_type_split) != 2:
+    #             raise ValueError("CertificateType should be in format 'Type_Branch'")
             
-            cert_type, cert_branch = cert_type_split
-            prefix = f"UP{timezone.now().year}{cert_type[0]}{cert_branch[0]}A"  # Adjust the prefix as needed
+    #         cert_type, cert_branch = cert_type_split
+    #         prefix = f"UP{timezone.now().year}{cert_type[0]}{cert_branch[0]}A"  # Adjust the prefix as needed
             
-            # Find the last serial number for the given CertificateType
-            last_certificate = Certificate.objects.filter(CertificateType=self.CertificateType).order_by('-id').first()
+    #         # Find the last serial number for the given CertificateType
+    #         last_certificate = Certificate.objects.filter(CertificateType=self.CertificateType).order_by('-id').first()
             
-            if last_certificate and last_certificate.serial_number:
-                # Extract the numeric part from serial_number
-                last_serial_number = last_certificate.serial_number.split('/')[-1].split('A')[-1]
-                new_serial_number = int(last_serial_number) + 1
-            else:
-                new_serial_number = 1
+    #         if last_certificate and last_certificate.serial_number:
+    #             # Extract the numeric part from serial_number
+    #             last_serial_number = last_certificate.serial_number.split('/')[-1].split('A')[-1]
+    #             new_serial_number = int(last_serial_number) + 1
+    #         else:
+    #             new_serial_number = 1
 
-            # Format new serial number for serial_number
-            self.serial_number = f"UP{timezone.now().year}{cert_type[0]}{cert_branch[0]}A{new_serial_number:06}"
+    #         # Format new serial number for serial_number
+    #         self.serial_number = f"UP{timezone.now().year}{cert_type[0]}{cert_branch[0]}A{new_serial_number:06}"
             
-            # For certificate_number, keep the existing format
-            self.certificate_number = f"UP/{cert_type[0]} Cert/{cert_branch}/{timezone.now().year}/{new_serial_number:03}"
-        else:
-            raise ValueError("CertificateType must be set before generating numbers")
+    #         # For certificate_number, keep the existing format
+    #         self.certificate_number = f"UP/{cert_type[0]} Cert/{cert_branch}/{timezone.now().year}/{new_serial_number:03}"
+    #     else:
+    #         raise ValueError("CertificateType must be set before generating numbers")
         
 
 

@@ -571,19 +571,25 @@ def student_detail_extended_view(request, student_id):
             if student.pass_fail == 'Pass':
                 if not student.certificate:
                     if student.unit and student.rank:
-                        certificate_type = f"{student.unit}_{student.rank}"
-                        certificate = Certificate.objects.create(
-                            Name=student.name,
-                            DOB=student.dob,
-                            Guardian=student.fathers_name,
-                            CadetRank=student.rank,
-                            CertificateType=certificate_type,
-                            Unit=student.unit,
-                            Institute=student.school_college,
-                            user_image=student.attach_photo_b_certificate,
-                        )
-                        student.certificate = certificate
-                        student.save()
+                        try:
+                            # Set a default CertificateType if not provided
+                            certificate_type = 'A_Army'  # You can set this based on your logic
+                            
+                            certificate = Certificate.objects.create(
+                                Name=student.name,
+                                DOB=student.dob,
+                                Guardian=student.fathers_name,
+                                CadetRank=student.rank,
+                                CertificateType=certificate_type,
+                                Unit=student.unit,
+                                Institute=student.school_college,
+                                user_image=student.attach_photo_b_certificate,
+                            )
+                            student.certificate = certificate
+                            student.save()
+                        except Exception as e:
+                            print(e)
+                            form.add_error(None, f"Error creating certificate: {str(e)}")
                 else:
                     certificate = student.certificate
                     certificate.Name = student.name
@@ -766,6 +772,8 @@ def edit_student_detail(request, id):
                 'serial_number': (172, 729),
                 'qr_code': (68, 286),  # Example position for QR code
                 'user_image': (888, 286),  # Example position for user image
+                'issue_date': (195, 1650),  # Example position for user image
+                
             }
 
             # Default text positions for other certificates
@@ -783,6 +791,7 @@ def edit_student_detail(request, id):
                 'serial_number': (394, 1114),
                 'qr_code': (215, 251),  # Example position for QR code
                 'user_image': (1721, 251),  # Example position for user image
+                'issue_date': (422, 2790)
             }
 
             # Select text positions based on certificate type
