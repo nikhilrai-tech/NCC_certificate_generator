@@ -772,8 +772,7 @@ def edit_student_detail(request, id):
                 'serial_number': (172, 729),
                 'qr_code': (68, 286),  # Example position for QR code
                 'user_image': (888, 286),  # Example position for user image
-                'issue_date': (195, 1650),  # Example position for user image
-                
+                'issue_date': (195, 1650),  # Example position for issue date
             }
 
             # Default text positions for other certificates
@@ -791,7 +790,7 @@ def edit_student_detail(request, id):
                 'serial_number': (394, 1114),
                 'qr_code': (215, 251),  # Example position for QR code
                 'user_image': (1721, 251),  # Example position for user image
-                'issue_date': (422, 2790)
+                'issue_date': (422, 2790),  # Example position for issue date
             }
 
             # Select text positions based on certificate type
@@ -823,6 +822,8 @@ def edit_student_detail(request, id):
             for field, pos in text_positions.items():
                 if field not in ['qr_code', 'user_image'] and hasattr(certificate, field):
                     value = str(getattr(certificate, field))
+                    if field == 'issue_date':
+                        value = certificate.issue_date.strftime('%d/%m/%Y')
                     draw.text(pos, value, font=font, fill="black")
 
             # Save the final certificate image to memory buffer
@@ -1065,3 +1066,8 @@ def signed_certificates_view(request):
     }
     
     return render(request, 'signed_certificates.html', context)
+
+
+def signed_certificates_viewtrue(request):
+    signed_certificates = Certificate.objects.filter(is_signed=True)
+    return render(request, 'signed_certificatestrue.html', {'certificates': signed_certificates})

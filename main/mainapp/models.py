@@ -76,6 +76,10 @@ class Certificate(models.Model):
     is_signed = models.BooleanField(default=False)
     issue_date = models.DateField(auto_now_add=True)
 
+    def formatted_issue_date(self):
+        return self.issue_date.strftime('%d/%m/%Y')
+
+
     def __str__(self):
         return self.Name
 

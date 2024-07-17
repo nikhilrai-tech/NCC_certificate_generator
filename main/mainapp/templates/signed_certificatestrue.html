@@ -1,0 +1,63 @@
+<!-- signed_certificates.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signed Certificates</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .certificate-card {
+            margin-bottom: 20px;
+        }
+        .certificate-image {
+            max-width: 100%;
+            height: auto;
+        }
+        .certificate-details {
+            margin-top: 10px;
+        }
+        .page-title {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            {% for certificate in certificates %}
+            {% if certificate.is_signed %}
+            <div class="col-md-4">
+                <div class="card certificate-card">
+                    <img src="{{ certificate.final_certificate.url }}" class="card-img-top certificate-image" alt="Certificate Image">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ certificate.Name }}</h5>
+                        <p class="card-text certificate-details">
+                            <strong>Certificate Number:</strong> {{ certificate.certificate_number }}<br>
+                            <strong>Serial Number:</strong> {{ certificate.serial_number }}<br>
+                            <strong>Issue Date:</strong> {{ certificate.formatted_issue_date }}<br>
+                            <strong>Date of Birth:</strong> {{ certificate.DOB }}<br>
+                            <strong>Guardian:</strong> {{ certificate.Guardian }}<br>
+                            <strong>Cadet Rank:</strong> {{ certificate.CadetRank }}<br>
+                            <strong>Passing Year:</strong> {{ certificate.PassingYear }}<br>
+                            <strong>Grade:</strong> {{ certificate.Grade }}<br>
+                            <strong>Unit:</strong> {{ certificate.Unit }}<br>
+                            <strong>Directorate:</strong> {{ certificate.Directorate }}<br>
+                            <strong>Place:</strong> {{ certificate.Place }}<br>
+                            <strong>Institute:</strong> {{ certificate.Institute }}<br>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        <a href="{% url 'dashboard' %}" class="button alert alert-primary">Return To Dashboard</a>
+
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
