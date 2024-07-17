@@ -10,7 +10,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css"
         rel="stylesheet">
     <style>
-        body {
+         body {
             font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
@@ -118,6 +118,7 @@
                     <input type="radio" name="action" value="approve" class="auto-submit-radio" onclick="this.form.submit();">
                     <span class="radio-dot"></span>
                 </label>
+                <textarea name="remarks" placeholder="Enter your remarks" class="mt-3"></textarea>
             </form>
             <p class="accept">Accept</p>
             {% endif %}
@@ -135,6 +136,7 @@
                     <input type="radio" name="action" value="reject" class="auto-submit-radio" onclick="this.form.submit();">
                     <span class="radio-dot"></span>
                 </label>
+                <textarea name="remarks" placeholder="Enter your remarks" class="mt-3"></textarea>
             </form>
             <p class="reject">Reject</p>
             {% endif %}

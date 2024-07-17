@@ -75,6 +75,7 @@ class Certificate(models.Model):
     signature_image = models.ImageField(upload_to='signatures/', null=True, blank=True)
     is_signed = models.BooleanField(default=False)
     issue_date = models.DateField(auto_now_add=True)
+    remarks = models.TextField(blank=True, null=True)
 
     def formatted_issue_date(self):
         return self.issue_date.strftime('%d/%m/%Y')

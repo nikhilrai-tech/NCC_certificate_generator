@@ -420,7 +420,7 @@ def dashboard(request):
     group_name = None
     if user.groups.filter(name='CEO').exists():
         group_name = 'CEO'
-        certificates = Certificate.objects.filter(CertificateType__in=['A_Army', 'A_AirForce', 'A_Navy', 'B_Army', 'B_AirForce', 'B_Navy', 'C'])
+        certificates = Certificate.objects.filter(CertificateType__in=['A_Army', 'A_AirForce', 'A_Navy', 'B_Army', 'B_AirForce', 'B_Navy', 'C_Army'])
     elif user.groups.filter(name='Staff').exists():
         group_name = 'Staff'
         certificates = Certificate.objects.filter(CertificateType__in=['B_Army', 'B_AirForce', 'B_Navy', 'C_Army'])
@@ -465,9 +465,23 @@ def dashboard(request):
 
 def mintemplate(request):
     certificates = Certificate.objects.all()
-    is_clerk = request.user.groups.filter(name='Clerk').exists()
-    
-    
+    user = request.user
+
+    # Determine the user's group
+    is_ceo = user.groups.filter(name='CEO').exists()
+    is_staff = user.groups.filter(name='Staff').exists()
+    is_clerk = user.groups.filter(name='Clerk').exists()
+    is_register_head = user.groups.filter(name='register_head').exists()
+
+
+    # Filter certificates based on the user's group
+    if is_ceo:
+        certificates = certificates.filter(CertificateType__in=['A_Army', 'A_AirForce', 'A_Navy','B_Army', 'B_AirForce', 'B_Navy','C_Army'])
+    elif is_staff:
+        certificates = certificates.filter(CertificateType__in=['B_Army', 'B_AirForce', 'B_Navy','C_Army'])
+    elif is_register_head:
+        certificates = certificates.filter(CertificateType__in=['C_Army'])
+
     return render(request, "maintemp.html", {'certificates': certificates, 'is_clerk': is_clerk})
 
 
@@ -721,7 +735,6 @@ def edit_student_detail(request, id):
             certificate = certificate_form.save(commit=False)
 
             try:
-                # Attempt to generate certificate numbers
                 certificate.generate_numbers()
             except ValueError as e:
                 print(f"Error generating numbers: {e}")
@@ -731,7 +744,6 @@ def edit_student_detail(request, id):
                     'error_message': str(e),
                 })
 
-            # Generate QR code with certificate URL
             qr_url = request.build_absolute_uri(f"/qr_scan/{certificate.id}/")
             qr = qrcode.QRCode(
                 version=1,
@@ -742,22 +754,17 @@ def edit_student_detail(request, id):
             qr.add_data(qr_url)
             qr.make(fit=True)
 
-            # Create QR code image
             qr_img = qr.make_image(fill_color="black", back_color="white")
 
-            # Save QR code image to memory buffer
             buffer = BytesIO()
             qr_img.save(buffer, format='PNG')
             buffer.seek(0)
 
-            # Save QR code image to the model instance's qr_code field
             certificate.qr_code.save(f'{certificate.Name}_qr.png', File(buffer))
 
-            # Select the appropriate JPG template based on the certificate type
             jpg_template_path = os.path.join(settings.BASE_DIR, f"templates/certificates/{certificate.CertificateType}.jpg")
             certificate_img = Image.open(jpg_template_path)
 
-            # Define text positions for C Army certificate, including QR code and user image
             c_army_text_positions = {
                 'Name': (197, 816),
                 'DOB': (952, 930),
@@ -770,12 +777,11 @@ def edit_student_detail(request, id):
                 'Place': (180, 1550),
                 'certificate_number': (757, 20),
                 'serial_number': (172, 729),
-                'qr_code': (68, 286),  # Example position for QR code
-                'user_image': (888, 286),  # Example position for user image
-                'issue_date': (195, 1650),  # Example position for issue date
+                'qr_code': (68, 286),
+                'user_image': (888, 286),
+                'issue_date': (195, 1650),
             }
 
-            # Default text positions for other certificates
             default_text_positions = {
                 'Name': (376, 1316),
                 'DOB': (1662, 1504),
@@ -788,24 +794,22 @@ def edit_student_detail(request, id):
                 'Place': (408, 2600),
                 'certificate_number': (1593, 52),
                 'serial_number': (394, 1114),
-                'qr_code': (215, 251),  # Example position for QR code
-                'user_image': (1721, 251),  # Example position for user image
-                'issue_date': (422, 2790),  # Example position for issue date
+                'qr_code': (215, 251),
+                'user_image': (1721, 251),
+                'issue_date': (422, 2790),
             }
 
-            # Select text positions based on certificate type
             if certificate.CertificateType == 'C_Army':
                 text_positions = c_army_text_positions
-                qr_img_size = (200, 200)  # Reduced size of QR code for C Army
-                user_img_size = (200, 200)  # Reduced size of user image for C Army
-                font_size = 35  # Reduced font size for C Army
+                qr_img_size = (200, 200)
+                user_img_size = (200, 200)
+                font_size = 35
             else:
                 text_positions = default_text_positions
-                qr_img_size = (400, 400)  # Default size of QR code for others
-                user_img_size = (400, 400)  # Default size of user image for others
-                font_size = 60  # Default font size for others
+                qr_img_size = (400, 400)
+                user_img_size = (400, 400)
+                font_size = 60
 
-            # Overlay QR code onto the certificate image
             qr_img = qr_img.resize(qr_img_size)
             certificate_img.paste(qr_img, text_positions['qr_code'])
 
@@ -814,7 +818,6 @@ def edit_student_detail(request, id):
                 user_img = user_img.resize(user_img_size)
                 certificate_img.paste(user_img, text_positions['user_image'])
 
-            # Draw text on the certificate image
             draw = ImageDraw.Draw(certificate_img)
             font_path = os.path.join(settings.BASE_DIR, "arial.ttf")
             font = ImageFont.truetype(font_path, font_size)
@@ -824,17 +827,16 @@ def edit_student_detail(request, id):
                     value = str(getattr(certificate, field))
                     if field == 'issue_date':
                         value = certificate.issue_date.strftime('%d/%m/%Y')
+                    if field == 'DOB':
+                        value = certificate.DOB.strftime('%d/%m/%Y')
                     draw.text(pos, value, font=font, fill="black")
 
-            # Save the final certificate image to memory buffer
             final_buffer = BytesIO()
             certificate_img.save(final_buffer, format='JPEG')
             final_buffer.seek(0)
 
-            # Save the final certificate image to the model instance's final_certificate field
             certificate.final_certificate.save(f'{certificate.Name}_certificate.jpg', File(final_buffer))
 
-            # Save the complete form data
             certificate.save()
 
             return redirect('dashboard')
@@ -914,11 +916,9 @@ def verify_certificate_view(request, certificate_id):
     elif certificate.CertificateType == 'C_Army':
         can_verify = group_name in ['CEO', 'register_head', 'Staff']
 
-    logger.debug(f"Certificate ID: {certificate_id}, Group: {group_name}, Can Verify: {can_verify}")
-
     if request.method == 'POST' and can_verify:
         action = request.POST.get('action')
-        logger.debug(f"Action: {action}")
+        remarks = request.POST.get('remarks')
 
         if action == 'check':
             certificate.checked_by = user
@@ -934,8 +934,8 @@ def verify_certificate_view(request, certificate_id):
             certificate.reviewer_staff = user
             certificate.staff_review_status = (action == 'approve')
 
+        certificate.remarks = remarks
         certificate.save()
-        logger.debug(f"Certificate {certificate_id} updated with new review status")
 
         # Apply signature if approved
         if action == 'approve':
@@ -950,7 +950,6 @@ def verify_certificate_view(request, certificate_id):
                 certificate.apply_signature('register_head', signature_path)
 
             certificate.save()
-            logger.debug(f"Signature applied to Certificate {certificate_id}")
 
         return redirect('main')
 
