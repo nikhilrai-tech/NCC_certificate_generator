@@ -835,7 +835,21 @@ def edit_student_detail(request, id):
             certificate_img.save(final_buffer, format='JPEG')
             final_buffer.seek(0)
 
-            certificate.final_certificate.save(f'{certificate.Name}_certificate.jpg', File(final_buffer))
+            if certificate.CertificateType in ['B_AirForce', 'B_Army', 'B_Navy', 'C_Army']:
+                # Use the same back template for all 'B' types
+                jpg_back_template_path = os.path.join(settings.BASE_DIR, "templates/certificates/B_back.jpg")
+                back_certificate_img = Image.open(jpg_back_template_path)
+
+                back_buffer = BytesIO()
+                back_certificate_img.save(back_buffer, format='JPEG')
+                back_buffer.seek(0)
+
+                pdf_buffer = BytesIO()
+                certificate_img.save(pdf_buffer, format='PDF', save_all=True, append_images=[back_certificate_img])
+                pdf_buffer.seek(0)
+                certificate.final_certificate.save(f'{certificate.Name}_certificate.pdf', File(pdf_buffer))
+            else:
+                certificate.final_certificate.save(f'{certificate.Name}_certificate.jpg', File(final_buffer))
 
             certificate.save()
 
