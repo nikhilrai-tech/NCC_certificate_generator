@@ -723,148 +723,184 @@ def certhome(request):
     print(fm)
     return render(request,"certhome.html",{"fm":fm})
 
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.utils import ImageReader
+from django.core.files.base import ContentFile
+import qrcode
+from io import BytesIO
+from PIL import Image
+import os
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import StudentDetail
+from .forms import CertificateForm
+from django.conf import settings
+from PyPDF2 import PdfReader, PdfWriter
+
+# def draw_grid(c, width, height, step=50):
+#   c.setStrokeColorRGB(0.8, 0.8, 0.8)  # Light gray color for the grid
+#   c.setLineWidth(0.1)  # Thinner lines
+#   c.setFont("Helvetica", 5)  # Smaller font for labels
+
+#   # Draw vertical lines
+#   for x in range(0, int(width) + step, step):
+#       c.line(x, 0, x, height)
+#       c.drawString(x + 1, 5, str(x))  # Bottom label
+#       c.drawString(x + 1, height - 10, str(x))  # Top label
+
+#   # Draw horizontal lines
+#   for y in range(0, int(height) + step, step):
+#       c.line(0, y, width, y)
+#       c.drawString(5, y + 1, str(y))  # Left label
+#       c.drawString(width - 20, y + 1, str(y))  # Right label
 
 def edit_student_detail(request, id):
-    student_detail = get_object_or_404(StudentDetail, id=id)
-    certificate = student_detail.certificate
+  student_detail = get_object_or_404(StudentDetail, id=id)
+  certificate = student_detail.certificate
 
-    if request.method == 'POST':
-        certificate_form = CertificateForm(request.POST, request.FILES, instance=certificate)
+  if request.method == 'POST':
+      certificate_form = CertificateForm(request.POST, request.FILES, instance=certificate)
 
-        if certificate_form.is_valid():
-            certificate = certificate_form.save(commit=False)
+      if certificate_form.is_valid():
+          certificate = certificate_form.save(commit=False)
 
-            try:
-                certificate.generate_numbers()
-            except ValueError as e:
-                print(f"Error generating numbers: {e}")
-                return render(request, 'edit_student_detail.html', {
-                    'certificate_form': certificate_form,
-                    'student_detail': student_detail,
-                    'error_message': str(e),
-                })
+          try:
+              certificate.generate_numbers()
+          except ValueError as e:
+              print(f"Error generating numbers: {e}")
+              return render(request, 'edit_student_detail.html', {
+                  'certificate_form': certificate_form,
+                  'student_detail': student_detail,
+                  'error_message': str(e),
+              })
 
-            qr_url = request.build_absolute_uri(f"/qr_scan/{certificate.id}/")
-            qr = qrcode.QRCode(
-                version=1,
-                error_correction=qrcode.constants.ERROR_CORRECT_L,
-                box_size=10,
-                border=4,
-            )
-            qr.add_data(qr_url)
-            qr.make(fit=True)
+          qr_url = request.build_absolute_uri(f"/qr_scan/{certificate.id}/")
+          qr = qrcode.QRCode(
+              version=1,
+              error_correction=qrcode.constants.ERROR_CORRECT_L,
+              box_size=10,
+              border=4,
+          )
+          qr.add_data(qr_url)
+          qr.make(fit=True)
 
-            qr_img = qr.make_image(fill_color="black", back_color="white")
+          qr_img = qr.make_image(fill_color="black", back_color="white")
 
-            buffer = BytesIO()
-            qr_img.save(buffer, format='PNG')
-            buffer.seek(0)
+          buffer = BytesIO()
+          qr_img.save(buffer, format='PNG')
+          buffer.seek(0)
 
-            certificate.qr_code.save(f'{certificate.Name}_qr.png', File(buffer))
+          certificate.qr_code.save(f'{certificate.Name}_qr.png', File(buffer))
 
-            jpg_template_path = os.path.join(settings.BASE_DIR, f"templates/certificates/{certificate.CertificateType}.jpg")
-            certificate_img = Image.open(jpg_template_path)
+          pdf_template_path = os.path.join(settings.BASE_DIR, f"templates/certificates/{certificate.CertificateType}.pdf")
 
-            c_army_text_positions = {
-                'Name': (197, 816),
-                'DOB': (952, 930),
-                'Guardian': (989, 837),
-                'CadetRank': (896, 754),
-                'PassingYear': (565, 1260),
-                'Grade': (500, 2400),
-                'Unit': (195, 927),
-                'Directorate': (460, 1047),
-                'Place': (180, 1550),
-                'certificate_number': (757, 20),
-                'serial_number': (172, 729),
-                'qr_code': (68, 286),
-                'user_image': (888, 286),
-                'issue_date': (195, 1650),
-            }
+          c_army_text_positions = {
+              'Name': (100, 400),
+              'DOB': (450, 360),
+              'Guardian': (470, 400),
+              'CadetRank': (425, 450),
+              'PassingYear': (260, 195),
+              'Grade': (500, 2400),
+              'Unit': (100, 360),
+              'Directorate': (200, 300),
+              'Place': (100, 50),
+              'certificate_number': (400, 780),
+              'serial_number': (100, 450),
+              'qr_code': (450, 660),
+              'user_image': (50, 660),
+              'issue_date': (90, 10),
+          }
 
-            default_text_positions = {
-                'Name': (376, 1316),
-                'DOB': (1662, 1504),
-                'Guardian': (1763, 1302),
-                'CadetRank': (1519, 1132),
-                'PassingYear': (1239, 2125),
-                'Grade': (486, 2340),
-                'Unit': (408, 1495),
-                'Directorate': (977, 1715),
-                'Place': (408, 2600),
-                'certificate_number': (1593, 52),
-                'serial_number': (394, 1114),
-                'qr_code': (215, 251),
-                'user_image': (1721, 251),
-                'issue_date': (422, 2790),
-            }
+          default_text_positions = {
+              'Name': (100, 520),
+              'DOB': (400, 470),
+              'Guardian': (450, 520),
+              'CadetRank': (400, 560),
+              'PassingYear': (300, 320),
+              'Grade': (130, 270),
+              'Unit': (100, 465),
+              'Directorate': (200, 420),
+              'Place': (100, 200),
+              'certificate_number': (370, 760),
+              'serial_number': (70, 560),
+              'qr_code': (500, 660),
+              'user_image': (50, 660),
+              'issue_date': (100, 160),
+          }
 
-            if certificate.CertificateType == 'C_Army':
-                text_positions = c_army_text_positions
-                qr_img_size = (200, 200)
-                user_img_size = (200, 200)
-                font_size = 35
-            else:
-                text_positions = default_text_positions
-                qr_img_size = (400, 400)
-                user_img_size = (400, 400)
-                font_size = 60
+          if certificate.CertificateType == 'C_Army':
+              text_positions = c_army_text_positions
+              qr_img_size = (90, 90)
+              user_img_size = (90, 90)
+              font_size = 15
+          else:
+              text_positions = default_text_positions
+              qr_img_size = (90, 90)
+              user_img_size = (90, 90)
+              font_size = 15
 
-            qr_img = qr_img.resize(qr_img_size)
-            certificate_img.paste(qr_img, text_positions['qr_code'])
+          qr_img = qr_img.resize(qr_img_size)
 
-            if certificate.user_image:
-                user_img = Image.open(certificate.user_image.path)
-                user_img = user_img.resize(user_img_size)
-                certificate_img.paste(user_img, text_positions['user_image'])
+          buffer = BytesIO()
+          c = canvas.Canvas(buffer, pagesize=letter)
 
-            draw = ImageDraw.Draw(certificate_img)
-            font_path = os.path.join(settings.BASE_DIR, "arial.ttf")
-            font = ImageFont.truetype(font_path, font_size)
+          # Draw the grid
+        #   draw_grid(c, letter[0], letter[1])
 
-            for field, pos in text_positions.items():
-                if field not in ['qr_code', 'user_image'] and hasattr(certificate, field):
-                    value = str(getattr(certificate, field))
-                    if field == 'issue_date':
-                        value = certificate.issue_date.strftime('%d/%m/%Y')
-                    if field == 'DOB':
-                        value = certificate.DOB.strftime('%d/%m/%Y')
-                    draw.text(pos, value, font=font, fill="black")
+          qr_img_reader = ImageReader(qr_img)
+          c.drawImage(qr_img_reader, *text_positions['qr_code'], width=qr_img_size[0], height=qr_img_size[1])
 
-            final_buffer = BytesIO()
-            certificate_img.save(final_buffer, format='JPEG')
-            final_buffer.seek(0)
+          if certificate.user_image:
+              user_img = Image.open(certificate.user_image.path)
+              user_img = user_img.resize(user_img_size)
+              user_img_reader = ImageReader(user_img)
+              c.drawImage(user_img_reader, *text_positions['user_image'], width=user_img_size[0], height=user_img_size[1])
 
-            if certificate.CertificateType in ['B_AirForce', 'B_Army', 'B_Navy', 'C_Army']:
-                # Use the same back template for all 'B' types
-                jpg_back_template_path = os.path.join(settings.BASE_DIR, "templates/certificates/B_back.jpg")
-                back_certificate_img = Image.open(jpg_back_template_path)
+          c.setFont("Helvetica", font_size)
 
-                back_buffer = BytesIO()
-                back_certificate_img.save(back_buffer, format='JPEG')
-                back_buffer.seek(0)
+          for field, pos in text_positions.items():
+              if field not in ['qr_code', 'user_image'] and hasattr(certificate, field):
+                  value = str(getattr(certificate, field))
+                  if field == 'issue_date':
+                      value = certificate.issue_date.strftime('%d/%m/%Y')
+                  if field == 'DOB':
+                      value = certificate.DOB.strftime('%d/%m/%Y')
+                  c.drawString(pos[0], pos[1], value)
 
-                pdf_buffer = BytesIO()
-                certificate_img.save(pdf_buffer, format='PDF', save_all=True, append_images=[back_certificate_img])
-                pdf_buffer.seek(0)
-                certificate.final_certificate.save(f'{certificate.Name}_certificate.pdf', File(pdf_buffer))
-            else:
-                certificate.final_certificate.save(f'{certificate.Name}_certificate.jpg', File(final_buffer))
+          c.save()
 
-            certificate.save()
+          buffer.seek(0)
+          overlay_pdf = PdfReader(buffer)
+          template_pdf = PdfReader(open(pdf_template_path, "rb"))
+          output_pdf = PdfWriter()
 
-            return redirect('dashboard')
+          for page_num in range(len(template_pdf.pages)):
+              template_page = template_pdf.pages[page_num]
+              if page_num < len(overlay_pdf.pages):
+                  overlay_page = overlay_pdf.pages[page_num]
+                  template_page.merge_page(overlay_page)
+              output_pdf.add_page(template_page)
 
-        else:
-            print("Certificate Form Errors: ", certificate_form.errors)
+          final_buffer = BytesIO()
+          output_pdf.write(final_buffer)
+          final_buffer.seek(0)
 
-    else:
-        certificate_form = CertificateForm(instance=certificate)
+          certificate.final_certificate.save(f'{certificate.Name}_certificate.pdf', ContentFile(final_buffer.getvalue()))
 
-    return render(request, 'edit_student_detail.html', {
-        'certificate_form': certificate_form,
-        'student_detail': student_detail,
-    })
+          certificate.save()
+
+          return redirect('dashboard')
+
+      else:
+          print("Certificate Form Errors: ", certificate_form.errors)
+
+  else:
+      certificate_form = CertificateForm(instance=certificate)
+
+  return render(request, 'edit_student_detail.html', {
+      'certificate_form': certificate_form,
+      'student_detail': student_detail,
+  })
 
 def certificate_success(request):
     return render(request, 'certificate_success1.html')
@@ -909,74 +945,80 @@ logger = logging.getLogger(__name__)
 
 @login_required
 def verify_certificate_view(request, certificate_id):
-    certificate = get_object_or_404(Certificate, id=certificate_id)
-    user = request.user
-    can_verify = False
-    group_name = None
+  certificate = get_object_or_404(Certificate, id=certificate_id)
+  user = request.user
+  can_verify = False
+  group_name = None
 
-    # Determine the user's group
-    if user.groups.filter(name='CEO').exists():
-        group_name = 'CEO'
-    elif user.groups.filter(name='register_head').exists():
-        group_name = 'register_head'
-    elif user.groups.filter(name='Staff').exists():
-        group_name = 'Staff'
+  # Determine the user's group
+  if user.groups.filter(name='CEO').exists():
+      group_name = 'CEO'
+  elif user.groups.filter(name='register_head').exists():
+      group_name = 'register_head'
+  elif user.groups.filter(name='Staff').exists():
+      group_name = 'Staff'
 
-    # Determine if the user can verify this certificate based on their group
-    if certificate.CertificateType in ['A_Army', 'A_AirForce', 'A_Navy']:
-        can_verify = group_name == 'CEO'
-    elif certificate.CertificateType in ['B_Army', 'B_AirForce', 'B_Navy']:
-        can_verify = group_name in ['CEO', 'Staff']
-    elif certificate.CertificateType == 'C_Army':
-        can_verify = group_name in ['CEO', 'register_head', 'Staff']
+  # Determine if the user can verify this certificate based on their group
+  if certificate.CertificateType.startswith('A_'):
+      can_verify = group_name == 'CEO'
+  elif certificate.CertificateType.startswith('B_'):
+      can_verify = group_name in ['CEO', 'Staff']
+  elif certificate.CertificateType == 'C_Army':
+      can_verify = group_name in ['CEO', 'register_head', 'Staff']
 
-    if request.method == 'POST' and can_verify:
-        action = request.POST.get('action')
-        remarks = request.POST.get('remarks')
+  if request.method == 'POST' and can_verify:
+      action = request.POST.get('action')
+      remarks = request.POST.get('remarks')
 
-        if action == 'check':
-            certificate.checked_by = user
-        elif action == 'revise':
-            certificate.revised_by = user
-        elif group_name == 'CEO':
-            certificate.reviewer_ceo = user
-            certificate.ceo_review_status = (action == 'approve')
-        elif group_name == 'register_head':
-            certificate.reviewer_register_head = user
-            certificate.register_head_review_status = (action == 'approve')
-        elif group_name == 'Staff':
-            certificate.reviewer_staff = user
-            certificate.staff_review_status = (action == 'approve')
+      if action == 'check':
+          certificate.checked_by = user
+      elif action == 'revise':
+          certificate.revised_by = user
+      elif group_name == 'CEO':
+          certificate.reviewer_ceo = user
+          certificate.ceo_review_status = (action == 'approve')
+      elif group_name == 'register_head':
+          certificate.reviewer_register_head = user
+          certificate.register_head_review_status = (action == 'approve')
+      elif group_name == 'Staff':
+          certificate.reviewer_staff = user
+          certificate.staff_review_status = (action == 'approve')
 
-        certificate.remarks = remarks
-        certificate.save()
+      certificate.remarks = remarks
+      certificate.save()
 
-        # Apply signature if approved
-        if action == 'approve':
-            if certificate.CertificateType in ['A_Army', 'A_AirForce', 'A_Navy'] and group_name == 'CEO':
-                signature_path = os.path.join(settings.BASE_DIR, 'mainapp', 'static', 'signatures', 'ceo_signature.png')
-                certificate.apply_signature('CEO', signature_path)
-            elif certificate.CertificateType in ['B_Army', 'B_AirForce', 'B_Navy'] and group_name == 'Staff':
-                signature_path = os.path.join(settings.BASE_DIR, 'mainapp', 'static', 'signatures', 'staff_signature.png')
-                certificate.apply_signature('Staff', signature_path)
-            elif certificate.CertificateType == 'C_Army' and group_name == 'register_head':
-                signature_path = os.path.join(settings.BASE_DIR, 'mainapp', 'static', 'signatures', 'register_head_signature.png')
-                certificate.apply_signature('register_head', signature_path)
+      # Apply signature if approved
+      if action == 'approve':
+          signature_path = os.path.join(settings.BASE_DIR, 'mainapp', 'static', 'signatures', f'{group_name.lower()}_signature.png')
+          
+          if certificate.CertificateType.startswith('A_') and group_name == 'CEO':
+              certificate.apply_signature('CEO', signature_path)
+          elif certificate.CertificateType.startswith('B_'):
+              if group_name == 'Staff' and not certificate.staff_signature_applied:
+                  certificate.apply_signature('Staff', signature_path)
+              elif group_name == 'CEO' and not certificate.ceo_signature_applied:
+                  certificate.apply_signature('CEO', signature_path)
+          elif certificate.CertificateType == 'C_Army':
+              if group_name == 'register_head' and not certificate.register_head_signature_applied:
+                  certificate.apply_signature('register_head', signature_path)
+              elif group_name in ['CEO', 'Staff']:
+                  if group_name == 'CEO' and not certificate.ceo_signature_applied:
+                      certificate.apply_signature('CEO', signature_path)
+                  elif group_name == 'Staff' and not certificate.staff_signature_applied:
+                      certificate.apply_signature('Staff', signature_path)
 
-            certificate.save()
+      return redirect('main')
 
-        return redirect('main')
+  context = {
+      'certificate': certificate,
+      'can_verify': can_verify,
+      'group_name': group_name,
+      'a_certificates': ['A_Army', 'A_AirForce', 'A_Navy'],
+      'b_certificates': ['B_Army', 'B_AirForce', 'B_Navy'],
+      'c_certificates': ['C_Army']
+  }
 
-    context = {
-        'certificate': certificate,
-        'can_verify': can_verify,
-        'group_name': group_name,
-        'a_certificates': ['A_Army', 'A_AirForce', 'A_Navy'],
-        'b_certificates': ['B_Army', 'B_AirForce', 'B_Navy'],
-        'c_certificates': ['C_Army']
-    }
-
-    return render(request, 'verify_certificate.html', context)
+  return render(request, 'verify_certificate.html', context)
 
 from PIL import Image, ImageDraw, ImageFont
 from mainapp.models import Certificate  # Import your Certificate model here
