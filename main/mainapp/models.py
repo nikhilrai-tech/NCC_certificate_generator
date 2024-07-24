@@ -93,6 +93,7 @@ class Certificate(models.Model):
   ceo_signature_applied = models.BooleanField(default=False)
   staff_signature_applied = models.BooleanField(default=False)
   register_head_signature_applied = models.BooleanField(default=False)
+  preview_image = models.ImageField(upload_to='certificate_previews/', null=True, blank=True)
 
 
   def formatted_issue_date(self):

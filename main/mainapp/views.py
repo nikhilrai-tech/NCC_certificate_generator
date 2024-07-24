@@ -147,57 +147,25 @@ from django.shortcuts import get_object_or_404
 from .models import Certificate
 from PIL import Image
 def download_all_certificates(request):
-    certificates = Certificate.objects.all()
-    if not certificates:
-        raise Http404("No certificates found.")
+  certificates = Certificate.objects.all()
+  if not certificates:
+      raise Http404("No certificates found.")
 
-    buffer = BytesIO()
-    c = canvas.Canvas(buffer, pagesize=A4)
+  buffer = BytesIO()
+  zip_file = zipfile.ZipFile(buffer, 'w')
 
-    # Calculate A4 page dimensions in points (1 inch = 72 points)
-    page_width, page_height = A4
+  for certificate in certificates:
+      if certificate.final_certificate:
+          file_path = certificate.final_certificate.path
+          file_name = certificate.final_certificate.name
+          zip_file.write(file_path, file_name)
 
-    # Margin settings in points
-    margin_x = 50
-    margin_y = 50
+  zip_file.close()
+  buffer.seek(0)
 
-    # Iterate through each certificate
-    for certificate in certificates:
-        # Load the certificate image
-        if certificate.final_certificate:
-            img_path = certificate.final_certificate.path
-            img = Image.open(img_path)
-
-            # Calculate image dimensions to fit within the A4 page
-            img_width, img_height = img.size
-            aspect_ratio = img_width / img_height
-
-            # Calculate scaling factor to fit the image within the A4 page
-            if aspect_ratio > 1:
-                # Landscape orientation
-                if img_width > page_width - 2 * margin_x:
-                    img_width = page_width - 2 * margin_x
-                    img_height = img_width / aspect_ratio
-            else:
-                # Portrait orientation
-                if img_height > page_height - 2 * margin_y:
-                    img_height = page_height - 2 * margin_y
-                    img_width = img_height * aspect_ratio
-
-            # Calculate position for the image on the page
-            x = (page_width - img_width) / 2
-            y = (page_height - img_height) / 2
-
-            # Draw the image on the PDF page
-            c.drawImage(img_path, x, y, width=img_width, height=img_height)
-            c.showPage()  # Add a new page for the next certificate
-
-    c.save()
-
-    buffer.seek(0)
-    response = HttpResponse(buffer, content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="all_certificates.pdf"'
-    return response
+  response = HttpResponse(buffer, content_type='application/zip')
+  response['Content-Disposition'] = 'attachment; filename="all_certificates.zip"'
+  return response
 
 def certificate_success1(request):
     return render(request, 'certificate_success.html')
@@ -1043,52 +1011,55 @@ def generate_duplicate_certificate(request):
             return HttpResponse("No Certificate matches the given query.")
     
     return render(request, 'generate_certificate.html')
-
+import PyPDF2
+from io import BytesIO
+from django.http import HttpResponse
 def download_duplicate_certificate(request):
-    if request.method == 'POST':
-        certificate_id = request.POST.get('certificate_id')
-        certificate = get_object_or_404(Certificate, id=certificate_id)
-        
-        # Load the existing certificate image
-        original_image_path = certificate.final_certificate.path
-        original_image = Image.open(original_image_path)
-        
-        # Create a drawing context
-        draw = ImageDraw.Draw(original_image)
-        
-        # Define the text and font
-        text = "Duplicate"
-        font_path = os.path.join(settings.BASE_DIR, 'fonts', 'arial.ttf')  # Adjust the font path as needed
-        font_size = 50  # Adjust the font size as needed
-        try:
-            font = ImageFont.truetype(font_path, font_size)
-        except IOError:
-            return HttpResponse("Error opening font file: cannot open resource")
-        
-        # Calculate text size
-        bbox = draw.textbbox((0, 0), text, font=font)
-        text_width = bbox[2] - bbox[0]
-        text_height = bbox[3] - bbox[1]
-        width, height = original_image.size
-        
-        # Custom position
-        x = 202  # Adjust x position as needed
-        y = 72  # Adjust y position as needed
-        
-        # Draw the text on the image
-        draw.text((x, y), text, font=font, fill="black")  # Adjust the color as needed
-        
-        # Save the modified image to a temporary location
-        temp_image_path = os.path.join(settings.MEDIA_ROOT, 'temp_duplicate_certificate.png')
-        original_image.save(temp_image_path)
-        
-        # Serve the modified image for download
-        with open(temp_image_path, 'rb') as f:
-            response = HttpResponse(f.read(), content_type="image/png")
-            response['Content-Disposition'] = 'attachment; filename="duplicate_certificate.png"'
-            return response
-    
-    return HttpResponse("Invalid request method.")
+  if request.method == 'POST':
+      certificate_id = request.POST.get('certificate_id')
+      certificate = get_object_or_404(Certificate, id=certificate_id)
+      
+      # Open the PDF file
+      pdf_file = open(certificate.final_certificate.path, 'rb')
+      pdf_reader = PyPDF2.PdfReader(pdf_file)
+      
+      # Create a new PDF writer
+      pdf_writer = PyPDF2.PdfWriter()
+      
+      # Create a new PDF canvas
+      packet = BytesIO()
+      can = canvas.Canvas(packet, pagesize=letter)
+      
+      # Draw the "Duplicate" text on the canvas
+      can.setFont("Helvetica", 12)
+      if Certificate.CertificateType == 'C_Army':
+          can.drawString(400, 780, "Duplicate")
+      else:
+          can.drawString(50, 780, "Duplicate")
+      
+      # Save the canvas to a bytes buffer
+      can.save()
+      packet.seek(0)
+      
+      # Merge the canvas with each page of the original PDF
+      new_pdf = PyPDF2.PdfReader(packet)
+      for page_num in range(len(pdf_reader.pages)):
+          page = pdf_reader.pages[page_num]
+          page.merge_page(new_pdf.pages[0])
+          pdf_writer.add_page(page)
+      
+      # Save the modified PDF to a temporary location
+      temp_pdf_path = os.path.join(settings.MEDIA_ROOT, 'temp_duplicate_certificate.pdf')
+      with open(temp_pdf_path, 'wb') as f:
+          pdf_writer.write(f)
+      
+      # Serve the modified PDF for download
+      with open(temp_pdf_path, 'rb') as f:
+          response = HttpResponse(f.read(), content_type="application/pdf")
+          response['Content-Disposition'] = 'attachment; filename="duplicate_certificate.pdf"'
+          return response
+  
+  return HttpResponse("Invalid request method.")
 
 def rejected_certificates_register_head(request):
     user = request.user

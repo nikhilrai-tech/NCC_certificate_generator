@@ -30,7 +30,7 @@
             {% if certificate.is_signed %}
             <div class="col-md-4">
                 <div class="card certificate-card">
-                    <img src="{{ certificate.final_certificate.url }}" class="card-img-top certificate-image" alt="Certificate Image">
+                    <p>Your browser does not support PDFs. <a href="{{ certificate.final_certificate.url }}" target="_blank">view PDF</a>.</p>
                     <div class="card-body">
                         <h5 class="card-title">{{ certificate.Name }}</h5>
                         <p class="card-text certificate-details">

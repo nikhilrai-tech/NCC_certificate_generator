@@ -61,7 +61,7 @@
     <div class="certificate-container">
         <h2>{{ certificate.certificate_number }}</h2>
         
-        <img src="{{ certificate.final_certificate.url }}" alt="Final Certificate" class="certificate-image">
+        <!-- <img src="{{ certificate.final_certificate.url }}" alt="Final Certificate" class="certificate-image"> -->
         
         <div class="button-container">
             <form method="post" action="{% url 'download_duplicate_certificate' %}">
