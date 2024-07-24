@@ -57,7 +57,7 @@
                 <th>Passing Year</th>
                 <th>Grade</th>
                 <th>Unit</th>
-                <th>Certificate</th>
+                <!-- <th>Certificate</th> -->
                 <th>Accept/Reject</th>
 
             </tr>
@@ -74,13 +74,13 @@
                     <td>{{ certificate.Grade }}</td>
                     <td>{{ certificate.Unit }}</td>
                     
-                    <td>
+                    <!-- <td>
                         {% if certificate.final_certificate %}
                             <img src="{{ certificate.final_certificate.url }}" alt="Certificate Image" class="certificate-img">
                         {% else %}
                             No Image
                         {% endif %}
-                    </td>
+                    </td> -->
                     <td><a href="{% url 'main' %}">Action</a></td>
 
                 </tr>

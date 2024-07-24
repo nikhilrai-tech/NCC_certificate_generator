@@ -160,78 +160,78 @@ class StudentDetailBasicForm(forms.ModelForm):
         self.fields['unit'].initial = '2UP CTR'
         self.fields['school_college'].initial = 'IIT Kanpur'
 class StudentDetailExtendedForm(forms.ModelForm):
-    class Meta:
-        model = StudentDetail
-        fields = "__all__"
-        exclude = ['attach_photo_b_certificate',]
-        widgets = {
-            'unit': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Unit'}),
-            'cbse_no': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter CBSE No'}),
-            'rank': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Rank'}),
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Name'}),
-            'dob': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'Enter Date of Birth'}),
-            'fathers_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "Enter Father's Name"}),
-            'school_college': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter School/College'}),
-            'year_of_passing_b_certificate': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Year of Passing B Certificate'}),
-            'fresh_or_failure': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Fresh or Failure'}),
-            'attendance_1st_year': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Attendance 1st Year'}),
-            'attendance_2nd_year': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Attendance 2nd Year'}),
-            'attendance_3rd_year': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Attendance 3rd Year'}),
-            'attendance_total': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Total Attendance'}),
-            'home_address': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Enter Home Address'}),
-            'pass_fail': forms.Select(attrs={'class': 'form-control'}),
-            'marks_subject1': forms.NumberInput(attrs={'class': 'form-control marks-fields', 'placeholder': 'Enter Marks for Subject 1'}),
-            'marks_subject2': forms.NumberInput(attrs={'class': 'form-control marks-fields', 'placeholder': 'Enter Marks for Subject 2'}),
-            'marks_subject3': forms.NumberInput(attrs={'class': 'form-control marks-fields', 'placeholder': 'Enter Marks for Subject 3'}),
-            'camp_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Name of Camp Attended'}),
-            'camp_date_from': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'Enter Start Date'}),
-            'camp_date_to': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'Enter End Date'}),
-            'camp_location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Camp Location'}),
-        }
+  class Meta:
+      model = StudentDetail
+      fields = "__all__"
+      exclude = ['attach_photo_b_certificate',]
+      widgets = {
+          'unit': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Unit'}),
+          'cbse_no': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter CBSE No'}),
+          'rank': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Rank'}),
+          'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Name'}),
+          'dob': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'Enter Date of Birth'}),
+          'fathers_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "Enter Father's Name"}),
+          'school_college': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter School/College'}),
+          'year_of_passing_b_certificate': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Year of Passing B Certificate'}),
+          'fresh_or_failure': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Fresh or Failure'}),
+          'attendance_1st_year': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Attendance 1st Year'}),
+          'attendance_2nd_year': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Attendance 2nd Year'}),
+          'attendance_3rd_year': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Attendance 3rd Year'}),
+          'attendance_total': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter Total Attendance'}),
+          'home_address': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Enter Home Address'}),
+          'pass_fail': forms.Select(attrs={'class': 'form-control'}),
+          'marks_subject1': forms.NumberInput(attrs={'class': 'form-control marks-fields', 'placeholder': 'Enter Marks for Subject 1'}),
+          'marks_subject2': forms.NumberInput(attrs={'class': 'form-control marks-fields', 'placeholder': 'Enter Marks for Subject 2'}),
+          'marks_subject3': forms.NumberInput(attrs={'class': 'form-control marks-fields', 'placeholder': 'Enter Marks for Subject 3'}),
+          'camp_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Name of Camp Attended'}),
+          'camp_date_from': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'Enter Start Date'}),
+          'camp_date_to': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'Enter End Date'}),
+          'camp_location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Camp Location'}),
+      }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['unit'].initial = '2UP CTR'
-        self.fields['school_college'].initial = 'IIT Kanpur'
-        self.fields['pass_fail'].widget.choices = [('', '------'), ('Pass', 'Pass'), ('Fail', 'Fail')]
-        if self.instance.pk:
-            self.handle_pass_fail(self.instance.pass_fail)
-        else:
-            self.handle_pass_fail(None)
+  def __init__(self, *args, **kwargs):
+      super().__init__(*args, **kwargs)
+      self.fields['unit'].initial = '2UP CTR'
+      self.fields['school_college'].initial = 'IIT Kanpur'
+      self.fields['pass_fail'].widget.choices = [('', '------'), ('Pass', 'Pass'), ('Fail', 'Fail')]
+      if self.instance.pk:
+          self.handle_pass_fail(self.instance.pass_fail)
+      else:
+          self.handle_pass_fail(None)
 
-    def handle_pass_fail(self, pass_fail_value):
-        if pass_fail_value == 'Pass':
-            self.fields['marks_subject1'].widget.attrs['style'] = 'display:block;'
-            self.fields['marks_subject2'].widget.attrs['style'] = 'display:block;'
-            self.fields['marks_subject3'].widget.attrs['style'] = 'display:block;'
-            self.fields['marks_subject1'].required = True
-            self.fields['marks_subject2'].required = True
-            self.fields['marks_subject3'].required = True
-        else:
-            self.fields['marks_subject1'].widget.attrs['style'] = 'display:none;'
-            self.fields['marks_subject2'].widget.attrs['style'] = 'display:none;'
-            self.fields['marks_subject3'].widget.attrs['style'] = 'display:none;'
-            self.fields['marks_subject1'].required = False
-            self.fields['marks_subject2'].required = False
-            self.fields['marks_subject3'].required = False
+  def handle_pass_fail(self, pass_fail_value):
+      if pass_fail_value == 'Pass':
+          self.fields['marks_subject1'].widget.attrs['style'] = 'display:block;'
+          self.fields['marks_subject2'].widget.attrs['style'] = 'display:block;'
+          self.fields['marks_subject3'].widget.attrs['style'] = 'display:block;'
+          self.fields['marks_subject1'].required = True
+          self.fields['marks_subject2'].required = True
+          self.fields['marks_subject3'].required = True
+      else:
+          self.fields['marks_subject1'].widget.attrs['style'] = 'display:none;'
+          self.fields['marks_subject2'].widget.attrs['style'] = 'display:none;'
+          self.fields['marks_subject3'].widget.attrs['style'] = 'display:none;'
+          self.fields['marks_subject1'].required = False
+          self.fields['marks_subject2'].required = False
+          self.fields['marks_subject3'].required = False
 
-    def clean(self):
-        cleaned_data = super().clean()
-        pass_fail = cleaned_data.get('pass_fail')
+  def clean(self):
+      cleaned_data = super().clean()
+      pass_fail = cleaned_data.get('pass_fail')
 
-        if pass_fail == 'Pass':
-            marks_subject1 = cleaned_data.get('marks_subject1')
-            marks_subject2 = cleaned_data.get('marks_subject2')
-            marks_subject3 = cleaned_data.get('marks_subject3')
+      if pass_fail == 'Pass':
+          marks_subject1 = cleaned_data.get('marks_subject1')
+          marks_subject2 = cleaned_data.get('marks_subject2')
+          marks_subject3 = cleaned_data.get('marks_subject3')
 
-            if not marks_subject1 or not marks_subject2 or not marks_subject3:
-                raise forms.ValidationError("Marks for all subjects are required for Pass.")
-        else:
-            cleaned_data['marks_subject1'] = None
-            cleaned_data['marks_subject2'] = None
-            cleaned_data['marks_subject3'] = None
+          if not marks_subject1 or not marks_subject2 or not marks_subject3:
+              raise forms.ValidationError("Marks for all subjects are required for Pass.")
+      else:
+          cleaned_data['marks_subject1'] = None
+          cleaned_data['marks_subject2'] = None
+          cleaned_data['marks_subject3'] = None
 
-        return cleaned_data
+      return cleaned_data
     
 class HelpForm(forms.Form):
     name = forms.CharField(
