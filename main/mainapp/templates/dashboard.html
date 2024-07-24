@@ -1023,6 +1023,11 @@
             </div>
         </div>
         <div id="adminCard" class="content-section adminCard">
+            {% if is_clerk %}
+            <a href="{% url 'success' %}" class="btn btn-outline-primary" style="margin-left: 36px; width: 249px; margin-bottom: 34px;">
+                Interactive Slideshow
+            </a>
+            {% endif %}
             <div class="d-flex justify-content-between mb-3">
                 <div class="d-flex align-items-center">
                     <label for="actionDropdown" class="me-2"><strong>Action</strong></label>

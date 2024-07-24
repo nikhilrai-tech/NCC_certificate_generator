@@ -84,6 +84,8 @@
             {% endfor %}
         </div>
         <a href="{% url 'dashboard' %}" class="back-button">Back to Dashboard</a>
+        <a href="{% url 'student_detail_basic' %}" class="back-button">Create New AdmitCard</a>
+
         <!-- <form action="{% url 'generate_pdf' %}" method="post">
             {% csrf_token %}
             <button type="submit">Download All Student Details as PDF</button>

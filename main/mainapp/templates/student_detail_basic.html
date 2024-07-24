@@ -109,8 +109,11 @@
                 {{ form.camp_location.label_tag }}
                 {{ form.camp_location }}
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary">next</button>
         </form>
+        <a href="{% url 'success' %}" class="btn btn-primary">Update Existing Admit Card</a>
+        <a href="{% url 'dashboard' %}" class="btn btn-primary mt-2">Back To Dashboard</a>
+
     </div>
 
     <!-- Bootstrap JS and dependencies -->

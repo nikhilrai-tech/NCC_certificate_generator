@@ -473,7 +473,6 @@ def mintemplate(request):
     is_clerk = user.groups.filter(name='Clerk').exists()
     is_register_head = user.groups.filter(name='register_head').exists()
 
-
     # Filter certificates based on the user's group
     if is_ceo:
         certificates = certificates.filter(CertificateType__in=['A_Army', 'A_AirForce', 'A_Navy','B_Army', 'B_AirForce', 'B_Navy','C_Army'])
@@ -481,6 +480,9 @@ def mintemplate(request):
         certificates = certificates.filter(CertificateType__in=['B_Army', 'B_AirForce', 'B_Navy','C_Army'])
     elif is_register_head:
         certificates = certificates.filter(CertificateType__in=['C_Army'])
+
+    # Filter out certificates without a final_certificate file
+    certificates = certificates.exclude(final_certificate='')
 
     return render(request, "maintemp.html", {'certificates': certificates, 'is_clerk': is_clerk})
 
@@ -552,78 +554,82 @@ def student_detail_single_view(request, student_id):
     student = get_object_or_404(StudentDetail, id=student_id)
     return render(request, 'student_detail_single.html', {'student': student})
 from .forms import StudentDetailExtendedForm,StudentDetailBasicForm
-
+from django.contrib import messages
 def student_detail_basic_view(request):
-    if request.method == 'POST':
-        form = StudentDetailBasicForm(request.POST, request.FILES)
-        if form.is_valid():
-            student_detail = form.save()
-            if student_detail.pass_fail == 'Pass' and not student_detail.certificate:
-                certificate = Certificate.objects.create(
-                    Name=student_detail.name,
-                    DOB=student_detail.dob,
-                    Guardian=student_detail.fathers_name,
-                    CadetRank=student_detail.rank,
-                    Unit=student_detail.unit,
-                    Institute=student_detail.school_college,
-                    user_image=student_detail.attach_photo_b_certificate,
-                )
-                student_detail.certificate = certificate
-                student_detail.save()
-            return redirect('success')
-    else:
-        form = StudentDetailBasicForm()
-    return render(request, 'student_detail_basic.html', {'form': form})
+  if request.method == 'POST':
+      form = StudentDetailBasicForm(request.POST, request.FILES)
+      if form.is_valid():
+          student_detail = form.save()
+          if student_detail.pass_fail == 'Pass' and not student_detail.certificate:
+              certificate = Certificate.objects.create(
+                  Name=student_detail.name,
+                  DOB=student_detail.dob,
+                  Guardian=student_detail.fathers_name,
+                  CadetRank=student_detail.rank,
+                  Unit=student_detail.unit,
+                  Institute=student_detail.school_college,
+                  user_image=student_detail.attach_photo_b_certificate,
+              )
+              student_detail.certificate = certificate
+              student_detail.save()
+          messages.success(request, 'Form submitted successfully!')
+          form = StudentDetailBasicForm()  # Reset the form after successful submission
+      else:
+          messages.error(request, 'There was an error in the form. Please correct it and try again.')
+  else:
+      form = StudentDetailBasicForm()
+  
+  return render(request, 'student_detail_basic.html', {'form': form})
 
 def student_detail_extended_view(request, student_id):
-    student = get_object_or_404(StudentDetail, id=student_id)
-    
-    if request.method == 'POST':
-        form = StudentDetailExtendedForm(request.POST, request.FILES, instance=student)
-        if form.is_valid():
-            student = form.save(commit=False)
-            if student.pass_fail == 'Pass':
-                if not student.certificate:
-                    if student.unit and student.rank:
-                        try:
-                            # Set a default CertificateType if not provided
-                            certificate_type = 'A_Army'  # You can set this based on your logic
-                            
-                            certificate = Certificate.objects.create(
-                                Name=student.name,
-                                DOB=student.dob,
-                                Guardian=student.fathers_name,
-                                CadetRank=student.rank,
-                                CertificateType=certificate_type,
-                                Unit=student.unit,
-                                Institute=student.school_college,
-                                user_image=student.attach_photo_b_certificate,
-                            )
-                            student.certificate = certificate
-                            student.save()
-                        except Exception as e:
-                            print(e)
-                            form.add_error(None, f"Error creating certificate: {str(e)}")
-                else:
-                    certificate = student.certificate
-                    certificate.Name = student.name
-                    certificate.DOB = student.dob
-                    certificate.Guardian = student.fathers_name
-                    certificate.CadetRank = student.rank
-                    certificate.Unit = student.unit
-                    certificate.Institute = student.school_college
-                    certificate.user_image = student.attach_photo_b_certificate
-                    certificate.save()
-            else:
-                if student.certificate:
-                    student.certificate.delete()
-                    student.certificate = None
-                    student.save()
-            return redirect('dashboard')
-    else:
-        form = StudentDetailExtendedForm(instance=student)
-    
-    return render(request, 'student_detail_extended.html', {'form': form})
+  student = get_object_or_404(StudentDetail, id=student_id)
+  
+  if request.method == 'POST':
+      form = StudentDetailExtendedForm(request.POST, request.FILES, instance=student)
+      if form.is_valid():
+          student = form.save(commit=False)
+          if student.pass_fail == 'Pass':
+              if not student.certificate:
+                  if student.unit and student.rank:
+                      try:
+                          # Set a default CertificateType if not provided
+                          certificate_type = 'A_Army'  # You can set this based on your logic
+                          
+                          certificate = Certificate.objects.create(
+                              Name=student.name,
+                              DOB=student.dob,
+                              Guardian=student.fathers_name,
+                              CadetRank=student.rank,
+                              CertificateType=certificate_type,
+                              Unit=student.unit,
+                              Institute=student.school_college,
+                              user_image=student.attach_photo_b_certificate,
+                          )
+                          student.certificate = certificate
+                          student.save()
+                      except Exception as e:
+                          print(e)
+                          form.add_error(None, f"Error creating certificate: {str(e)}")
+              else:
+                  certificate = student.certificate
+                  certificate.Name = student.name
+                  certificate.DOB = student.dob
+                  certificate.Guardian = student.fathers_name
+                  certificate.CadetRank = student.rank
+                  certificate.Unit = student.unit
+                  certificate.Institute = student.school_college
+                  certificate.user_image = student.attach_photo_b_certificate
+                  certificate.save()
+          else:
+              if student.certificate:
+                  student.certificate.delete()
+                  student.certificate = None
+              student.save()  # Ensure student is saved even if pass_fail is 'Fail'
+          return redirect('success')
+  else:
+      form = StudentDetailExtendedForm(instance=student)
+  
+  return render(request, 'student_detail_extended.html', {'form': form})
 import zipfile
 import os
 from io import BytesIO
@@ -835,21 +841,7 @@ def edit_student_detail(request, id):
             certificate_img.save(final_buffer, format='JPEG')
             final_buffer.seek(0)
 
-            if certificate.CertificateType in ['B_AirForce', 'B_Army', 'B_Navy', 'C_Army']:
-                # Use the same back template for all 'B' types
-                jpg_back_template_path = os.path.join(settings.BASE_DIR, "templates/certificates/B_back.jpg")
-                back_certificate_img = Image.open(jpg_back_template_path)
-
-                back_buffer = BytesIO()
-                back_certificate_img.save(back_buffer, format='JPEG')
-                back_buffer.seek(0)
-
-                pdf_buffer = BytesIO()
-                certificate_img.save(pdf_buffer, format='PDF', save_all=True, append_images=[back_certificate_img])
-                pdf_buffer.seek(0)
-                certificate.final_certificate.save(f'{certificate.Name}_certificate.pdf', File(pdf_buffer))
-            else:
-                certificate.final_certificate.save(f'{certificate.Name}_certificate.jpg', File(final_buffer))
+            certificate.final_certificate.save(f'{certificate.Name}_certificate.jpg', File(final_buffer))
 
             certificate.save()
 
