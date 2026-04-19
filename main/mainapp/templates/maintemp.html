@@ -1,0 +1,171 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            display: flex;
+            align-items: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 20px;
+        }
+
+        .button-container label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .button-container input[type="radio"] {
+            display: none;
+        }
+
+        .button-container .radio-dot {
+            width: 44px;
+            height: 42px;
+            border-radius: 50%;
+            border: 2px solid black;
+            margin-right: 10px;
+            display: inline-block;
+        }
+
+        .button-container input[type="radio"]:checked + .radio-dot {
+            background-color: black;
+        }
+
+        .button-container p {
+            margin: 0;
+            color: green;
+            font-weight: bold;
+        }
+
+        .button-container p.reject {
+            color: red;
+        }
+
+        .image-container {
+            width: 600px;
+        }
+
+        .image-container img {
+            width: 100%;
+        }
+
+        .custom-icon {
+            font-size: 70px;
+            margin-left: 27px;
+            margin-right: 26px;
+            cursor: pointer;
+        }
+
+        .custom-placeholder::placeholder {
+            color: black;
+        }
+
+        .cancel-icon {
+            cursor: pointer;
+            margin-left: auto; /* Aligns the cancel icon to the right */
+            font-size: 24px;
+            color: #555; /* Adjust color as needed */
+        }
+
+        .cancel-icon:hover {
+            color: #333; /* Darker color on hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="container" style="
+    margin-top: 90px;">
+        <i class="bi bi-arrow-left-circle-fill custom-icon" onclick="navigate('prev')"></i>
+        <div class="button-container" style="margin-left: 67px;">
+            {% if not is_clerk %}
+            <form method="post" action="{% url 'verify_certificate_view' certificates.0.id %}" class="check-revise-form">
+                {% csrf_token %}
+                <label class="custom-radio">
+                    <input type="radio" name="action" value="approve" class="auto-submit-radio" onclick="this.form.submit();">
+                    <span class="radio-dot"></span>
+                </label>
+            </form>
+            <p class="accept">Accept</p>
+
+            {% endif %}
+        </div>
+        <div class="image-container">
+            {% for certificate in certificates %}
+            <img src="{{ certificate.final_certificate.url }}" alt="Certificate" style=" display: {% if forloop.first %}block{% else %}none{% endif %};" data-id="{{ certificate.id }}">
+            {% endfor %}
+        </div>
+        <div class="button-container" style="margin-left: 140px;">
+            {% if not is_clerk %}
+            <form method="post" action="{% url 'verify_certificate_view' certificates.0.id %}" class="check-revise-form">
+                {% csrf_token %}
+                <label class="custom-radio">
+                    <input type="radio" name="action" value="reject" class="auto-submit-radio" onclick="this.form.submit();">
+                    <span class="radio-dot"></span>
+                </label>
+            </form>
+            <p class="reject">Reject</p>
+
+            {% endif %}
+        </div>
+        <i class="bi bi-arrow-right-circle-fill custom-icon" onclick="navigate('next')"></i>
+
+        <!-- Cancel Icon with Redirect Link -->
+        <a href="{% url 'dashboard' %}" class="cancel-icon bi bi-x-circle" style="margin-bottom: 755px;"></a>
+    </div>
+
+    <script>
+        let currentIndex = 0;
+        const images = document.querySelectorAll('.image-container img');
+
+        function navigate(direction) {
+            images[currentIndex].style.display = 'none';
+            if (direction === 'prev') {
+                currentIndex = (currentIndex === 0) ? images.length - 1 : currentIndex - 1;
+            } else if (direction === 'next') {
+                currentIndex = (currentIndex === images.length - 1) ? 0 : currentIndex + 1;
+            }
+            images[currentIndex].style.display = 'block';
+            updateFormAction();
+        }
+
+        function updateFormAction() {
+            const forms = document.querySelectorAll('.check-revise-form');
+            const certificateId = images[currentIndex].getAttribute('data-id');
+            forms.forEach(form => {
+                form.action = `{% url 'verify_certificate_view' 0 %}`.replace('/0/', `/${certificateId}/`);
+            });
+        }
+
+        // Initialize form action on page load
+        updateFormAction();
+    </script>
+</body>
+</html>

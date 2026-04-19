@@ -200,31 +200,58 @@ input[type="submit"]:active
   <section> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> 
 
     <div class="signin"> 
-        <div class="content"> 
-          <h2 style="color: white;">{{ role }} Sign Up</h2> 
-          <form method="POST" action="{% url 'custom_login' %}" class="form"> 
-            {% csrf_token %}
-            <div class="inputBox"> 
-              <input type="text" name="username" required> 
-              <i>Username</i> 
-            </div> 
-            <div class="inputBox"> 
-              <input type="password" name="password" required> 
-              <i>Password</i> 
-            </div> 
-            <div class="inputBox"> 
-                <input type="password" name="passwordconfirm" required> 
-                <i>password confirmation</i> 
-              </div> 
-            <div class="links"> 
-              <!-- <a href="{% url 'forgotpass' %}">Forgot Password</a>  -->
-              <!-- <a href="{% url 'signuppage' %}">Signup</a>  -->
-            </div> 
-            <div class="inputBox"> 
-              <input type="submit" value="Signup"> 
-            </div> 
-          </form> 
-        </div> 
+        <!doctype html>
+        <html lang="en">
+        
+        <head>
+            <meta charset="UTF-8">
+            <title>Signup</title>
+            <!-- <link rel="stylesheet" href="./style.css">  -->
+        </head>
+        
+        <style>
+            /* Your CSS styling remains the same */
+        </style>
+        
+        <body>
+            <section>
+                <span></span> <!-- Repeated spans remain the same -->
+        
+                <div class="signin">
+                    <div class="content">
+                        <h2 style="color: white;">{{ role }} Sign Up</h2>
+                        <form method="POST" action="{% url 'register_staff' %}" class="form">
+                            {% csrf_token %}
+                            <div class="inputBox">
+                                <input type="text" name="username" required>
+                                <i>Username</i>
+                            </div>
+                            <div class="inputBox">
+                                <input type="password" name="password1" required>
+                                <i>Password</i>
+                            </div>
+                            <div class="inputBox">
+                                <input type="password" name="password2" required>
+                                <i>Password Confirmation</i>
+                            </div>
+                            <div class="inputBox">
+                                <input type="submit" value="Signup">
+                            </div>
+                            {% if errors %}
+                                <div class="errors">
+                                    {% for field, error_list in errors.items %}
+                                        <p style="color: wheat;">{{ field }}: {{ error_list|join:", " }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </body>
+        
+        </html>
+        
       </div> 
 
   </section> <!-- partial --> 

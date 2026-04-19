@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Certificate</title>
+</head>
+<body>
+    <div>
+        
+        <h2>Review Status</h2>
+        
+        {% if certificate.CertificateType in a_certificates %}
+            <p>
+                CO:
+                {% if certificate.ceo_review_status is not None %}
+                    {% if certificate.ceo_review_status %}
+                        <span style="color: green;">Approved by {{ certificate.reviewer_ceo.username }}</span>
+                    {% else %}
+                        <span style="color: red;">Rejected by {{ certificate.reviewer_ceo.username }}</span>
+                    {% endif %}
+                {% else %}
+                    <span style="color: orange;">Pending review by CO</span>
+                {% endif %}
+            </p>
+            <p>
+                ADG:
+                {% if certificate.register_head_review_status is not None %}
+                    {% if certificate.register_head_review_status %}
+                        <span style="color: green;">Approved by {{ certificate.reviewer_register_head.username }}</span>
+                    {% else %}
+                        <span style="color: red;">Rejected by {{ certificate.reviewer_register_head.username }}</span>
+                    {% endif %}
+                {% else %}
+                    <span style="color: orange;">Pending review by ADG</span>
+                {% endif %}
+            </p>
+        {% elif certificate.CertificateType in b_certificates %}
+            <p>
+                CO:
+                {% if certificate.ceo_review_status is not None %}
+                    {% if certificate.ceo_review_status %}
+                        <span style="color: green;">Approved by {{ certificate.reviewer_ceo.username }}</span>
+                    {% else %}
+                        <span style="color: red;">Rejected by {{ certificate.reviewer_ceo.username }}</span>
+                    {% endif %}
+                {% else %}
+                    <span style="color: orange;">Pending review by CO</span>
+                {% endif %}
+            </p>
+            <p>
+                group commander:
+                {% if certificate.staff_review_status is not None %}
+                    {% if certificate.staff_review_status %}
+                        <span style="color: green;">Approved by {{ certificate.reviewer_staff.username }}</span>
+                    {% else %}
+                        <span style="color: red;">Rejected by {{ certificate.reviewer_staff.username }}</span>
+                    {% endif %}
+                {% else %}
+                    <span style="color: orange;">Pending review by group commander</span>
+                {% endif %}
+            </p>
+        {% endif %}
+
+        {% if can_verify %}
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" name="action" value="approve">Approve</button>
+            <button type="submit" name="action" value="reject">Reject</button>
+        </form>
+        {% else %}
+        <p>You do not have permission to verify this certificate.</p>
+        {% endif %}
+
+        <a href="{% url 'dashboard' %}">Back to Dashboard</a>
+    </div>
+</body>
+</html>
